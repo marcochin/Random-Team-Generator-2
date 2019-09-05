@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/addPlayersFragment">
+    
+    <fragment
+        android:id="@+id/addPlayersFragment"
+        android:name="com.marcochin.teamrandomizer.ui.addplayers.AddPlayersFragment"
+        android:label="fragment_add_players"
+        tools:layout="@layout/fragment_add_players" >
+        <action
+            android:id="@+id/action_addPlayersFragment_to_randomizeFragment"
+            app:destination="@id/randomizeFragment" />
+        <action
+            android:id="@+id/action_addPlayersFragment_to_loadFragment"
+            app:popUpTo="@+id/addPlayersFragment"
+            app:popUpToInclusive="true"
+            app:destination="@id/loadFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/loadFragment"
+        android:name="com.marcochin.teamrandomizer.ui.load.LoadFragment"
+        android:label="fragment_load"
+        tools:layout="@layout/fragment_load" >
+        <action
+            android:id="@+id/action_loadFragment_to_addPlayersFragment"
+            app:destination="@id/addPlayersFragment" />
+        <action
+            android:id="@+id/action_loadFragment_to_randomizeFragment"
+            app:destination="@id/randomizeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/randomizeFragment"
+        android:name="com.marcochin.teamrandomizer.ui.randomize.RandomizeFragment"
+        android:label="fragment_randomize"
+        tools:layout="@layout/fragment_randomize" >
+        <action
+            android:id="@+id/action_randomizeFragment_to_loadFragment"
+            app:destination="@id/loadFragment" />
+    </fragment>
+</navigation>

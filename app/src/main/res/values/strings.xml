@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Random</string>
+
+    <!-- Bottom Navigation Strings-->
+    <string name="nav_randomize">Randomize</string>
+    <string name="nav_load">Load</string>
+
+    <!-- Content Descriptions -->
+    <string name="cd_toggle_checkboxes">Toggle checkboxes</string>
+    <string name="cd_save">Save</string>
+</resources>
