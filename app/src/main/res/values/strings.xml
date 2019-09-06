@@ -5,6 +5,12 @@
     <string name="nav_randomize">Randomize</string>
     <string name="nav_load">Load</string>
 
+    <!-- Add Players Fragment -->
+    <string name="apf_randomize">Randomize</string>
+    <string name="apf_add">Add</string>
+    <string name="apf_clear">Clear</string>
+    <string name="apf_edit_text_hint">Name</string>
+
     <!-- Content Descriptions -->
     <string name="cd_toggle_checkboxes">Toggle checkboxes</string>
     <string name="cd_save">Save</string>

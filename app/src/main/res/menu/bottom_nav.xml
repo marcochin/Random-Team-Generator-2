@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/nav_randomize"
+    <item android:id="@+id/addPlayersFragment"
         android:icon="@drawable/ic_randomize_black_svg"
         android:title="@string/nav_randomize"/>
 
-    <item android:id="@+id/nav_load"
+    <item android:id="@+id/loadFragment"
         android:icon="@drawable/ic_load_black_svg"
         android:title="@string/nav_load"/>
 </menu>
