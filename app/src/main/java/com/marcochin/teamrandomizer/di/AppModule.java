@@ -26,7 +26,7 @@ abstract class AppModule {
 
     @Singleton
     @Provides
-    // Even though this is an interface. We don't use @Binds because we need the PlayersGroupDao
+    // NO ABSTRACT. Even though this is an interface. We don't use @Binds because we need the PlayersGroupDao
     // that generated from the database obj. This is because we want the db obj to auto gen and fill
     // in the abstract methods.
     static GroupDao providePlayersGroupDao(GroupDatabase playersDatabase){

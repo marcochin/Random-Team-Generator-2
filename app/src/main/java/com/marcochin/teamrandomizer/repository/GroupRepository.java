@@ -10,10 +10,12 @@ import com.marcochin.teamrandomizer.ui.Resource;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
+@Singleton
 public class GroupRepository {
     public static final String SAVE_SUCCESS = "Saved!";
     public static final String SAVE_FAILED = "Save failed";
