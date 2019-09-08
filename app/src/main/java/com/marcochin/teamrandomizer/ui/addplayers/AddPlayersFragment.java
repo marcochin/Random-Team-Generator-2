@@ -81,13 +81,32 @@ public class AddPlayersFragment extends DaggerFragment {
                 mListAdapter.submitList(players);
             }
         });
+
+        mViewModel.getUserActionLiveData().observe(this, new Observer<AddPlayersViewModel.UserAction>() {
+            @Override
+            public void onChanged(AddPlayersViewModel.UserAction userAction) {
+                switch(userAction){
+                    case ADD_PLAYER:
+                        handleAddPlayerAction();
+                        mViewModel.clearUserActionLiveData();
+                        break;
+                }
+            }
+        });
+    }
+
+    private void handleAddPlayerAction(){
+        List<Player> playerList = mViewModel.getPlayerListLiveData().getValue();
+        if(playerList != null && playerList.size() > 0) {
+            mRecyclerView.smoothScrollToPosition(playerList.size() - 1);
+        }
+        mNameEditText.setText("");
     }
 
     private View.OnClickListener mAddButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             mViewModel.addPlayer(new Player(mNameEditText.getText().toString()));
-            mNameEditText.setText("");
         }
     };
 

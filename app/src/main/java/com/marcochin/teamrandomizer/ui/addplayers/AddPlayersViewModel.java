@@ -20,21 +20,23 @@ public class AddPlayersViewModel extends ViewModel {
 
     private MutableLiveData<List<Player>> mPlayerListLiveData;
     private MutableLiveData<String> mGroupNameLiveData;
+    private MutableLiveData<UserAction> mUserActionLiveData;
 
     private Group mGroup;
+
+    public enum UserAction{
+        ADD_PLAYER, NONE
+    }
 
     @Inject
     public AddPlayersViewModel(GroupRepository groupRepository) {
         mGroupRepository = groupRepository;
         mPlayerListLiveData = new MutableLiveData<>();
         mGroupNameLiveData = new MutableLiveData<>();
+        mUserActionLiveData = new MutableLiveData<>();
 
         List<Player> playerList = new ArrayList<>();
         mPlayerListLiveData.setValue(playerList);
-    }
-
-    public void setGroup(Group group){
-        mGroup = group;
     }
 
     public void addPlayer(Player player){
@@ -43,6 +45,8 @@ public class AddPlayersViewModel extends ViewModel {
             List<Player> newPlayerList = new ArrayList<>(oldPlayerList);
             newPlayerList.add(player);
             mPlayerListLiveData.setValue(newPlayerList);
+
+            mUserActionLiveData.setValue(UserAction.ADD_PLAYER);
         }
     }
 
@@ -55,20 +59,30 @@ public class AddPlayersViewModel extends ViewModel {
         }
     }
 
+    public void setGroup(Group group){
+        mGroup = group;
+    }
+
     public void setGroupName(String groupName){
         mGroupNameLiveData.setValue(groupName);
     }
 
     public LiveData<Resource<Integer>> insertGroup(){
+        // TODO
         return null;
     }
 
     public LiveData<Resource<Integer>> updateGroup(){
+        // TODO
         return null;
     }
 
     public void getMostRecentGroup(){
+        // TODO
+    }
 
+    public void clearUserActionLiveData(){
+        mUserActionLiveData.setValue(UserAction.NONE);
     }
 
     public LiveData<List<Player>> getPlayerListLiveData() {
@@ -77,5 +91,9 @@ public class AddPlayersViewModel extends ViewModel {
 
     public LiveData<String> getGroupNameLiveData() {
         return mGroupNameLiveData;
+    }
+
+    public LiveData<UserAction> getUserActionLiveData(){
+        return mUserActionLiveData;
     }
 }
