@@ -15,14 +15,15 @@ import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.model.Player;
 
 public class PlayerListAdapter extends ListAdapter<Player, PlayerListAdapter.PlayerHolder> {
-    private OnItemClickListenerListener mOnItemClickListener;
+    private OnItemClickListener mOnItemClickListener;
 
-    public interface OnItemClickListenerListener {
-        void onCheckboxClick();
-        void onDeleteClick();
+    public interface OnItemClickListener {
+        void onCheckboxClick(int pos, Player player);
+
+        void onDeleteClick(int pos, Player player);
     }
 
-    private static final DiffUtil.ItemCallback<Player> DIFF_CALLBACK = new DiffUtil.ItemCallback<Player>(){
+    private static final DiffUtil.ItemCallback<Player> DIFF_CALLBACK = new DiffUtil.ItemCallback<Player>() {
         @Override
         public boolean areItemsTheSame(@NonNull Player oldItem, @NonNull Player newItem) {
             return oldItem == newItem;
@@ -31,7 +32,8 @@ public class PlayerListAdapter extends ListAdapter<Player, PlayerListAdapter.Pla
         @Override
         public boolean areContentsTheSame(@NonNull Player oldItem, @NonNull Player newItem) {
             return oldItem.getName().equals(newItem.getName())
-                    && oldItem.isIncluded() == newItem.isIncluded();
+                    && oldItem.isIncluded() == newItem.isIncluded()
+                    && oldItem.isCheckboxVisible() == newItem.isCheckboxVisible();
         }
     };
 
@@ -50,16 +52,16 @@ public class PlayerListAdapter extends ListAdapter<Player, PlayerListAdapter.Pla
     public void onBindViewHolder(@NonNull PlayerHolder holder, int position) {
         Player player = getItem(position);
 
-        if(player.isCheckboxVisible()){
+        if (player.isCheckboxVisible()) {
             holder.checkbox.setVisibility(View.VISIBLE);
 
-            if(player.isIncluded()){
+            if (player.isIncluded()) {
                 holder.checkbox.setSelected(true);
-            }else{
+            } else {
                 holder.checkbox.setSelected(false);
             }
-        }else{
-            holder.checkbox.setVisibility(View.INVISIBLE);
+        } else {
+            holder.checkbox.setVisibility(View.GONE);
             // If checkbox is not visible player is automatically included in the random pool
             player.setIncluded(true);
         }
@@ -67,7 +69,7 @@ public class PlayerListAdapter extends ListAdapter<Player, PlayerListAdapter.Pla
         holder.playerNameText.setText(player.getName());
     }
 
-    public void setOnItemClickListener(OnItemClickListenerListener onItemClickListener) {
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         mOnItemClickListener = onItemClickListener;
     }
 
@@ -88,8 +90,9 @@ public class PlayerListAdapter extends ListAdapter<Player, PlayerListAdapter.Pla
             checkboxNameContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(mOnItemClickListener != null){
-                        mOnItemClickListener.onCheckboxClick();
+                    int position = getAdapterPosition();
+                    if (mOnItemClickListener != null && position != RecyclerView.NO_POSITION) {
+                        mOnItemClickListener.onCheckboxClick(position, getItem(position));
                     }
                 }
             });
@@ -97,7 +100,10 @@ public class PlayerListAdapter extends ListAdapter<Player, PlayerListAdapter.Pla
             deleteContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mOnItemClickListener.onDeleteClick();
+                    int position = getAdapterPosition();
+                    if (mOnItemClickListener != null && position != RecyclerView.NO_POSITION) {
+                        mOnItemClickListener.onDeleteClick(position, getItem(position));
+                    }
                 }
             });
         }

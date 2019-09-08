@@ -12,7 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_weight="1"
-        android:background="?android:selectableItemBackgroundBorderless"
+        android:background="?android:selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
         android:orientation="horizontal"
@@ -39,11 +39,11 @@
         android:id="@+id/del_name_container"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="?android:selectableItemBackgroundBorderless"
+        android:background="?android:selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp">
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
 
         <ImageView
             android:id="@+id/del_name_btn"

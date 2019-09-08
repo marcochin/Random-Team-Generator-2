@@ -4,16 +4,23 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.di.viewmodelfactory.ViewModelProviderFactory;
+import com.marcochin.teamrandomizer.model.Player;
 import com.marcochin.teamrandomizer.ui.addplayers.adapters.PlayerListAdapter;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -24,6 +31,11 @@ public class AddPlayersFragment extends DaggerFragment {
     @Inject
     ViewModelProviderFactory mViewModelProviderFactory;
 
+    private TextView mGroupNameText;
+    private EditText mNameEditText;
+
+    private RecyclerView mRecyclerView;
+    private PlayerListAdapter mListAdapter;
     private AddPlayersViewModel mViewModel;
 
     @Nullable
@@ -36,14 +48,58 @@ public class AddPlayersFragment extends DaggerFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        RecyclerView recyclerView = view.findViewById(R.id.players_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mGroupNameText = view.findViewById(R.id.group_name_text);
+        mNameEditText = view.findViewById(R.id.name_edit_text);
+        Button addButton = view.findViewById(R.id.add_btn);
 
-        PlayerListAdapter listAdapter = new PlayerListAdapter();
-        recyclerView.setAdapter(listAdapter);
+        addButton.setOnClickListener(mAddButtonClickListener);
 
+        // Setup recyclerView
+        mRecyclerView = view.findViewById(R.id.players_recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mListAdapter = new PlayerListAdapter();
+        mListAdapter.setOnItemClickListener(mOnItemClickListener);
+        mRecyclerView.setAdapter(mListAdapter);
+
+        // Retrieve the viewModel
         mViewModel = ViewModelProviders.of(this, mViewModelProviderFactory).get(AddPlayersViewModel.class);
 
-        // Observer liveData here and populate player list
+        observeLiveData();
     }
+
+    private void observeLiveData() {
+        mViewModel.getGroupNameLiveData().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                mGroupNameText.setText(s);
+            }
+        });
+
+        mViewModel.getPlayerListLiveData().observe(this, new Observer<List<Player>>() {
+            @Override
+            public void onChanged(List<Player> players) {
+                mListAdapter.submitList(players);
+            }
+        });
+    }
+
+    private View.OnClickListener mAddButtonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            mViewModel.addPlayer(new Player(mNameEditText.getText().toString()));
+            mNameEditText.setText("");
+        }
+    };
+
+    private PlayerListAdapter.OnItemClickListener mOnItemClickListener = new PlayerListAdapter.OnItemClickListener() {
+        @Override
+        public void onCheckboxClick(int position, Player player) {
+
+        }
+
+        @Override
+        public void onDeleteClick(int position, Player player) {
+            mViewModel.deletePlayer(player);
+        }
+    };
 }

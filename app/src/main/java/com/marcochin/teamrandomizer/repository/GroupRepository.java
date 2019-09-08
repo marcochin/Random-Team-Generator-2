@@ -24,7 +24,7 @@ public class GroupRepository {
     public static final String DELETE_SUCCESS = "Deleted!";
     public static final String DELETE_FAILED = "Delete failed";
 
-    // Inject
+    // Injected
     private GroupDao mGroupDao;
 
     @Inject
