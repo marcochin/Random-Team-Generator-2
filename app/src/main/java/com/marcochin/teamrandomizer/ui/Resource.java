@@ -14,25 +14,33 @@ public class Resource<T> {
     @Nullable
     public final String message;
 
-    public Resource(@NonNull Status status, @Nullable T data, @NonNull String message) {
+    public enum Status { SUCCESS, ERROR, LOADING}
+
+    public Resource(@NonNull Status status) {
+        this(status, null, null);
+    }
+
+    public Resource(@NonNull Status status, @Nullable T data) {
+        this(status, data, null);
+    }
+
+    public Resource(@NonNull Status status, @Nullable T data, @Nullable String message) {
         this.status = status;
         this.data = data;
         this.message = message;
     }
 
-    public static <T> Resource<T> success(@NonNull T data, @NonNull String message) {
+    public static <T> Resource<T> success(@NonNull T data, @Nullable String message) {
         return new Resource<>(Status.SUCCESS, data, message);
     }
 
-    public static <T> Resource<T> error( @Nullable T data, @NonNull String msg) {
-        return new Resource<>(Status.ERROR, data, msg);
+    public static <T> Resource<T> error( @Nullable T data, @Nullable String message) {
+        return new Resource<>(Status.ERROR, data, message);
     }
 
-    public static <T> Resource<T> loading(@Nullable T data) {
-        return new Resource<>(Status.LOADING, data, null);
+    public static <T> Resource<T> loading(@Nullable T data, @Nullable String message) {
+        return new Resource<>(Status.LOADING, data, message);
     }
-
-    public enum Status { SUCCESS, ERROR, LOADING}
 
     @Override
     public boolean equals(Object obj) {

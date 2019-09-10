@@ -1,5 +1,6 @@
 package com.marcochin.teamrandomizer.ui.addplayers.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,20 +51,19 @@ public class PlayerListAdapter extends ListAdapter<Player, PlayerListAdapter.Pla
 
     @Override
     public void onBindViewHolder(@NonNull PlayerHolder holder, int position) {
+        Log.d("Binded", position + "");
         Player player = getItem(position);
 
         if (player.isCheckboxVisible()) {
             holder.checkbox.setVisibility(View.VISIBLE);
 
             if (player.isIncluded()) {
-                holder.checkbox.setSelected(true);
+                holder.checkbox.setChecked(true);
             } else {
-                holder.checkbox.setSelected(false);
+                holder.checkbox.setChecked(false);
             }
         } else {
             holder.checkbox.setVisibility(View.GONE);
-            // If checkbox is not visible player is automatically included in the random pool
-            player.setIncluded(true);
         }
 
         holder.playerNameText.setText(player.getName());

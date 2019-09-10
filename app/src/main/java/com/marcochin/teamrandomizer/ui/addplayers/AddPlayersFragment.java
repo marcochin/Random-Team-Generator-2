@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,7 +27,7 @@ import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
-public class AddPlayersFragment extends DaggerFragment {
+public class AddPlayersFragment extends DaggerFragment implements View.OnClickListener{
 
     @Inject
     ViewModelProviderFactory mViewModelProviderFactory;
@@ -34,7 +35,7 @@ public class AddPlayersFragment extends DaggerFragment {
     private TextView mGroupNameText;
     private EditText mNameEditText;
 
-    private RecyclerView mRecyclerView;
+    private LinearLayoutManager mLinearLayoutManager;
     private PlayerListAdapter mListAdapter;
     private AddPlayersViewModel mViewModel;
 
@@ -51,20 +52,27 @@ public class AddPlayersFragment extends DaggerFragment {
         mGroupNameText = view.findViewById(R.id.group_name_text);
         mNameEditText = view.findViewById(R.id.name_edit_text);
         Button addButton = view.findViewById(R.id.add_btn);
+        Button clearButton = view.findViewById(R.id.clear_btn);
+        ImageButton checkboxButton = view.findViewById(R.id.checkbox_btn);
+        RecyclerView recyclerView = view.findViewById(R.id.players_recycler_view);
 
-        addButton.setOnClickListener(mAddButtonClickListener);
+        addButton.setOnClickListener(this);
+        clearButton.setOnClickListener(this);
+        checkboxButton.setOnClickListener(this);
 
-        // Setup recyclerView
-        mRecyclerView = view.findViewById(R.id.players_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mListAdapter = new PlayerListAdapter();
-        mListAdapter.setOnItemClickListener(mOnItemClickListener);
-        mRecyclerView.setAdapter(mListAdapter);
+        setupRecyclerView(recyclerView);
 
         // Retrieve the viewModel
         mViewModel = ViewModelProviders.of(this, mViewModelProviderFactory).get(AddPlayersViewModel.class);
-
         observeLiveData();
+    }
+
+    private void setupRecyclerView(RecyclerView recyclerView){
+        mListAdapter = new PlayerListAdapter();
+        mListAdapter.setOnItemClickListener(mOnItemClickListener);
+        mLinearLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setAdapter(mListAdapter);
+        recyclerView.setLayoutManager(mLinearLayoutManager);
     }
 
     private void observeLiveData() {
@@ -78,47 +86,94 @@ public class AddPlayersFragment extends DaggerFragment {
         mViewModel.getPlayerListLiveData().observe(this, new Observer<List<Player>>() {
             @Override
             public void onChanged(List<Player> players) {
+                // Don't rely on this update list when there are list actions cause we aren't using
+                // this with the use case it was intended for.
                 mListAdapter.submitList(players);
             }
         });
 
-        mViewModel.getUserActionLiveData().observe(this, new Observer<AddPlayersViewModel.UserAction>() {
+        mViewModel.getListActionLiveData().observe(this, new Observer<ListActionResource<Integer>>() {
             @Override
-            public void onChanged(AddPlayersViewModel.UserAction userAction) {
-                switch(userAction){
-                    case ADD_PLAYER:
-                        handleAddPlayerAction();
-                        mViewModel.clearUserActionLiveData();
+            public void onChanged(ListActionResource<Integer> listActionResource) {
+                switch(listActionResource.status){
+                    case PLAYER_ADDED:
+                        handlePlayerAddedAction(listActionResource);
+                        mViewModel.resetListActionLiveData();
+                        break;
+
+                    case PLAYER_DELETED:
+                        handlePlayerDeletedAction(listActionResource);
+                        mViewModel.resetListActionLiveData();
+                        break;
+
+                    case PLAYER_CHECKBOX_TOGGLED:
+                        handlePlayerCheckboxToggledAction(listActionResource);
+                        mViewModel.resetListActionLiveData();
+                        break;
+
+                    case CHECKBOX_BUTTON_TOGGLED:
+                        handleCheckboxButtonToggledAction(listActionResource);
+                        mViewModel.resetListActionLiveData();
                         break;
                 }
             }
         });
     }
 
-    private void handleAddPlayerAction(){
-        List<Player> playerList = mViewModel.getPlayerListLiveData().getValue();
-        if(playerList != null && playerList.size() > 0) {
-            mRecyclerView.smoothScrollToPosition(playerList.size() - 1);
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.add_btn:
+                mViewModel.addPlayer(new Player(mNameEditText.getText().toString()));
+                break;
+
+            case R.id.clear_btn:
+                mViewModel.clearAllPlayers();
+                break;
+
+            case R.id.checkbox_btn:
+                mViewModel.toggleCheckBoxButton();
+                break;
         }
-        mNameEditText.setText("");
     }
 
-    private View.OnClickListener mAddButtonClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            mViewModel.addPlayer(new Player(mNameEditText.getText().toString()));
+    private void handlePlayerAddedAction(ListActionResource<Integer> listActionResource){
+        if(listActionResource.data != null) {
+            mListAdapter.notifyItemInserted(listActionResource.data);
+            if (mListAdapter.getItemCount() > 0) {
+                mLinearLayoutManager.scrollToPosition(listActionResource.data);
+            }
+            mNameEditText.setText("");
         }
-    };
+    }
+
+    private void handlePlayerDeletedAction(ListActionResource<Integer> listActionResource){
+        if(listActionResource.data != null) {
+            mListAdapter.notifyItemRemoved(listActionResource.data);
+        }
+    }
+
+    private void handlePlayerCheckboxToggledAction(ListActionResource<Integer> listActionResource){
+        if(listActionResource.data != null) {
+            mListAdapter.notifyItemChanged(listActionResource.data);
+        }
+    }
+
+    private void handleCheckboxButtonToggledAction(ListActionResource<Integer> listActionResource){
+        if(listActionResource.data != null) {
+            mListAdapter.notifyItemRangeChanged(0, 15);
+        }
+    }
 
     private PlayerListAdapter.OnItemClickListener mOnItemClickListener = new PlayerListAdapter.OnItemClickListener() {
         @Override
         public void onCheckboxClick(int position, Player player) {
-
+            mViewModel.togglePlayerCheckBox(position);
         }
 
         @Override
         public void onDeleteClick(int position, Player player) {
-            mViewModel.deletePlayer(player);
+            mViewModel.deletePlayer(position);
         }
     };
 }
