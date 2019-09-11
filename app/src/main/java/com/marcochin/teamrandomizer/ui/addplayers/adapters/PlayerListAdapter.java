@@ -67,11 +67,6 @@ public class PlayerListAdapter extends ListAdapter<Player, PlayerListAdapter.Pla
         holder.playerNameText.setText(player.getName());
     }
 
-    @Override
-    public long getItemId(int position) {
-        return getItem(position).hashCode();
-    }
-
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         mOnItemClickListener = onItemClickListener;
     }

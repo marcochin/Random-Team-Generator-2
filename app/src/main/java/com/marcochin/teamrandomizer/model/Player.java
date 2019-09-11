@@ -7,7 +7,6 @@ public class Player {
 
     public Player(String name) {
         this.name = name;
-        included = true; // Player is included in the random pool by default
     }
 
     public boolean isCheckboxVisible() {

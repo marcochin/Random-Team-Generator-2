@@ -43,10 +43,17 @@ public class AddPlayersViewModel extends ViewModel {
         mPlayerListLiveData.setValue(playerList);
     }
 
-    public void addPlayer(Player player){
+    public void addPlayer(String name){
         List<Player> playerList = mPlayerListLiveData.getValue();
 
         if(playerList != null) {
+            Player player = new Player(name);
+            player.setIncluded(true); // default new player to always be included...aww how nice
+
+            if(!mCheckBoxButtonState.equals(CheckboxButtonState.GONE)){
+                player.setCheckboxVisible(true);
+            }
+
             playerList.add(player);
             mListActionLiveData.setValue(ListActionResource.playerAdded(playerList.size() - 1 ,null));
         }

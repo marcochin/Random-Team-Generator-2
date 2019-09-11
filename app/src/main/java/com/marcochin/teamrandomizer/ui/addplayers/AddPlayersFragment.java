@@ -133,7 +133,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.add_btn:
-                mViewModel.addPlayer(new Player(mNameEditText.getText().toString()));
+                mViewModel.addPlayer(mNameEditText.getText().toString());
                 break;
 
             case R.id.clear_btn:
