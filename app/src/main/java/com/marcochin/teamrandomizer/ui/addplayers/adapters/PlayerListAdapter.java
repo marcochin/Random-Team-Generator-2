@@ -1,6 +1,5 @@
 package com.marcochin.teamrandomizer.ui.addplayers.adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +50,6 @@ public class PlayerListAdapter extends ListAdapter<Player, PlayerListAdapter.Pla
 
     @Override
     public void onBindViewHolder(@NonNull PlayerHolder holder, int position) {
-        Log.d("Binded", position + "");
         Player player = getItem(position);
 
         if (player.isCheckboxVisible()) {
@@ -67,6 +65,11 @@ public class PlayerListAdapter extends ListAdapter<Player, PlayerListAdapter.Pla
         }
 
         holder.playerNameText.setText(player.getName());
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return getItem(position).hashCode();
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -87,15 +90,8 @@ public class PlayerListAdapter extends ListAdapter<Player, PlayerListAdapter.Pla
             checkboxNameContainer = itemView.findViewById(R.id.checkbox_name_container);
             deleteContainer = itemView.findViewById(R.id.del_name_container);
 
-            checkboxNameContainer.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int position = getAdapterPosition();
-                    if (mOnItemClickListener != null && position != RecyclerView.NO_POSITION) {
-                        mOnItemClickListener.onCheckboxClick(position, getItem(position));
-                    }
-                }
-            });
+            checkbox.setOnClickListener(checkBoxOnClickListener);
+            checkboxNameContainer.setOnClickListener(checkBoxOnClickListener);
 
             deleteContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -107,5 +103,15 @@ public class PlayerListAdapter extends ListAdapter<Player, PlayerListAdapter.Pla
                 }
             });
         }
+
+        private View.OnClickListener checkBoxOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int position = getAdapterPosition();
+                if (mOnItemClickListener != null && position != RecyclerView.NO_POSITION) {
+                    mOnItemClickListener.onCheckboxClick(position, getItem(position));
+                }
+            }
+        };
     }
 }

@@ -2,44 +2,41 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/checkbox_name_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:baselineAligned="false"
-    android:orientation="horizontal">
+    android:layout_height="50dp"
+    android:layout_weight="1"
+    android:background="?android:selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="horizontal"
+    android:paddingStart="11dp"
+    android:paddingEnd="0dp">
 
-    <LinearLayout
-        android:id="@+id/checkbox_name_container"
+    <CheckBox
+        android:id="@+id/checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical" />
+
+    <TextView
+        android:id="@+id/player_name_text"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="1dp"
         android:layout_weight="1"
-        android:background="?android:selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="horizontal"
-        android:padding="8dp">
-
-        <CheckBox
-            android:id="@+id/checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/player_name_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="1dp"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:textSize="16sp"
-            tools:text="Heidi" />
-    </LinearLayout>
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textSize="16sp"
+        tools:text="Heidi Von YackkerBackston the III of Yorkshire" />
 
     <FrameLayout
         android:id="@+id/del_name_container"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="?android:selectableItemBackground"
+        android:background="?android:selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
         android:paddingStart="16dp"
@@ -50,6 +47,7 @@
             android:layout_width="18dp"
             android:layout_height="18dp"
             android:layout_gravity="center"
+            android:layout_marginTop="2dp"
             android:contentDescription="@string/cd_save"
             app:srcCompat="@drawable/ic_close_black_svg" />
     </FrameLayout>

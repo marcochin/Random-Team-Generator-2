@@ -35,8 +35,10 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     private TextView mGroupNameText;
     private EditText mNameEditText;
 
+    private RecyclerView mRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private PlayerListAdapter mListAdapter;
+    private RecyclerView.ItemAnimator mListItemAnimator;
     private AddPlayersViewModel mViewModel;
 
     @Nullable
@@ -54,13 +56,13 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         Button addButton = view.findViewById(R.id.add_btn);
         Button clearButton = view.findViewById(R.id.clear_btn);
         ImageButton checkboxButton = view.findViewById(R.id.checkbox_btn);
-        RecyclerView recyclerView = view.findViewById(R.id.players_recycler_view);
+        mRecyclerView = view.findViewById(R.id.players_recycler_view);
 
         addButton.setOnClickListener(this);
         clearButton.setOnClickListener(this);
         checkboxButton.setOnClickListener(this);
 
-        setupRecyclerView(recyclerView);
+        setupRecyclerView(mRecyclerView);
 
         // Retrieve the viewModel
         mViewModel = ViewModelProviders.of(this, mViewModelProviderFactory).get(AddPlayersViewModel.class);
@@ -68,10 +70,16 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     }
 
     private void setupRecyclerView(RecyclerView recyclerView){
+        mListItemAnimator = recyclerView.getItemAnimator();
+        recyclerView.setHasFixedSize(true);
+
+        // Set adapter
         mListAdapter = new PlayerListAdapter();
         mListAdapter.setOnItemClickListener(mOnItemClickListener);
-        mLinearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setAdapter(mListAdapter);
+
+        // Set layoutManager
+        mLinearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLinearLayoutManager);
     }
 
@@ -86,8 +94,9 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         mViewModel.getPlayerListLiveData().observe(this, new Observer<List<Player>>() {
             @Override
             public void onChanged(List<Player> players) {
-                // Don't rely on this update list when there are list actions cause we aren't using
-                // this with the use case it was intended for.
+                // We only use this for initial population of the list and clearing the list.
+                // I only do it this way because I want granular callbacks for when I've added an item,
+                // deleted an item, etc..
                 mListAdapter.submitList(players);
             }
         });
@@ -139,9 +148,11 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
 
     private void handlePlayerAddedAction(ListActionResource<Integer> listActionResource){
         if(listActionResource.data != null) {
+            mRecyclerView.setItemAnimator(mListItemAnimator);
             mListAdapter.notifyItemInserted(listActionResource.data);
+
             if (mListAdapter.getItemCount() > 0) {
-                mLinearLayoutManager.scrollToPosition(listActionResource.data);
+                mLinearLayoutManager.scrollToPosition(listActionResource.data); // Item pos
             }
             mNameEditText.setText("");
         }
@@ -149,22 +160,27 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
 
     private void handlePlayerDeletedAction(ListActionResource<Integer> listActionResource){
         if(listActionResource.data != null) {
-            mListAdapter.notifyItemRemoved(listActionResource.data);
+            mRecyclerView.setItemAnimator(mListItemAnimator);
+            mListAdapter.notifyItemRemoved(listActionResource.data); // Item pos
         }
     }
 
     private void handlePlayerCheckboxToggledAction(ListActionResource<Integer> listActionResource){
         if(listActionResource.data != null) {
-            mListAdapter.notifyItemChanged(listActionResource.data);
+            mRecyclerView.setItemAnimator(mListItemAnimator);
+            mListAdapter.notifyItemChanged(listActionResource.data); // Item pos
         }
     }
 
     private void handleCheckboxButtonToggledAction(ListActionResource<Integer> listActionResource){
         if(listActionResource.data != null) {
-            mListAdapter.notifyItemRangeChanged(0, 15);
+            mRecyclerView.setItemAnimator(null);
+            mListAdapter.notifyItemRangeChanged(0, listActionResource.data); // playerListSize
         }
     }
 
+
+    // Anonymous Inner Classes
     private PlayerListAdapter.OnItemClickListener mOnItemClickListener = new PlayerListAdapter.OnItemClickListener() {
         @Override
         public void onCheckboxClick(int position, Player player) {
