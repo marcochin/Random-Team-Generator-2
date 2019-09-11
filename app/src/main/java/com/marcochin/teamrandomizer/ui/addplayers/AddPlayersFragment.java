@@ -1,6 +1,7 @@
 package com.marcochin.teamrandomizer.ui.addplayers;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +28,7 @@ import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
-public class AddPlayersFragment extends DaggerFragment implements View.OnClickListener{
+public class AddPlayersFragment extends DaggerFragment implements View.OnClickListener {
 
     @Inject
     ViewModelProviderFactory mViewModelProviderFactory;
@@ -40,6 +41,12 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     private PlayerListAdapter mListAdapter;
     private RecyclerView.ItemAnimator mListItemAnimator;
     private AddPlayersViewModel mViewModel;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d("meme", "onCreate");
+    }
 
     @Nullable
     @Override
@@ -69,7 +76,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         observeLiveData();
     }
 
-    private void setupRecyclerView(RecyclerView recyclerView){
+    private void setupRecyclerView(RecyclerView recyclerView) {
         mListItemAnimator = recyclerView.getItemAnimator();
         recyclerView.setHasFixedSize(true);
 
@@ -93,18 +100,19 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
 
         mViewModel.getPlayerListLiveData().observe(this, new Observer<List<Player>>() {
             @Override
-            public void onChanged(List<Player> players) {
+            public void onChanged(final List<Player> players) {
                 // We only use this for initial population of the list and clearing the list.
                 // I only do it this way because I want granular callbacks for when I've added an item,
                 // deleted an item, etc..
                 mListAdapter.submitList(players);
+
             }
         });
 
         mViewModel.getListActionLiveData().observe(this, new Observer<ListActionResource<Integer>>() {
             @Override
             public void onChanged(ListActionResource<Integer> listActionResource) {
-                switch(listActionResource.status){
+                switch (listActionResource.status) {
                     case PLAYER_ADDED:
                         handlePlayerAddedAction(listActionResource);
                         mViewModel.resetListActionLiveData();
@@ -131,7 +139,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.add_btn:
                 mViewModel.addPlayer(mNameEditText.getText().toString());
                 break;
@@ -146,8 +154,8 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         }
     }
 
-    private void handlePlayerAddedAction(ListActionResource<Integer> listActionResource){
-        if(listActionResource.data != null) {
+    private void handlePlayerAddedAction(ListActionResource<Integer> listActionResource) {
+        if (listActionResource.data != null) {
             mRecyclerView.setItemAnimator(mListItemAnimator);
             mListAdapter.notifyItemInserted(listActionResource.data);
 
@@ -158,22 +166,22 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         }
     }
 
-    private void handlePlayerDeletedAction(ListActionResource<Integer> listActionResource){
-        if(listActionResource.data != null) {
+    private void handlePlayerDeletedAction(ListActionResource<Integer> listActionResource) {
+        if (listActionResource.data != null) {
             mRecyclerView.setItemAnimator(mListItemAnimator);
             mListAdapter.notifyItemRemoved(listActionResource.data); // Item pos
         }
     }
 
-    private void handlePlayerCheckboxToggledAction(ListActionResource<Integer> listActionResource){
-        if(listActionResource.data != null) {
+    private void handlePlayerCheckboxToggledAction(ListActionResource<Integer> listActionResource) {
+        if (listActionResource.data != null) {
             mRecyclerView.setItemAnimator(mListItemAnimator);
             mListAdapter.notifyItemChanged(listActionResource.data); // Item pos
         }
     }
 
-    private void handleCheckboxButtonToggledAction(ListActionResource<Integer> listActionResource){
-        if(listActionResource.data != null) {
+    private void handleCheckboxButtonToggledAction(ListActionResource<Integer> listActionResource) {
+        if (listActionResource.data != null) {
             mRecyclerView.setItemAnimator(null);
             mListAdapter.notifyItemRangeChanged(0, listActionResource.data); // playerListSize
         }

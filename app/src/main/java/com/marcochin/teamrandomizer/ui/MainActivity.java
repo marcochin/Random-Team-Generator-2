@@ -1,27 +1,57 @@
 package com.marcochin.teamrandomizer.ui;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.marcochin.teamrandomizer.R;
 
 public class MainActivity extends AppCompatActivity {
+    private Fragment mAddPlayersFragment;
+    private Fragment mLoadFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Find Ui
         BottomNavigationView bottomNavigationView = findViewById(R.id.main_bottom_nav);
 
-        // Connect bottomNavView with the navController and it will know which fragment to load
-        // as long as the bottomNavView menu item ids match the fragment ids in the nav_graph.xml
-        NavigationUI.setupWithNavController(bottomNavigationView,
-                Navigation.findNavController(this, R.id.main_nav_host_fragment));
+        // Find Fragments
+        mAddPlayersFragment = getSupportFragmentManager().findFragmentById(R.id.addPlayersFragment);
+        mLoadFragment = getSupportFragmentManager().findFragmentById(R.id.loadFragment);
 
+        // Hide the LoadFragment initially
+        getSupportFragmentManager().beginTransaction().hide(mLoadFragment).commit();
+
+        // Setup the BottomNavigationView callback
+        setupBottomViewNavigation(bottomNavigationView);
+    }
+
+    private void setupBottomViewNavigation(BottomNavigationView bottomNavigationView) {
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.addPlayersFragment:
+                        getSupportFragmentManager().beginTransaction()
+                                .hide(mLoadFragment)
+                                .show(mAddPlayersFragment).commit();
+                        break;
+
+                    case R.id.loadFragment:
+                        getSupportFragmentManager().beginTransaction()
+                                .hide(mAddPlayersFragment)
+                                .show(mLoadFragment).commit();
+                        break;
+                }
+                return true;
+            }
+        });
     }
 }

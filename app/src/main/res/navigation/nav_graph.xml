@@ -17,11 +17,6 @@
         android:label="@string/nav_load"
         tools:layout="@layout/fragment_load" />
 
-    <fragment
-        android:id="@+id/randomizeFragment"
-        android:name="com.marcochin.teamrandomizer.ui.randomize.RandomizeActivity"
-        android:label="fragment_randomize"
-        tools:layout="@layout/fragment_randomize" />
     <activity
         android:id="@+id/randomizeActivity"
         android:name="com.marcochin.teamrandomizer.ui.randomize.RandomizeActivity"
