@@ -20,12 +20,13 @@ public class AddPlayersViewModel extends ViewModel {
 
     private MutableLiveData<List<Player>> mPlayerListLiveData;
     private MutableLiveData<String> mGroupNameLiveData;
+    private MutableLiveData<Integer> mTotalPlayersLiveData;
     private MutableLiveData<ListActionResource<Integer>> mListActionLiveData;
 
     private CheckboxButtonState mCheckBoxButtonState = CheckboxButtonState.GONE;
     private Group mGroup;
 
-    private enum CheckboxButtonState{
+    private enum CheckboxButtonState {
         GONE, ALL_CHECKED, NONE_CHECKED
     }
 
@@ -34,124 +35,153 @@ public class AddPlayersViewModel extends ViewModel {
         mGroupRepository = groupRepository;
         mPlayerListLiveData = new MutableLiveData<>();
         mGroupNameLiveData = new MutableLiveData<>();
+        mTotalPlayersLiveData = new MutableLiveData<>();
         mListActionLiveData = new MutableLiveData<>();
 
         List<Player> playerList = new ArrayList<>();
-        for(int i = 0; i < 100; i++){
+
+        //TODO remove test code
+        for (int i = 0; i < 100; i++) {
             playerList.add(new Player(i + ""));
         }
         mPlayerListLiveData.setValue(playerList);
+        mTotalPlayersLiveData.setValue(playerList.size());
     }
 
-    public void addPlayer(String name){
+    void addPlayer(String name) {
         List<Player> playerList = mPlayerListLiveData.getValue();
 
-        if(playerList != null) {
+        if (playerList != null) {
             Player player = new Player(name);
             player.setIncluded(true); // default new player to always be included...aww how nice
 
-            if(!mCheckBoxButtonState.equals(CheckboxButtonState.GONE)){
+            if (!mCheckBoxButtonState.equals(CheckboxButtonState.GONE)) {
                 player.setCheckboxVisible(true);
             }
 
             playerList.add(player);
-            mListActionLiveData.setValue(ListActionResource.playerAdded(playerList.size() - 1 ,null));
+            mListActionLiveData.setValue(ListActionResource.playerAdded(playerList.size() - 1, null));
+            mTotalPlayersLiveData.setValue(playerList.size());
         }
     }
 
-    public void deletePlayer(int pos){
+    void deletePlayer(int pos) {
         List<Player> playerList = mPlayerListLiveData.getValue();
 
-        if(playerList != null) {
+        if (playerList != null) {
             playerList.remove(pos);
-            mListActionLiveData.setValue(ListActionResource.playerDeleted(pos ,null));
+            mListActionLiveData.setValue(ListActionResource.playerDeleted(pos, null));
+            mTotalPlayersLiveData.setValue(playerList.size());
         }
     }
 
-    public void clearAllPlayers(){
-        if(mPlayerListLiveData.getValue() != null) {
-            mPlayerListLiveData.setValue(new ArrayList<Player>());
-        }
+    void clearAllPlayers() {
+        mPlayerListLiveData.setValue(new ArrayList<Player>());
+        mTotalPlayersLiveData.setValue(0);
     }
 
-    public void toggleCheckBoxButton(){
+    void toggleCheckBoxButton() {
         List<Player> playerList = mPlayerListLiveData.getValue();
 
-        if(playerList != null) {
-            for(int i = 0; i <= playerList.size() - 1; i++){
+        if (playerList != null) {
+            if (mCheckBoxButtonState == CheckboxButtonState.GONE) {
+                mCheckBoxButtonState = CheckboxButtonState.ALL_CHECKED;
+                // Don't need to set total players here because GONE -> ALL CHECKED wont change the total
+
+            } else if (mCheckBoxButtonState == CheckboxButtonState.ALL_CHECKED) {
+                mCheckBoxButtonState = CheckboxButtonState.NONE_CHECKED;
+                mTotalPlayersLiveData.setValue(0);
+
+            } else if (mCheckBoxButtonState == CheckboxButtonState.NONE_CHECKED) {
+                mCheckBoxButtonState = CheckboxButtonState.GONE;
+                mTotalPlayersLiveData.setValue(playerList.size());
+            }
+
+            for (int i = 0; i <= playerList.size() - 1; i++) {
                 Player player = playerList.get(i);
 
-                if(mCheckBoxButtonState == CheckboxButtonState.GONE){
-                    player.setCheckboxVisible(true);
-                    player.setIncluded(true);
+                switch(mCheckBoxButtonState){
+                    case GONE:
+                        player.setCheckboxVisible(false);
+                        player.setIncluded(true);
+                        break;
 
-                }else if(mCheckBoxButtonState == CheckboxButtonState.ALL_CHECKED){
-                    player.setIncluded(false);
+                    case ALL_CHECKED:
+                        player.setCheckboxVisible(true);
+                        player.setIncluded(true);
+                        break;
 
-                }else{
-                    player.setCheckboxVisible(false);
+                    case NONE_CHECKED:
+                        player.setIncluded(false);
+                        break;
                 }
             }
 
-            if(mCheckBoxButtonState == CheckboxButtonState.GONE){
-                mCheckBoxButtonState = CheckboxButtonState.ALL_CHECKED;
-
-            }else if(mCheckBoxButtonState == CheckboxButtonState.ALL_CHECKED){
-                mCheckBoxButtonState = CheckboxButtonState.NONE_CHECKED;
-
-            }else if (mCheckBoxButtonState == CheckboxButtonState.NONE_CHECKED){
-                mCheckBoxButtonState = CheckboxButtonState.GONE;
-            }
-
-            mListActionLiveData.setValue(ListActionResource.checkboxButtonToggled(playerList.size(),null));
+            mListActionLiveData.setValue(ListActionResource.checkboxButtonToggled(playerList.size(), null));
         }
     }
 
-    public void togglePlayerCheckBox(int pos){
+    void togglePlayerCheckBox(int pos) {
         List<Player> playerList = mPlayerListLiveData.getValue();
 
-        if(playerList != null) {
+        if (playerList != null) {
             Player player = playerList.get(pos);
             player.setIncluded(!player.isIncluded());
-            mListActionLiveData.setValue(ListActionResource.playerCheckboxToggled(pos ,null));
+            mListActionLiveData.setValue(ListActionResource.playerCheckboxToggled(pos, null));
+
+            if(mTotalPlayersLiveData.getValue() != null) {
+                if (player.isIncluded()) {
+                    mTotalPlayersLiveData.setValue(mTotalPlayersLiveData.getValue() + 1);
+                } else {
+                    mTotalPlayersLiveData.setValue(mTotalPlayersLiveData.getValue() - 1);
+                }
+            }
         }
     }
 
-    public void resetListActionLiveData(){
+    void resetListActionLiveData() {
         mListActionLiveData.setValue(ListActionResource.noAction(-1, null));
     }
 
-    public void setGroup(Group group){
+    public void setGroup(Group group) {
         mGroup = group;
     }
 
-    public void setGroupName(String groupName){
+    public void setGroupName(String groupName) {
         mGroupNameLiveData.setValue(groupName);
     }
 
-    public LiveData<Resource<Integer>> insertGroup(){
+
+    // Database operations
+    public LiveData<Resource<Integer>> insertGroup() {
         // TODO
         return null;
     }
 
-    public LiveData<Resource<Integer>> updateGroup(){
+    public LiveData<Resource<Integer>> updateGroup() {
         // TODO
         return null;
     }
 
-    public void getMostRecentGroup(){
+    public void getMostRecentGroup() {
         // TODO
     }
 
-    public LiveData<List<Player>> getPlayerListLiveData() {
+
+    // LiveData getters
+    LiveData<List<Player>> getPlayerListLiveData() {
         return mPlayerListLiveData;
     }
 
-    public LiveData<String> getGroupNameLiveData() {
+    LiveData<String> getGroupNameLiveData() {
         return mGroupNameLiveData;
     }
 
-    public LiveData<ListActionResource<Integer>> getListActionLiveData(){
+    LiveData<Integer> getTotalPlayersLiveData() {
+        return mTotalPlayersLiveData;
+    }
+
+    LiveData<ListActionResource<Integer>> getListActionLiveData() {
         return mListActionLiveData;
     }
 }

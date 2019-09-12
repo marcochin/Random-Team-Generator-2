@@ -1,7 +1,6 @@
 package com.marcochin.teamrandomizer.ui.addplayers;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +33,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     ViewModelProviderFactory mViewModelProviderFactory;
 
     private TextView mGroupNameText;
+    private TextView mNumPlayersText;
     private EditText mNameEditText;
 
     private RecyclerView mRecyclerView;
@@ -41,12 +41,6 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     private PlayerListAdapter mListAdapter;
     private RecyclerView.ItemAnimator mListItemAnimator;
     private AddPlayersViewModel mViewModel;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.d("meme", "onCreate");
-    }
 
     @Nullable
     @Override
@@ -60,10 +54,11 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
 
         mGroupNameText = view.findViewById(R.id.group_name_text);
         mNameEditText = view.findViewById(R.id.name_edit_text);
+        mNumPlayersText = view.findViewById(R.id.total_players_text);
+        mRecyclerView = view.findViewById(R.id.players_recycler_view);
         Button addButton = view.findViewById(R.id.add_btn);
         Button clearButton = view.findViewById(R.id.clear_btn);
         ImageButton checkboxButton = view.findViewById(R.id.checkbox_btn);
-        mRecyclerView = view.findViewById(R.id.players_recycler_view);
 
         addButton.setOnClickListener(this);
         clearButton.setOnClickListener(this);
@@ -106,6 +101,13 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
                 // deleted an item, etc..
                 mListAdapter.submitList(players);
 
+            }
+        });
+
+        mViewModel.getTotalPlayersLiveData().observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                mNumPlayersText.setText(getString(R.string.ph_total_players, integer.toString()));
             }
         });
 

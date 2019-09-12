@@ -38,8 +38,8 @@
         android:background="?android:selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp">
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp">
 
         <ImageView
             android:id="@+id/del_name_btn"

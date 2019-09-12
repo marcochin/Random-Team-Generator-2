@@ -14,4 +14,7 @@
     <!-- Content Descriptions -->
     <string name="cd_toggle_checkboxes">Toggle checkboxes</string>
     <string name="cd_save">Save</string>
+
+    <!-- Placeholder Strings-->
+    <string name="ph_total_players">Total Players: %1$s</string>
 </resources>
