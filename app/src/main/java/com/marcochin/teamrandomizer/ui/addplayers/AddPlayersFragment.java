@@ -1,12 +1,15 @@
 package com.marcochin.teamrandomizer.ui.addplayers;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Space;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +21,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.di.viewmodelfactory.ViewModelProviderFactory;
+import com.marcochin.teamrandomizer.keyboarddetection.KeyboardHeightObserver;
+import com.marcochin.teamrandomizer.keyboarddetection.KeyboardHeightProvider;
 import com.marcochin.teamrandomizer.model.Player;
 import com.marcochin.teamrandomizer.ui.addplayers.adapters.PlayerListAdapter;
 
@@ -32,6 +37,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     @Inject
     ViewModelProviderFactory mViewModelProviderFactory;
 
+    private Space mTopConstraint;
     private TextView mGroupNameText;
     private TextView mNumPlayersText;
     private EditText mNameEditText;
@@ -41,6 +47,15 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     private PlayerListAdapter mListAdapter;
     private RecyclerView.ItemAnimator mListItemAnimator;
     private AddPlayersViewModel mViewModel;
+
+    /**
+     * See https://github.com/siebeprojects/samples-keyboardheight
+     * or https://stackoverflow.com/a/41035914/5673746
+     * Basically the soft keyboard pushes our layout up with adjustPan so we need this to calculate
+     * the height of the soft keyboard so we can adjust our layout back down to show the
+     * necessary information
+     */
+    private KeyboardHeightProvider mKeyboardHeightProvider;
 
     @Nullable
     @Override
@@ -52,6 +67,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mTopConstraint = view.findViewById(R.id.top_constraint);
         mGroupNameText = view.findViewById(R.id.group_name_text);
         mNameEditText = view.findViewById(R.id.name_edit_text);
         mNumPlayersText = view.findViewById(R.id.total_players_text);
@@ -69,6 +85,37 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         // Retrieve the viewModel
         mViewModel = ViewModelProviders.of(this, mViewModelProviderFactory).get(AddPlayersViewModel.class);
         observeLiveData();
+
+        // Setup KeyBoardHeightProvider
+        mKeyboardHeightProvider = new KeyboardHeightProvider(getActivity());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mKeyboardHeightProvider.setKeyboardHeightObserver(null);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mKeyboardHeightProvider.setKeyboardHeightObserver(mKeyboardHeightObserver);
+
+        // LIBRARY CREATOR: Make sure to start the keyboard height provider after the onResume
+        // of this activity. This is because a popup window must be initialised and attached to
+        // the activity root view.
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mKeyboardHeightProvider.start();
+            }
+        }, 200);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mKeyboardHeightProvider.close();
     }
 
     private void setupRecyclerView(RecyclerView recyclerView) {
@@ -143,7 +190,10 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.add_btn:
-                mViewModel.addPlayer(mNameEditText.getText().toString());
+//                mViewModel.addPlayer(mNameEditText.getText().toString());
+                int[] outLocation = new int[2];
+                mTopConstraint.getLocationOnScreen(outLocation);
+                Log.d("meme", outLocation[0] + " " + outLocation[1]);
                 break;
 
             case R.id.clear_btn:
@@ -200,6 +250,22 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         @Override
         public void onDeleteClick(int position, Player player) {
             mViewModel.deletePlayer(position);
+        }
+    };
+
+    private KeyboardHeightObserver mKeyboardHeightObserver = new KeyboardHeightObserver() {
+        @Override
+        public void onKeyboardHeightChanged(int height, int orientation) {
+//            Log.d("meme", height + "");
+//            if(getActivity() != null) {
+//                ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) mTopConstraint.getLayoutParams();
+//                layoutParams.topMargin = (int) PxDpConversionUtil.convertPixelsToDp(height, getActivity());
+//                mTopConstraint.setLayoutParams(layoutParams);
+//            }
+
+//            int[] outLocation = new int[2];
+//            mTopConstraint.getLocationOnScreen(outLocation);
+//            Log.d("meme", outLocation[0] + " " + outLocation[1]);
         }
     };
 }

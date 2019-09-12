@@ -9,26 +9,26 @@
         android:id="@+id/checkbox_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:background="?android:selectableItemBackgroundBorderless"
         android:contentDescription="@string/cd_toggle_checkboxes"
         android:padding="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top_constraint"
         app:srcCompat="@drawable/ic_check_box_black_svg" />
 
     <ImageButton
         android:id="@+id/save_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="6dp"
         android:background="?android:selectableItemBackgroundBorderless"
         android:contentDescription="@string/cd_save"
         android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top_constraint"
         app:srcCompat="@drawable/ic_save_black_svg" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -47,7 +47,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:ellipsize="end"
         android:maxLines="1"
@@ -55,7 +55,7 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/clear_btn"
         app:layout_constraintStart_toEndOf="@+id/checkbox_btn"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top_constraint"
         tools:text="Party Crew" />
 
     <EditText
@@ -67,11 +67,13 @@
         android:layout_marginBottom="8dp"
         android:ems="10"
         android:hint="@string/apf_edit_text_hint"
+        android:importantForAutofill="no"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toTopOf="@+id/randomize_btn"
         app:layout_constraintEnd_toStartOf="@+id/add_btn"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:targetApi="o" />
 
     <Button
         android:id="@+id/add_btn"
@@ -115,5 +117,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/save_btn"
         tools:text="Total Players: 160" />
+
+    <Space
+        android:id="@+id/top_constraint"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
