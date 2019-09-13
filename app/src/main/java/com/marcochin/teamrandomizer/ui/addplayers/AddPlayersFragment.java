@@ -269,9 +269,8 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
             mRecyclerView.setItemAnimator(mListItemAnimator);
             mListAdapter.notifyItemInserted(addPlayersActionResource.data);
 
-            if (mListAdapter.getItemCount() > 0) {
-                mLinearLayoutManager.scrollToPosition(addPlayersActionResource.data); // data = item pos
-            }
+            // Scroll to the bottom of list for quality of life
+            mLinearLayoutManager.scrollToPosition(addPlayersActionResource.data); // data = item pos
             mNameEditText.setText("");
         }
     }
