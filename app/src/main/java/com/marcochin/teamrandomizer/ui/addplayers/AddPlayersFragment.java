@@ -1,5 +1,6 @@
 package com.marcochin.teamrandomizer.ui.addplayers;
 
+import android.app.Activity;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,21 +11,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Space;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.di.viewmodelfactory.ViewModelProviderFactory;
 import com.marcochin.teamrandomizer.model.Player;
@@ -42,6 +45,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     @Inject
     ViewModelProviderFactory mViewModelProviderFactory;
 
+    private CoordinatorLayout mParentCoordinatorLayout;
     private Space mTopConstraint;
     private TextView mGroupNameText;
     private TextView mNumPlayersText;
@@ -97,6 +101,14 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (getActivity() != null) {
+            mParentCoordinatorLayout = getActivity().findViewById(R.id.main_coordinator_layout);
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         // Won't get called when a fragment is hidden, but will get called when user resumes app from bg
@@ -117,9 +129,9 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         super.onHiddenChanged(hidden);
         // onHiddenChanged will only get triggered when the fragment is hidden (switching tabs).
         // It will not get triggered when user press home button, back button etc.
-        if(hidden){
+        if (hidden) {
             removeKeyboardLayoutListener();
-        }else{
+        } else {
             addKeyboardLayoutListener();
         }
     }
@@ -150,7 +162,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         });
     }
 
-    private void setupEditText(final EditText editText){
+    private void setupEditText(final EditText editText) {
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -192,7 +204,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         mViewModel.getAddPlayersActionLiveData().observe(this, new Observer<AddPlayersActionResource<Integer>>() {
             @Override
             public void onChanged(AddPlayersActionResource<Integer> addPlayersActionResource) {
-                if(addPlayersActionResource == null){
+                if (addPlayersActionResource == null) {
                     return;
                 }
 
@@ -223,9 +235,9 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
 
     private void onKeyboardVisibilityChanged(boolean opened) {
 //        Log.d(TAG, "onKeyboardVisibilityChanged : " + opened);
-        final ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams)mTopConstraint.getLayoutParams();
+        final ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) mTopConstraint.getLayoutParams();
 
-        if(opened){
+        if (opened) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -239,7 +251,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
 
                 }
             }, 250);
-        }else{
+        } else {
             layoutParams.topMargin = 0;
             mTopConstraint.setLayoutParams(layoutParams);
         }
@@ -252,9 +264,9 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
                 try {
                     mViewModel.addPlayer(mNameEditText.getText().toString());
 
-                }catch (IllegalArgumentException e){
+                } catch (IllegalArgumentException e) {
                     Log.e(TAG, e.getMessage());
-                    showToast(e.getMessage());
+                    showSnackbar(e.getMessage());
                 }
                 break;
 
@@ -303,23 +315,37 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         }
     }
 
-    private void showToast(String message) {
-        Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+
+    // Utility
+
+    private void showSnackbar(String message) {
+        if (mParentCoordinatorLayout != null) {
+            // Referencing a coordinator layout makes the snackbar swipeable
+            Snackbar.make(mParentCoordinatorLayout, message, Snackbar.LENGTH_SHORT).show();
+            hideSoftKeyboard();
+        }
+    }
+
+    private void hideSoftKeyboard() {
+        if (getActivity() != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(mNameEditText.getWindowToken(), 0);
+        }
     }
 
 
     // Manage Listeners
 
-    private void addKeyboardLayoutListener(){
+    private void addKeyboardLayoutListener() {
         // ContentView is the root view of the layout of this activity/fragment
-        if(!mIsKeyboardLayoutListenerAdded && getView() != null){
+        if (!mIsKeyboardLayoutListenerAdded && getView() != null) {
             getView().getViewTreeObserver().addOnGlobalLayoutListener(mKeyboardLayoutListener);
             mIsKeyboardLayoutListenerAdded = true;
         }
     }
 
-    private void removeKeyboardLayoutListener(){
-        if(mIsKeyboardLayoutListenerAdded && getView() != null){
+    private void removeKeyboardLayoutListener() {
+        if (mIsKeyboardLayoutListenerAdded && getView() != null) {
             getView().getViewTreeObserver().removeOnGlobalLayoutListener(mKeyboardLayoutListener);
             mIsKeyboardLayoutListenerAdded = false;
         }
@@ -330,7 +356,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
      * Basically the soft keyboard pushes our layout up with adjustPan so we need to push it back
      * down when the keyboard is showing. This is a way to detect if the keyboard is showing or not.
      * https://stackoverflow.com/a/26964010/5673746
-     * */
+     */
     private ViewTreeObserver.OnGlobalLayoutListener mKeyboardLayoutListener
             = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override
