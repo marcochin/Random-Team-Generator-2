@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import com.marcochin.teamrandomizer.model.Group;
 import com.marcochin.teamrandomizer.model.Player;
 import com.marcochin.teamrandomizer.repository.GroupRepository;
+import com.marcochin.teamrandomizer.ui.Constants;
 import com.marcochin.teamrandomizer.ui.Resource;
 
 import java.util.ArrayList;
@@ -15,16 +16,19 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class AddPlayersViewModel extends ViewModel {
+    private static final String MSG_INVALID_NAME = "Please enter a valid name!";
+
     // Injected
     private GroupRepository mGroupRepository;
 
     private MutableLiveData<List<Player>> mPlayerListLiveData;
     private MutableLiveData<String> mGroupNameLiveData;
     private MutableLiveData<Integer> mTotalPlayersLiveData;
-    private MutableLiveData<ListActionResource<Integer>> mListActionLiveData;
+    private MutableLiveData<AddPlayersActionResource<Integer>> mAddPlayersActionLiveData;
+
+    private Group mGroup;
 
     private CheckboxButtonState mCheckBoxButtonState = CheckboxButtonState.GONE;
-    private Group mGroup;
 
     private enum CheckboxButtonState {
         GONE, ALL_CHECKED, NONE_CHECKED
@@ -36,7 +40,7 @@ public class AddPlayersViewModel extends ViewModel {
         mPlayerListLiveData = new MutableLiveData<>();
         mGroupNameLiveData = new MutableLiveData<>();
         mTotalPlayersLiveData = new MutableLiveData<>();
-        mListActionLiveData = new MutableLiveData<>();
+        mAddPlayersActionLiveData = new MutableLiveData<>();
 
         List<Player> playerList = new ArrayList<>();
 
@@ -49,6 +53,11 @@ public class AddPlayersViewModel extends ViewModel {
     }
 
     void addPlayer(String name) {
+        if(!validatePlayerName(name)){
+            mAddPlayersActionLiveData.setValue(AddPlayersActionResource.showMessage((Integer)null, MSG_INVALID_NAME));
+            return;
+        }
+
         List<Player> playerList = mPlayerListLiveData.getValue();
 
         if (playerList != null) {
@@ -60,7 +69,7 @@ public class AddPlayersViewModel extends ViewModel {
             }
 
             playerList.add(player);
-            mListActionLiveData.setValue(ListActionResource.playerAdded(playerList.size() - 1, null));
+            mAddPlayersActionLiveData.setValue(AddPlayersActionResource.playerAdded(playerList.size() - 1, null));
             mTotalPlayersLiveData.setValue(playerList.size());
         }
     }
@@ -70,7 +79,7 @@ public class AddPlayersViewModel extends ViewModel {
 
         if (playerList != null) {
             playerList.remove(pos);
-            mListActionLiveData.setValue(ListActionResource.playerDeleted(pos, null));
+            mAddPlayersActionLiveData.setValue(AddPlayersActionResource.playerDeleted(pos, null));
             mTotalPlayersLiveData.setValue(playerList.size());
         }
     }
@@ -78,6 +87,24 @@ public class AddPlayersViewModel extends ViewModel {
     void clearAllPlayers() {
         mPlayerListLiveData.setValue(new ArrayList<Player>());
         mTotalPlayersLiveData.setValue(0);
+    }
+
+    void togglePlayerCheckBox(int pos) {
+        List<Player> playerList = mPlayerListLiveData.getValue();
+
+        if (playerList != null) {
+            Player player = playerList.get(pos);
+            player.setIncluded(!player.isIncluded());
+            mAddPlayersActionLiveData.setValue(AddPlayersActionResource.playerCheckboxToggled(pos, null));
+
+            if(mTotalPlayersLiveData.getValue() != null) {
+                if (player.isIncluded()) {
+                    mTotalPlayersLiveData.setValue(mTotalPlayersLiveData.getValue() + 1);
+                } else {
+                    mTotalPlayersLiveData.setValue(mTotalPlayersLiveData.getValue() - 1);
+                }
+            }
+        }
     }
 
     void toggleCheckBoxButton() {
@@ -117,30 +144,8 @@ public class AddPlayersViewModel extends ViewModel {
                 }
             }
 
-            mListActionLiveData.setValue(ListActionResource.checkboxButtonToggled(playerList.size(), null));
+            mAddPlayersActionLiveData.setValue(AddPlayersActionResource.checkboxButtonToggled(playerList.size(), null));
         }
-    }
-
-    void togglePlayerCheckBox(int pos) {
-        List<Player> playerList = mPlayerListLiveData.getValue();
-
-        if (playerList != null) {
-            Player player = playerList.get(pos);
-            player.setIncluded(!player.isIncluded());
-            mListActionLiveData.setValue(ListActionResource.playerCheckboxToggled(pos, null));
-
-            if(mTotalPlayersLiveData.getValue() != null) {
-                if (player.isIncluded()) {
-                    mTotalPlayersLiveData.setValue(mTotalPlayersLiveData.getValue() + 1);
-                } else {
-                    mTotalPlayersLiveData.setValue(mTotalPlayersLiveData.getValue() - 1);
-                }
-            }
-        }
-    }
-
-    void resetListActionLiveData() {
-        mListActionLiveData.setValue(ListActionResource.noAction(-1, null));
     }
 
     public void setGroup(Group group) {
@@ -149,6 +154,11 @@ public class AddPlayersViewModel extends ViewModel {
 
     public void setGroupName(String groupName) {
         mGroupNameLiveData.setValue(groupName);
+    }
+
+    // Validations
+    private boolean validatePlayerName(String name){
+        return name != null && !name.trim().isEmpty() && !name.contains(Constants.NAME_SEPARATOR);
     }
 
 
@@ -168,7 +178,7 @@ public class AddPlayersViewModel extends ViewModel {
     }
 
 
-    // LiveData getters
+    // LiveData
     LiveData<List<Player>> getPlayerListLiveData() {
         return mPlayerListLiveData;
     }
@@ -181,7 +191,11 @@ public class AddPlayersViewModel extends ViewModel {
         return mTotalPlayersLiveData;
     }
 
-    LiveData<ListActionResource<Integer>> getListActionLiveData() {
-        return mListActionLiveData;
+    LiveData<AddPlayersActionResource<Integer>> getAddPlayersActionLiveData() {
+        return mAddPlayersActionLiveData;
+    }
+
+    void clearAddPlayersActionLiveData() {
+        mAddPlayersActionLiveData.setValue(AddPlayersActionResource.<Integer>noAction());
     }
 }
