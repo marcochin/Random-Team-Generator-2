@@ -21,7 +21,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -45,7 +44,6 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     @Inject
     ViewModelProviderFactory mViewModelProviderFactory;
 
-    private CoordinatorLayout mParentCoordinatorLayout;
     private Space mTopConstraint;
     private TextView mGroupNameText;
     private TextView mNumPlayersText;
@@ -103,9 +101,6 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getActivity() != null) {
-            mParentCoordinatorLayout = getActivity().findViewById(R.id.main_coordinator_layout);
-        }
     }
 
     @Override
@@ -319,11 +314,11 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     // Utility
 
     private void showSnackbar(String message) {
-        if (mParentCoordinatorLayout != null) {
-            // Referencing a coordinator layout makes the snackbar swipeable
-            Snackbar.make(mParentCoordinatorLayout, message, Snackbar.LENGTH_SHORT).show();
-            hideSoftKeyboard();
-        }
+        // You don't even have to pass in the coordinator layout as long as it's a view inside a coordinator layout
+        // Since our activity parent view is a coordinator layout and therefore makes it the parent of all views
+        // we just pass in any random view such as the recyclerView.
+        Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show();
+        hideSoftKeyboard();
     }
 
     private void hideSoftKeyboard() {
