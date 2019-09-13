@@ -18,9 +18,9 @@ public class PlayerListAdapter extends ListAdapter<Player, PlayerListAdapter.Pla
     private OnItemClickListener mOnItemClickListener;
 
     public interface OnItemClickListener {
-        void onCheckboxClick(int pos, Player player);
+        void onCheckboxClick(int position, Player player);
 
-        void onDeleteClick(int pos, Player player);
+        void onDeleteClick(int position, Player player);
     }
 
     private static final DiffUtil.ItemCallback<Player> DIFF_CALLBACK = new DiffUtil.ItemCallback<Player>() {
