@@ -52,10 +52,9 @@ public class AddPlayersViewModel extends ViewModel {
         mTotalPlayersLiveData.setValue(playerList.size());
     }
 
-    void addPlayer(String name) {
+    void addPlayer(String name) throws IllegalArgumentException{
         if(!validatePlayerName(name)){
-            mAddPlayersActionLiveData.setValue(AddPlayersActionResource.showMessage((Integer)null, MSG_INVALID_NAME));
-            return;
+            throw new IllegalArgumentException(MSG_INVALID_NAME);
         }
 
         List<Player> playerList = mPlayerListLiveData.getValue();
@@ -196,6 +195,6 @@ public class AddPlayersViewModel extends ViewModel {
     }
 
     void clearAddPlayersActionLiveData() {
-        mAddPlayersActionLiveData.setValue(AddPlayersActionResource.<Integer>noAction());
+        mAddPlayersActionLiveData.setValue(null);
     }
 }

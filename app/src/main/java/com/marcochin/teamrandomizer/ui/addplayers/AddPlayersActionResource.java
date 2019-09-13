@@ -6,7 +6,7 @@ import androidx.annotation.Nullable;
 public class AddPlayersActionResource<T> {
 
     @NonNull
-    public final ListAction status;
+    public final AddPlayersAction status;
 
     @Nullable
     public final T data;
@@ -14,46 +14,38 @@ public class AddPlayersActionResource<T> {
     @Nullable
     public final String message;
 
-    public enum ListAction {
-        PLAYER_ADDED, PLAYER_DELETED, PLAYER_CHECKBOX_TOGGLED, CHECKBOX_BUTTON_TOGGLED, SHOW_MSG, NO_ACTION
+    public enum AddPlayersAction {
+        PLAYER_ADDED, PLAYER_DELETED, PLAYER_CHECKBOX_TOGGLED, CHECKBOX_BUTTON_TOGGLED
     }
 
-    public AddPlayersActionResource(@NonNull ListAction status) {
+    public AddPlayersActionResource(@NonNull AddPlayersAction status) {
         this(status, null, null);
     }
 
-    public AddPlayersActionResource(@NonNull ListAction status, @Nullable T data) {
+    public AddPlayersActionResource(@NonNull AddPlayersAction status, @Nullable T data) {
         this(status, data, null);
     }
 
-    public AddPlayersActionResource(@NonNull ListAction status, @Nullable T data, @Nullable String message) {
+    public AddPlayersActionResource(@NonNull AddPlayersAction status, @Nullable T data, @Nullable String message) {
         this.status = status;
         this.data = data;
         this.message = message;
     }
 
     public static <T> AddPlayersActionResource<T> playerAdded(@NonNull T data, @Nullable String msg) {
-        return new AddPlayersActionResource<>(ListAction.PLAYER_ADDED, data, msg);
+        return new AddPlayersActionResource<>(AddPlayersAction.PLAYER_ADDED, data, msg);
     }
 
     public static <T> AddPlayersActionResource<T> playerDeleted(@Nullable T data, @Nullable String msg) {
-        return new AddPlayersActionResource<>(ListAction.PLAYER_DELETED, data, msg);
+        return new AddPlayersActionResource<>(AddPlayersAction.PLAYER_DELETED, data, msg);
     }
 
     public static <T> AddPlayersActionResource<T> playerCheckboxToggled(@Nullable T data, @Nullable String msg) {
-        return new AddPlayersActionResource<>(ListAction.PLAYER_CHECKBOX_TOGGLED, data, msg);
+        return new AddPlayersActionResource<>(AddPlayersAction.PLAYER_CHECKBOX_TOGGLED, data, msg);
     }
 
     public static <T> AddPlayersActionResource<T> checkboxButtonToggled(@Nullable T data, @Nullable String msg) {
-        return new AddPlayersActionResource<>(ListAction.CHECKBOX_BUTTON_TOGGLED, data, msg);
-    }
-
-    public static <T> AddPlayersActionResource<T> showMessage(@Nullable T data, @Nullable String msg) {
-        return new AddPlayersActionResource<>(ListAction.SHOW_MSG, data, msg);
-    }
-
-    public static AddPlayersActionResource<Integer> noAction() {
-        return new AddPlayersActionResource<>(ListAction.NO_ACTION, null, null);
+        return new AddPlayersActionResource<>(AddPlayersAction.CHECKBOX_BUTTON_TOGGLED, data, msg);
     }
 
     @Override

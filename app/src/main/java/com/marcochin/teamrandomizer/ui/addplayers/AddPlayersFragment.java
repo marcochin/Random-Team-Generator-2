@@ -3,6 +3,7 @@ package com.marcochin.teamrandomizer.ui.addplayers;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -135,6 +136,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLinearLayoutManager);
 
+        // Set RecyclerView OnItemClickListener
         mListAdapter.setOnItemClickListener(new PlayerListAdapter.OnItemClickListener() {
             @Override
             public void onCheckboxClick(int position, Player player) {
@@ -190,6 +192,10 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         mViewModel.getAddPlayersActionLiveData().observe(this, new Observer<AddPlayersActionResource<Integer>>() {
             @Override
             public void onChanged(AddPlayersActionResource<Integer> addPlayersActionResource) {
+                if(addPlayersActionResource == null){
+                    return;
+                }
+
                 switch (addPlayersActionResource.status) {
                     case PLAYER_ADDED:
                         handlePlayerAddedAction(addPlayersActionResource);
@@ -208,11 +214,6 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
 
                     case CHECKBOX_BUTTON_TOGGLED:
                         handleCheckboxButtonToggledAction(addPlayersActionResource);
-                        mViewModel.clearAddPlayersActionLiveData();
-                        break;
-
-                    case SHOW_MSG:
-                        handleShowMessageAction(addPlayersActionResource);
                         mViewModel.clearAddPlayersActionLiveData();
                         break;
                 }
@@ -248,7 +249,13 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.add_btn:
-                mViewModel.addPlayer(mNameEditText.getText().toString());
+                try {
+                    mViewModel.addPlayer(mNameEditText.getText().toString());
+
+                }catch (IllegalArgumentException e){
+                    Log.e(TAG, e.getMessage());
+                    showToast(e.getMessage());
+                }
                 break;
 
             case R.id.clear_btn:
@@ -296,8 +303,8 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         }
     }
 
-    private void handleShowMessageAction(AddPlayersActionResource<Integer> addPlayersActionResource) {
-        Toast.makeText(getActivity(), addPlayersActionResource.message, Toast.LENGTH_LONG).show();
+    private void showToast(String message) {
+        Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
     }
 
 
