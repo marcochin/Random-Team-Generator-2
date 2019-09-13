@@ -69,6 +69,7 @@
         android:hint="@string/apf_edit_text_hint"
         android:importantForAutofill="no"
         android:inputType="textPersonName"
+        android:imeOptions="actionDone"
         app:layout_constraintBottom_toTopOf="@+id/randomize_btn"
         app:layout_constraintEnd_toStartOf="@+id/add_btn"
         app:layout_constraintHorizontal_bias="1.0"

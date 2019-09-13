@@ -3,10 +3,12 @@ package com.marcochin.teamrandomizer.ui.addplayers;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -86,6 +88,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         checkboxButton.setOnClickListener(this);
 
         setupRecyclerView(mRecyclerView);
+        setupEditText(mNameEditText);
 
         // Retrieve the viewModel
         mViewModel = ViewModelProviders.of(this, mViewModelProviderFactory).get(AddPlayersViewModel.class);
@@ -145,27 +148,17 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         });
     }
 
-    private void onKeyboardVisibilityChanged(boolean opened) {
-//        Log.d(TAG, "onKeyboardVisibilityChanged : " + opened);
-        final ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams)mTopConstraint.getLayoutParams();
-
-        if(opened){
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    int[] pushedUpCoords = new int[2];
-                    mTopConstraint.getLocationOnScreen(pushedUpCoords);
-
-                    // Calculate the position difference set on the layout params
-                    layoutParams.topMargin = mTopConstraintOriginalCoords[1] - pushedUpCoords[1];
-                    mTopConstraint.setLayoutParams(layoutParams);
-
+    private void setupEditText(final EditText editText){
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    mViewModel.addPlayer(editText.getText().toString());
                 }
-            }, 250);
-        }else{
-            layoutParams.topMargin = 0;
-            mTopConstraint.setLayoutParams(layoutParams);
-        }
+                // Return true if you want to keep the keyboard open after hitting the enter button
+                return true;
+            }
+        });
     }
 
     private void observeLiveData() {
@@ -227,6 +220,30 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         });
     }
 
+    private void onKeyboardVisibilityChanged(boolean opened) {
+//        Log.d(TAG, "onKeyboardVisibilityChanged : " + opened);
+        final ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams)mTopConstraint.getLayoutParams();
+
+        if(opened){
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    int[] pushedUpCoords = new int[2];
+                    mTopConstraint.getLocationOnScreen(pushedUpCoords);
+
+                    // Calculate the topConstraint's original and new position difference and push
+                    // the topConstraint back down
+                    layoutParams.topMargin = mTopConstraintOriginalCoords[1] - pushedUpCoords[1];
+                    mTopConstraint.setLayoutParams(layoutParams);
+
+                }
+            }, 250);
+        }else{
+            layoutParams.topMargin = 0;
+            mTopConstraint.setLayoutParams(layoutParams);
+        }
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -243,6 +260,9 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
                 break;
         }
     }
+
+
+    // Handle AddPlayersActions
 
     private void handlePlayerAddedAction(AddPlayersActionResource<Integer> addPlayersActionResource) {
         if (addPlayersActionResource.data != null) {
@@ -280,6 +300,9 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     private void handleShowMessageAction(AddPlayersActionResource<Integer> addPlayersActionResource) {
         Toast.makeText(getActivity(), addPlayersActionResource.message, Toast.LENGTH_LONG).show();
     }
+
+
+    // Manage Listeners
 
     private void addKeyboardLayoutListener(){
         // ContentView is the root view of the layout of this activity/fragment
