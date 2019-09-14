@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <ImageButton
-        android:id="@+id/checkbox_btn"
+        android:id="@+id/fap_checkbox_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -15,11 +15,11 @@
         android:contentDescription="@string/cd_toggle_checkboxes"
         android:padding="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_constraint"
+        app:layout_constraintTop_toBottomOf="@+id/fap_top_constraint"
         app:srcCompat="@drawable/ic_check_box_black_svg" />
 
     <ImageButton
-        android:id="@+id/save_btn"
+        android:id="@+id/fap_save_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -28,22 +28,29 @@
         android:contentDescription="@string/cd_save"
         android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_constraint"
+        app:layout_constraintTop_toBottomOf="@+id/fap_top_constraint"
         app:srcCompat="@drawable/ic_save_black_svg" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/players_recycler_view"
+    <com.marcochin.teamrandomizer.ui.custom.NestedCoordinatorLayout
+        android:id="@+id/fap_nested_coordinator_layout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/name_edit_text"
+        app:layout_constraintBottom_toTopOf="@+id/fap_name_edit_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/checkbox_btn" />
+        app:layout_constraintTop_toBottomOf="@+id/fap_checkbox_btn">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/fap_players_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </com.marcochin.teamrandomizer.ui.custom.NestedCoordinatorLayout>
 
     <TextView
-        android:id="@+id/group_name_text"
+        android:id="@+id/fap_group_name_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -53,13 +60,13 @@
         android:maxLines="1"
         android:minHeight="30dp"
         android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/clear_btn"
-        app:layout_constraintStart_toEndOf="@+id/checkbox_btn"
-        app:layout_constraintTop_toBottomOf="@+id/top_constraint"
+        app:layout_constraintEnd_toStartOf="@+id/fap_clear_btn"
+        app:layout_constraintStart_toEndOf="@+id/fap_checkbox_btn"
+        app:layout_constraintTop_toBottomOf="@+id/fap_top_constraint"
         tools:text="Party Crew" />
 
     <EditText
-        android:id="@+id/name_edit_text"
+        android:id="@+id/fap_name_edit_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -70,24 +77,24 @@
         android:importantForAutofill="no"
         android:inputType="textPersonName"
         android:imeOptions="actionDone"
-        app:layout_constraintBottom_toTopOf="@+id/randomize_btn"
-        app:layout_constraintEnd_toStartOf="@+id/add_btn"
+        app:layout_constraintBottom_toTopOf="@+id/fap_randomize_btn"
+        app:layout_constraintEnd_toStartOf="@+id/fap_add_btn"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         tools:targetApi="o" />
 
     <Button
-        android:id="@+id/add_btn"
+        android:id="@+id/fap_add_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="2dp"
         android:text="@string/apf_add"
-        app:layout_constraintBottom_toTopOf="@+id/randomize_btn"
+        app:layout_constraintBottom_toTopOf="@+id/fap_randomize_btn"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/randomize_btn"
+        android:id="@+id/fap_randomize_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -99,28 +106,28 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/clear_btn"
+        android:id="@+id/fap_clear_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?android:selectableItemBackgroundBorderless"
         android:minWidth="70dp"
         android:minHeight="40dp"
         android:text="@string/apf_clear"
-        app:layout_constraintBaseline_toBaselineOf="@+id/group_name_text"
-        app:layout_constraintEnd_toStartOf="@+id/save_btn" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/fap_group_name_text"
+        app:layout_constraintEnd_toStartOf="@+id/fap_save_btn" />
 
     <TextView
-        android:id="@+id/total_players_text"
+        android:id="@+id/fap_total_players_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/players_recycler_view"
+        app:layout_constraintTop_toBottomOf="@+id/fap_nested_coordinator_layout"
         tools:text="Total Players: 160" />
 
     <Space
-        android:id="@+id/top_constraint"
+        android:id="@+id/fap_top_constraint"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"

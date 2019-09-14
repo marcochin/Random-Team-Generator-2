@@ -1,6 +1,5 @@
 package com.marcochin.teamrandomizer.ui.addplayers;
 
-import android.app.Activity;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -31,6 +29,7 @@ import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.di.viewmodelfactory.ViewModelProviderFactory;
 import com.marcochin.teamrandomizer.model.Player;
 import com.marcochin.teamrandomizer.ui.addplayers.adapters.PlayerListAdapter;
+import com.marcochin.teamrandomizer.ui.custom.NestedCoordinatorLayout;
 
 import java.util.List;
 
@@ -44,6 +43,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     @Inject
     ViewModelProviderFactory mViewModelProviderFactory;
 
+    private NestedCoordinatorLayout mNestedCoordinatorLayout;
     private Space mTopConstraint;
     private TextView mGroupNameText;
     private TextView mNumPlayersText;
@@ -77,14 +77,15 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mTopConstraint = view.findViewById(R.id.top_constraint);
-        mGroupNameText = view.findViewById(R.id.group_name_text);
-        mNameEditText = view.findViewById(R.id.name_edit_text);
-        mNumPlayersText = view.findViewById(R.id.total_players_text);
-        mRecyclerView = view.findViewById(R.id.players_recycler_view);
-        Button addButton = view.findViewById(R.id.add_btn);
-        Button clearButton = view.findViewById(R.id.clear_btn);
-        ImageButton checkboxButton = view.findViewById(R.id.checkbox_btn);
+        mNestedCoordinatorLayout = view.findViewById(R.id.fap_nested_coordinator_layout);
+        mTopConstraint = view.findViewById(R.id.fap_top_constraint);
+        mGroupNameText = view.findViewById(R.id.fap_group_name_text);
+        mNameEditText = view.findViewById(R.id.fap_name_edit_text);
+        mNumPlayersText = view.findViewById(R.id.fap_total_players_text);
+        mRecyclerView = view.findViewById(R.id.fap_players_recycler_view);
+        Button addButton = view.findViewById(R.id.fap_add_btn);
+        Button clearButton = view.findViewById(R.id.fap_clear_btn);
+        ImageButton checkboxButton = view.findViewById(R.id.fap_checkbox_btn);
 
         addButton.setOnClickListener(this);
         clearButton.setOnClickListener(this);
@@ -250,15 +251,15 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.add_btn:
+            case R.id.fap_add_btn:
                 onAddPlayerButtonClick();
                 break;
 
-            case R.id.clear_btn:
+            case R.id.fap_clear_btn:
                 mViewModel.clearAllPlayers();
                 break;
 
-            case R.id.checkbox_btn:
+            case R.id.fap_checkbox_btn:
                 mViewModel.toggleCheckBoxButton();
                 break;
         }
@@ -312,18 +313,19 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     // Utility
 
     private void showSnackbar(String message) {
-        // You don't even have to pass in the coordinator layout as long as it's a view inside a coordinator layout
-        // Since our activity parent view is a coordinator layout and therefore makes it the parent of all views
-        // we just pass in any random view such as the recyclerView.
-        Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_SHORT).show();
-        hideSoftKeyboard();
-    }
+        View parentView;
 
-    private void hideSoftKeyboard() {
-        if (getActivity() != null) {
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(mNameEditText.getWindowToken(), 0);
+        if(mIsKeyboardShowing){
+            parentView = mNestedCoordinatorLayout;
+
+        }else{
+            // You don't even have to pass in a coordinator layout to Snackbar as long as it's a
+            // view inside a coordinator layout. Snackbar will automatically check if the view
+            // passed in has a CoordinatorLayout in it's parent hierarchy.  This will find the
+            // activity's CoordinatorLayout.
+            parentView = mNameEditText;
         }
+        Snackbar.make(parentView, message, Snackbar.LENGTH_SHORT).show();
     }
 
 
