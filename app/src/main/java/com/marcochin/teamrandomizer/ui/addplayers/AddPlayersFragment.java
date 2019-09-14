@@ -99,11 +99,6 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         // Won't get called when a fragment is hidden, but will get called when user resumes app from bg
@@ -162,7 +157,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    mViewModel.addPlayer(editText.getText().toString());
+                    onAddPlayerButtonClick();
                 }
                 // Return true if you want to keep the keyboard open after hitting the enter button
                 return true;
@@ -256,13 +251,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.add_btn:
-                try {
-                    mViewModel.addPlayer(mNameEditText.getText().toString());
-
-                } catch (IllegalArgumentException e) {
-                    Log.e(TAG, e.getMessage());
-                    showSnackbar(e.getMessage());
-                }
+                onAddPlayerButtonClick();
                 break;
 
             case R.id.clear_btn:
@@ -275,6 +264,15 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         }
     }
 
+    private void onAddPlayerButtonClick(){
+        try {
+            mViewModel.addPlayer(mNameEditText.getText().toString());
+
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, e.getMessage());
+            showSnackbar(e.getMessage());
+        }
+    }
 
     // Handle AddPlayersActions
 
