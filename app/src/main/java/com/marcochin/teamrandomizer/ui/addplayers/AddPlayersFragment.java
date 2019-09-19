@@ -29,7 +29,7 @@ import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.di.viewmodelfactory.ViewModelProviderFactory;
 import com.marcochin.teamrandomizer.model.Player;
 import com.marcochin.teamrandomizer.ui.addplayers.adapters.PlayerListAdapter;
-import com.marcochin.teamrandomizer.ui.custom.NestedCoordinatorLayout;
+import com.marcochin.teamrandomizer.ui.customclasses.NestedCoordinatorLayout;
 
 import java.util.List;
 
@@ -97,6 +97,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         // Retrieve the viewModel
         mViewModel = ViewModelProviders.of(this, mViewModelProviderFactory).get(AddPlayersViewModel.class);
         observeLiveData();
+        loadLastOpenedGroup();
     }
 
     @Override
@@ -113,6 +114,12 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         // Won't get called when a fragment is hidden, but will get called when user hits home
         // button etc even if fragment if hidden.
         removeKeyboardLayoutListener();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mViewModel.autoSaveGroup();
     }
 
     @Override
@@ -164,6 +171,10 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
                 return true;
             }
         });
+    }
+
+    private void loadLastOpenedGroup(){
+        mViewModel.loadMostRecentGroup();
     }
 
     private void observeLiveData() {
@@ -346,7 +357,9 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         }
     }
 
+
     // Anonymous Inner Classes
+
     /**
      * Basically the soft keyboard pushes our layout up with adjustPan so we need to push it back
      * down when the keyboard is showing. This is a way to detect if the keyboard is showing or not.

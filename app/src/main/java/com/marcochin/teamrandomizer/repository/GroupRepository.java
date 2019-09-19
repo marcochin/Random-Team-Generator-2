@@ -17,11 +17,11 @@ import io.reactivex.schedulers.Schedulers;
 
 @Singleton
 public class GroupRepository {
-    public static final String SAVE_SUCCESS = "Saved!";
+    public static final String SAVE_SUCCESS = "Saved";
     public static final String SAVE_FAILED = "Save failed";
-    public static final String UPDATE_SUCCESS = "Updated!";
+    public static final String UPDATE_SUCCESS = "Updated";
     public static final String UPDATE_FAILED = "Update failed";
-    public static final String DELETE_SUCCESS = "Deleted!";
+    public static final String DELETE_SUCCESS = "Deleted";
     public static final String DELETE_FAILED = "Delete failed";
 
     // Injected
@@ -106,6 +106,10 @@ public class GroupRepository {
                         })
                         .subscribeOn(Schedulers.io())
                         .toFlowable());
+    }
+
+    public LiveData<Group> getMostRecentGroup() {
+        return mGroupDao.getMostRecentGroup();
     }
 
     public LiveData<List<Group>> getAllGroups() {

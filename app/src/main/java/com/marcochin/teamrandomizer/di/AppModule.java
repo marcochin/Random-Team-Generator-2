@@ -14,14 +14,14 @@ import dagger.Provides;
 
 @Module
 abstract class AppModule {
-
     @Singleton
     @Provides
     static GroupDatabase providePlayersGroupDatabase(Application application) {
         return Room.databaseBuilder(
                 application,
                 GroupDatabase.class,
-                GroupDatabase.DATABASE_NAME).build();
+                GroupDatabase.DATABASE_NAME)
+                .build();
     }
 
     @Singleton

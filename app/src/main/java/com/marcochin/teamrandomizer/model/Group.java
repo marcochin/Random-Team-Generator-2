@@ -33,7 +33,8 @@ public class Group {
     }
 
     // Id should not go in constructor because it is auto-generated. If it was in constructor
-    // we would have no way to create the object correctly ourselves.
+    // we would have no way to create the object correctly ourselves. We have a setter for
+    // id that is only used by Room to create the obj.
     public void setId(int id) {
         this.id = id;
     }
@@ -43,8 +44,16 @@ public class Group {
         return id;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setPlayers(String players) {
+        this.players = players;
     }
 
     public String getPlayers() {

@@ -31,7 +31,7 @@
         app:layout_constraintTop_toBottomOf="@+id/fap_top_constraint"
         app:srcCompat="@drawable/ic_save_black_svg" />
 
-    <com.marcochin.teamrandomizer.ui.custom.NestedCoordinatorLayout
+    <com.marcochin.teamrandomizer.ui.customclasses.NestedCoordinatorLayout
         android:id="@+id/fap_nested_coordinator_layout"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -47,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-    </com.marcochin.teamrandomizer.ui.custom.NestedCoordinatorLayout>
+    </com.marcochin.teamrandomizer.ui.customclasses.NestedCoordinatorLayout>
 
     <TextView
         android:id="@+id/fap_group_name_text"

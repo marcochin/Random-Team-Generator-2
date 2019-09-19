@@ -17,14 +17,17 @@ import io.reactivex.Single;
 public interface GroupDao {
 
     @Insert
-    Single<Long> insert(Group group);
+    Single<Long> insert(Group group); // Returns id
 
     @Delete
-    Single<Integer> delete(Group group);
+    Single<Integer> delete(Group group); // Returns rows affected
 
     @Update
-    Single<Integer> update(Group group);
+    Single<Integer> update(Group group); // Returns rows affected
 
-    @Query("SELECT * FROM group_table")
+    @Query("SELECT * FROM group_table ORDER BY updated_at DESC LIMIT 1")
+    LiveData<Group> getMostRecentGroup();
+
+    @Query("SELECT * FROM group_table WHERE name != '' ORDER BY updated_at DESC")
     LiveData<List<Group>> getAllGroups();
 }

@@ -1,4 +1,4 @@
-package com.marcochin.teamrandomizer.ui.custom;
+package com.marcochin.teamrandomizer.ui.customclasses;
 
 import android.content.Context;
 import android.util.AttributeSet;
