@@ -161,6 +161,7 @@ public class AddPlayersViewModel extends ViewModel {
             mGroupNameLiveData.setValue(groupName);
 
         }else{
+            //TODO  show msg
             Log.d("meme", MSG_INVALID_NAME);
         }
     }
@@ -181,8 +182,8 @@ public class AddPlayersViewModel extends ViewModel {
 
     public void showNameDialogOrSaveGroup(String groupName) {
         // groupName comes from the textView
-        if (groupName == null || groupName.equals(GroupDatabase.NEW_GROUP_NAME)) {
-            // Bring up dialog
+        if (mCurrentGroup == null || mCurrentGroup.getName().equals(GroupDatabase.NEW_GROUP_NAME)) {
+            //TODO Bring up dialog
 
         } else {
             saveGroup(groupName);
@@ -198,7 +199,7 @@ public class AddPlayersViewModel extends ViewModel {
         }
     }
 
-    private void saveGroup(String groupName) {
+    public void saveGroup(String groupName) {
         if (validateGroupName(groupName)) {
             if (mCurrentGroup == null || mCurrentGroup.getName().equals(GroupDatabase.NEW_GROUP_NAME)) {
                 insertGroup(groupName);
@@ -207,7 +208,7 @@ public class AddPlayersViewModel extends ViewModel {
                 updateGroup();
             }
         }else{
-            // Show error
+            //TODO  show msg
             Log.d("meme", MSG_INVALID_NAME);
         }
     }
@@ -218,7 +219,7 @@ public class AddPlayersViewModel extends ViewModel {
                 System.currentTimeMillis());
 
         mGroupRepository.insertGroup(group);
-        //TODO need to observe
+        //TODO need to observe to trigger
     }
 
     private void updateGroup() {
@@ -227,7 +228,7 @@ public class AddPlayersViewModel extends ViewModel {
         mCurrentGroup.setUpdatedAt(System.currentTimeMillis());
 
         mGroupRepository.updateGroup(mCurrentGroup);
-        //TODO need to observe
+        //TODO need to observe to trigger
     }
 
     void loadMostRecentGroup() {
