@@ -2,6 +2,7 @@ package com.marcochin.teamrandomizer.di;
 
 import com.marcochin.teamrandomizer.di.addplayers.AddPlayersModule;
 import com.marcochin.teamrandomizer.ui.addplayers.AddPlayersFragment;
+import com.marcochin.teamrandomizer.ui.addplayers.dialogs.SaveGroupDialog;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -17,4 +18,7 @@ abstract class SubComponentModule {
     // Fragments
     @ContributesAndroidInjector(modules = {AddPlayersModule.class})
     abstract AddPlayersFragment contributeAddPlayersFragment ();
+
+    @ContributesAndroidInjector(modules = {AddPlayersModule.class})
+    abstract SaveGroupDialog contributeSaveGroupDialog ();
 }

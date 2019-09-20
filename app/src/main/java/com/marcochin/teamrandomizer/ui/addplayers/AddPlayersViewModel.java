@@ -212,7 +212,7 @@ public class AddPlayersViewModel extends ViewModel {
         });
     }
 
-    void saveGroup(String groupName) {
+    public void saveGroup(String groupName) {
         if (validateGroupName(groupName)) {
             final LiveData<Resource<Integer>> source;
 
@@ -286,11 +286,11 @@ public class AddPlayersViewModel extends ViewModel {
         return mTotalPlayersLiveData;
     }
 
-    LiveData<AddPlayersActionResource<Integer>> getAddPlayersActionLiveData() {
+    public LiveData<AddPlayersActionResource<Integer>> getAddPlayersActionLiveData() {
         return mAddPlayersActionLiveData;
     }
 
-    void clearAddPlayersActionLiveData() {
+    public void clearAddPlayersActionLiveData() {
         mAddPlayersActionLiveData.setValue(null);
     }
 

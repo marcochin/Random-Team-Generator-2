@@ -6,7 +6,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/dsg_group_name_text_input"
-        android:layout_width="320dp"
+        android:layout_width="@dimen/dialog_edit_text_width"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
