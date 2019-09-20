@@ -3,7 +3,6 @@ package com.marcochin.teamrandomizer.ui.addplayers;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +18,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,6 +29,7 @@ import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.di.viewmodelfactory.ViewModelProviderFactory;
 import com.marcochin.teamrandomizer.model.Player;
 import com.marcochin.teamrandomizer.ui.addplayers.adapters.PlayerListAdapter;
+import com.marcochin.teamrandomizer.ui.addplayers.dialogs.SaveGroupDialog;
 import com.marcochin.teamrandomizer.ui.customclasses.NestedCoordinatorLayout;
 
 import java.util.List;
@@ -85,10 +86,12 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         mRecyclerView = view.findViewById(R.id.fap_players_recycler_view);
         Button addButton = view.findViewById(R.id.fap_add_btn);
         Button clearButton = view.findViewById(R.id.fap_clear_btn);
+        ImageButton saveButton = view.findViewById(R.id.fap_save_btn);
         ImageButton checkboxButton = view.findViewById(R.id.fap_checkbox_btn);
 
         addButton.setOnClickListener(this);
         clearButton.setOnClickListener(this);
+        saveButton.setOnClickListener(this);
         checkboxButton.setOnClickListener(this);
 
         setupRecyclerView(mRecyclerView);
@@ -103,23 +106,22 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     @Override
     public void onResume() {
         super.onResume();
-        // Won't get called when a fragment is hidden, but will get called when user resumes app from bg
-        // even if fragment if hidden.
+        // Lifecycle method won't get called when a fragment is hidden, but will get called when user
+        // hits home button etc even if fragment if hidden.
+
         addKeyboardLayoutListener();
     }
 
     @Override
     public void onPause() {
-        super.onPause();
-        // Won't get called when a fragment is hidden, but will get called when user hits home
-        // button etc even if fragment if hidden.
-        removeKeyboardLayoutListener();
-    }
+        // Lifecycle method won't get called when a fragment is hidden, but will get called when user
+        // hits home button etc even if fragment if hidden.
 
-    @Override
-    public void onStop() {
-        super.onStop();
+        removeKeyboardLayoutListener();
+        // Call autoSaveGroup before onPause super method just as a precaution before LiveData inactive state
         mViewModel.autoSaveGroup();
+
+        super.onPause();
     }
 
     @Override
@@ -173,7 +175,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         });
     }
 
-    private void loadLastOpenedGroup(){
+    private void loadLastOpenedGroup() {
         mViewModel.loadMostRecentGroup();
     }
 
@@ -230,6 +232,16 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
                         handleCheckboxButtonToggledAction(addPlayersActionResource);
                         mViewModel.clearAddPlayersActionLiveData();
                         break;
+
+                    case SHOW_SAVE_GROUP_DIALOG:
+                        handleShowSaveGroupDialogAction(addPlayersActionResource);
+                        mViewModel.clearAddPlayersActionLiveData();
+                        break;
+
+                    case SHOW_MSG:
+                        handleShowMessageAction(addPlayersActionResource);
+                        mViewModel.clearAddPlayersActionLiveData();
+                        break;
                 }
             }
         });
@@ -270,20 +282,18 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
                 mViewModel.clearAllPlayers();
                 break;
 
+            case R.id.fap_save_btn:
+                mViewModel.showNameDialogOrSaveGroup(mGroupNameText.getText().toString());
+                break;
+
             case R.id.fap_checkbox_btn:
                 mViewModel.toggleCheckBoxButton();
                 break;
         }
     }
 
-    private void onAddPlayerButtonClick(){
-        try {
-            mViewModel.addPlayer(mNameEditText.getText().toString());
-
-        } catch (IllegalArgumentException e) {
-            Log.e(TAG, e.getMessage());
-            showSnackbar(e.getMessage());
-        }
+    private void onAddPlayerButtonClick() {
+        mViewModel.addPlayer(mNameEditText.getText().toString());
     }
 
     // Handle AddPlayersActions
@@ -320,16 +330,37 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         }
     }
 
+    private void handleShowSaveGroupDialogAction(AddPlayersActionResource<Integer> addPlayersActionResource) {
+        if (addPlayersActionResource.data != null) {
+            switch (addPlayersActionResource.data) {
+                case AddPlayersViewModel.DIALOG_SAVE_GROUP:
+                    if (getActivity() != null) {
+                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        SaveGroupDialog saveGroupDialog = new SaveGroupDialog();
+                        saveGroupDialog.show(fragmentManager, SaveGroupDialog.TAG);
+                    }
+                    break;
+
+                case AddPlayersViewModel.DIALOG_EDIT_GROUP_NAME:
+                    break;
+            }
+        }
+    }
+
+    private void handleShowMessageAction(AddPlayersActionResource<Integer> addPlayersActionResource) {
+        showSnackbar(addPlayersActionResource.message);
+    }
+
 
     // Utility
 
     private void showSnackbar(String message) {
         View parentView;
 
-        if(mIsKeyboardShowing){
+        if (mIsKeyboardShowing) {
             parentView = mNestedCoordinatorLayout;
 
-        }else{
+        } else {
             // You don't even have to pass in a coordinator layout to Snackbar as long as it's a
             // view inside a coordinator layout. Snackbar will automatically check if the view
             // passed in has a CoordinatorLayout in it's parent hierarchy.  This will find the

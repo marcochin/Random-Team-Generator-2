@@ -45,7 +45,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fap_players_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
     </com.marcochin.teamrandomizer.ui.customclasses.NestedCoordinatorLayout>
 
@@ -73,10 +73,10 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="2dp"
         android:ems="10"
-        android:hint="@string/apf_edit_text_hint"
+        android:hint="@string/fap_edit_text_hint"
+        android:imeOptions="actionDone"
         android:importantForAutofill="no"
         android:inputType="textPersonName"
-        android:imeOptions="actionDone"
         app:layout_constraintBottom_toTopOf="@+id/fap_randomize_btn"
         app:layout_constraintEnd_toStartOf="@+id/fap_add_btn"
         app:layout_constraintHorizontal_bias="1.0"
@@ -89,7 +89,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="2dp"
-        android:text="@string/apf_add"
+        android:text="@string/fap_add"
         app:layout_constraintBottom_toTopOf="@+id/fap_randomize_btn"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -100,7 +100,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="12dp"
-        android:text="@string/apf_randomize"
+        android:text="@string/fap_randomize"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -112,7 +112,7 @@
         android:background="?android:selectableItemBackgroundBorderless"
         android:minWidth="70dp"
         android:minHeight="40dp"
-        android:text="@string/apf_clear"
+        android:text="@string/fap_clear"
         app:layout_constraintBaseline_toBaselineOf="@+id/fap_group_name_text"
         app:layout_constraintEnd_toStartOf="@+id/fap_save_btn" />
 

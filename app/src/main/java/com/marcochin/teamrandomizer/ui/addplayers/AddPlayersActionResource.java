@@ -15,7 +15,8 @@ public class AddPlayersActionResource<T> {
     public final String message;
 
     public enum AddPlayersAction {
-        PLAYER_ADDED, PLAYER_DELETED, PLAYER_CHECKBOX_TOGGLED, CHECKBOX_BUTTON_TOGGLED
+        PLAYER_ADDED, PLAYER_DELETED, PLAYER_CHECKBOX_TOGGLED, CHECKBOX_BUTTON_TOGGLED,
+        SHOW_SAVE_GROUP_DIALOG, SHOW_MSG
     }
 
     public AddPlayersActionResource(@NonNull AddPlayersAction status) {
@@ -46,6 +47,14 @@ public class AddPlayersActionResource<T> {
 
     public static <T> AddPlayersActionResource<T> checkboxButtonToggled(@Nullable T data, @Nullable String msg) {
         return new AddPlayersActionResource<>(AddPlayersAction.CHECKBOX_BUTTON_TOGGLED, data, msg);
+    }
+
+    public static <T> AddPlayersActionResource<T> showDialog(@Nullable T data, @Nullable String msg) {
+        return new AddPlayersActionResource<>(AddPlayersAction.SHOW_SAVE_GROUP_DIALOG, data, msg);
+    }
+
+    public static <T> AddPlayersActionResource<T> showMessage(@Nullable T data, @Nullable String msg) {
+        return new AddPlayersActionResource<>(AddPlayersAction.SHOW_MSG, data, msg);
     }
 
     @Override

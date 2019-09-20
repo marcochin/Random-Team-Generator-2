@@ -5,11 +5,14 @@
     <string name="nav_randomize">Randomize</string>
     <string name="nav_load">Load</string>
 
-    <!-- Add Players Fragment -->
-    <string name="apf_randomize">Randomize</string>
-    <string name="apf_add">Add</string>
-    <string name="apf_clear">Clear</string>
-    <string name="apf_edit_text_hint">Name</string>
+    <!-- Fragment Add Players -->
+    <string name="fap_randomize">Randomize</string>
+    <string name="fap_add">Add</string>
+    <string name="fap_clear">Clear</string>
+    <string name="fap_edit_text_hint">Name</string>
+
+    <!-- Dialog Save Group-->
+    <string name="dsg_group_name">Group Name</string>
 
     <!-- Content Descriptions -->
     <string name="cd_toggle_checkboxes">Toggle checkboxes</string>

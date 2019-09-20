@@ -1,7 +1,5 @@
 package com.marcochin.teamrandomizer.ui.addplayers;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -12,6 +10,7 @@ import com.marcochin.teamrandomizer.database.GroupDatabase;
 import com.marcochin.teamrandomizer.model.Group;
 import com.marcochin.teamrandomizer.model.Player;
 import com.marcochin.teamrandomizer.repository.GroupRepository;
+import com.marcochin.teamrandomizer.ui.Resource;
 import com.marcochin.teamrandomizer.util.ListUtil;
 
 import java.util.ArrayList;
@@ -20,7 +19,11 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class AddPlayersViewModel extends ViewModel {
-    private static final String MSG_INVALID_NAME = "Please enter a valid name!";
+    private static final String MSG_INVALID_PLAYER_NAME = "Please enter a valid name!";
+    private static final String MSG_INVALID_GROUP_NAME = "Please enter a valid group name!";
+
+    public static final int DIALOG_SAVE_GROUP = 1;
+    public static final int DIALOG_EDIT_GROUP_NAME = 2;
 
     // Injected
     private GroupRepository mGroupRepository;
@@ -57,9 +60,10 @@ public class AddPlayersViewModel extends ViewModel {
         mGroupNameLiveData.setValue(GroupDatabase.NEW_GROUP_NAME);
     }
 
-    void addPlayer(String name) throws IllegalArgumentException {
+    void addPlayer(String name) {
         if (!validatePlayerName(name)) {
-            throw new IllegalArgumentException(MSG_INVALID_NAME);
+            showMessage(MSG_INVALID_PLAYER_NAME);
+            return;
         }
 
         List<Player> playerList = mPlayerListLiveData.getValue();
@@ -156,13 +160,12 @@ public class AddPlayersViewModel extends ViewModel {
         mCurrentGroup = group;
     }
 
-    public void setGroupName(String groupName) {
+    public void editGroupName(String groupName) {
         if(validateGroupName(groupName)) {
             mGroupNameLiveData.setValue(groupName);
 
         }else{
-            //TODO  show msg
-            Log.d("meme", MSG_INVALID_NAME);
+            showMessage(MSG_INVALID_GROUP_NAME);
         }
     }
 
@@ -183,52 +186,70 @@ public class AddPlayersViewModel extends ViewModel {
     public void showNameDialogOrSaveGroup(String groupName) {
         // groupName comes from the textView
         if (mCurrentGroup == null || mCurrentGroup.getName().equals(GroupDatabase.NEW_GROUP_NAME)) {
-            //TODO Bring up dialog
+            showDialog(DIALOG_SAVE_GROUP);
 
         } else {
             saveGroup(groupName);
         }
     }
 
-    public void autoSaveGroup() {
+    void autoSaveGroup() {
+        final LiveData<Resource<Integer>> source;
+
         if (mCurrentGroup == null) {
-            insertGroup(GroupDatabase.NEW_GROUP_NAME);
+            source = insertGroup(GroupDatabase.NEW_GROUP_NAME);
 
-        } else if (mCurrentGroup.getId() > 0) {
-            updateGroup();
+        } else {
+            source = updateGroup();
         }
-    }
 
-    public void saveGroup(String groupName) {
-        if (validateGroupName(groupName)) {
-            if (mCurrentGroup == null || mCurrentGroup.getName().equals(GroupDatabase.NEW_GROUP_NAME)) {
-                insertGroup(groupName);
-
-            } else if (mCurrentGroup.getId() > 0) {
-                updateGroup();
+        // Piggyback on lifecycle
+        mPlayerListLiveData.addSource(source, new Observer<Resource<Integer>>() {
+            @Override
+            public void onChanged(Resource<Integer> integerResource) {
+                mPlayerListLiveData.removeSource(source);
             }
+        });
+    }
+
+    void saveGroup(String groupName) {
+        if (validateGroupName(groupName)) {
+            final LiveData<Resource<Integer>> source;
+
+            if (mCurrentGroup == null || mCurrentGroup.getName().equals(GroupDatabase.NEW_GROUP_NAME)) {
+                source = insertGroup(groupName);
+
+            } else {
+                source = updateGroup();
+            }
+
+            // Piggyback on lifecycle
+            mPlayerListLiveData.addSource(source, new Observer<Resource<Integer>>() {
+                @Override
+                public void onChanged(Resource<Integer> integerResource) {
+                    showMessage(integerResource.message);
+                    mPlayerListLiveData.removeSource(source);
+                }
+            });
         }else{
-            //TODO  show msg
-            Log.d("meme", MSG_INVALID_NAME);
+            showMessage(MSG_INVALID_GROUP_NAME);
         }
     }
 
-    private void insertGroup(String groupName) {
+    private LiveData<Resource<Integer>> insertGroup(String groupName) {
         Group group = new Group(groupName,
                 ListUtil.playerListToCsv(mPlayerListLiveData.getValue()),
                 System.currentTimeMillis());
 
-        mGroupRepository.insertGroup(group);
-        //TODO need to observe to trigger
+        return mGroupRepository.insertGroup(group);
     }
 
-    private void updateGroup() {
+    private LiveData<Resource<Integer>> updateGroup() {
         mCurrentGroup.setName(mGroupNameLiveData.getValue());
         mCurrentGroup.setPlayers(ListUtil.playerListToCsv(mPlayerListLiveData.getValue()));
         mCurrentGroup.setUpdatedAt(System.currentTimeMillis());
 
-        mGroupRepository.updateGroup(mCurrentGroup);
-        //TODO need to observe to trigger
+        return mGroupRepository.updateGroup(mCurrentGroup);
     }
 
     void loadMostRecentGroup() {
@@ -271,5 +292,13 @@ public class AddPlayersViewModel extends ViewModel {
 
     void clearAddPlayersActionLiveData() {
         mAddPlayersActionLiveData.setValue(null);
+    }
+
+    private void showDialog(int dialog){
+        mAddPlayersActionLiveData.setValue(AddPlayersActionResource.showDialog(dialog, null));
+    }
+
+    private void showMessage(String message){
+        mAddPlayersActionLiveData.setValue(AddPlayersActionResource.showMessage((Integer)null, message));
     }
 }
