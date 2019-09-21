@@ -29,7 +29,7 @@ import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.di.viewmodelfactory.ViewModelProviderFactory;
 import com.marcochin.teamrandomizer.model.Player;
 import com.marcochin.teamrandomizer.ui.addplayers.adapters.PlayerListAdapter;
-import com.marcochin.teamrandomizer.ui.addplayers.dialogs.SaveGroupDialog;
+import com.marcochin.teamrandomizer.ui.addplayers.savegroup.SaveGroupDialog;
 import com.marcochin.teamrandomizer.ui.customclasses.NestedCoordinatorLayout;
 
 import java.util.List;
@@ -205,41 +205,41 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
             }
         });
 
-        mViewModel.getAddPlayersActionLiveData().observe(this, new Observer<AddPlayersActionResource<Integer>>() {
+        mViewModel.getAddPlayersActionLiveData().observe(this, new Observer<AddPlayersAction<Integer>>() {
             @Override
-            public void onChanged(AddPlayersActionResource<Integer> addPlayersActionResource) {
-                if (addPlayersActionResource == null) {
+            public void onChanged(AddPlayersAction<Integer> addPlayersAction) {
+                if (addPlayersAction == null) {
                     return;
                 }
 
-                switch (addPlayersActionResource.status) {
+                switch (addPlayersAction.action) {
                     case PLAYER_ADDED:
-                        handlePlayerAddedAction(addPlayersActionResource);
+                        handlePlayerAddedAction(addPlayersAction);
                         mViewModel.clearAddPlayersActionLiveData();
                         break;
 
                     case PLAYER_DELETED:
-                        handlePlayerDeletedAction(addPlayersActionResource);
+                        handlePlayerDeletedAction(addPlayersAction);
                         mViewModel.clearAddPlayersActionLiveData();
                         break;
 
                     case PLAYER_CHECKBOX_TOGGLED:
-                        handlePlayerCheckboxToggledAction(addPlayersActionResource);
+                        handlePlayerCheckboxToggledAction(addPlayersAction);
                         mViewModel.clearAddPlayersActionLiveData();
                         break;
 
                     case CHECKBOX_BUTTON_TOGGLED:
-                        handleCheckboxButtonToggledAction(addPlayersActionResource);
+                        handleCheckboxButtonToggledAction(addPlayersAction);
                         mViewModel.clearAddPlayersActionLiveData();
                         break;
 
                     case SHOW_SAVE_GROUP_DIALOG:
-                        handleShowSaveGroupDialogAction(addPlayersActionResource);
+                        handleShowSaveGroupDialogAction(addPlayersAction);
                         mViewModel.clearAddPlayersActionLiveData();
                         break;
 
                     case SHOW_MSG:
-                        handleShowMessageAction(addPlayersActionResource);
+                        handleShowMessageAction(addPlayersAction);
                         mViewModel.clearAddPlayersActionLiveData();
                         break;
                 }
@@ -298,41 +298,41 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
 
     // Handle AddPlayersActions
 
-    private void handlePlayerAddedAction(AddPlayersActionResource<Integer> addPlayersActionResource) {
-        if (addPlayersActionResource.data != null) {
+    private void handlePlayerAddedAction(AddPlayersAction<Integer> addPlayersAction) {
+        if (addPlayersAction.data != null) {
             mRecyclerView.setItemAnimator(mListItemAnimator);
-            mListAdapter.notifyItemInserted(addPlayersActionResource.data);
+            mListAdapter.notifyItemInserted(addPlayersAction.data);
 
             // Scroll to the bottom of list for quality of life
-            mLinearLayoutManager.scrollToPosition(addPlayersActionResource.data); // data = item pos
+            mLinearLayoutManager.scrollToPosition(addPlayersAction.data); // data = item pos
             mNameEditText.setText("");
         }
     }
 
-    private void handlePlayerDeletedAction(AddPlayersActionResource<Integer> addPlayersActionResource) {
-        if (addPlayersActionResource.data != null) {
+    private void handlePlayerDeletedAction(AddPlayersAction<Integer> addPlayersAction) {
+        if (addPlayersAction.data != null) {
             mRecyclerView.setItemAnimator(mListItemAnimator);
-            mListAdapter.notifyItemRemoved(addPlayersActionResource.data); // data = item pos
+            mListAdapter.notifyItemRemoved(addPlayersAction.data); // data = item pos
         }
     }
 
-    private void handlePlayerCheckboxToggledAction(AddPlayersActionResource<Integer> addPlayersActionResource) {
-        if (addPlayersActionResource.data != null) {
+    private void handlePlayerCheckboxToggledAction(AddPlayersAction<Integer> addPlayersAction) {
+        if (addPlayersAction.data != null) {
             mRecyclerView.setItemAnimator(mListItemAnimator);
-            mListAdapter.notifyItemChanged(addPlayersActionResource.data); // data = item pos
+            mListAdapter.notifyItemChanged(addPlayersAction.data); // data = item pos
         }
     }
 
-    private void handleCheckboxButtonToggledAction(AddPlayersActionResource<Integer> addPlayersActionResource) {
-        if (addPlayersActionResource.data != null) {
+    private void handleCheckboxButtonToggledAction(AddPlayersAction<Integer> addPlayersAction) {
+        if (addPlayersAction.data != null) {
             mRecyclerView.setItemAnimator(null);
-            mListAdapter.notifyItemRangeChanged(0, addPlayersActionResource.data); // data = playerListSize
+            mListAdapter.notifyItemRangeChanged(0, addPlayersAction.data); // data = playerListSize
         }
     }
 
-    private void handleShowSaveGroupDialogAction(AddPlayersActionResource<Integer> addPlayersActionResource) {
-        if (addPlayersActionResource.data != null) {
-            switch (addPlayersActionResource.data) {
+    private void handleShowSaveGroupDialogAction(AddPlayersAction<Integer> addPlayersAction) {
+        if (addPlayersAction.data != null) {
+            switch (addPlayersAction.data) {
                 case AddPlayersViewModel.DIALOG_SAVE_GROUP:
                     if (getActivity() != null) {
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
@@ -347,8 +347,8 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         }
     }
 
-    private void handleShowMessageAction(AddPlayersActionResource<Integer> addPlayersActionResource) {
-        showSnackbar(addPlayersActionResource.message);
+    private void handleShowMessageAction(AddPlayersAction<Integer> addPlayersAction) {
+        showSnackbar(addPlayersAction.message);
     }
 
 

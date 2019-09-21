@@ -12,6 +12,7 @@ import com.marcochin.teamrandomizer.model.Player;
 import com.marcochin.teamrandomizer.repository.GroupRepository;
 import com.marcochin.teamrandomizer.ui.Resource;
 import com.marcochin.teamrandomizer.util.ListUtil;
+import com.marcochin.teamrandomizer.util.ValidationUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ import javax.inject.Inject;
 
 public class AddPlayersViewModel extends ViewModel {
     private static final String MSG_INVALID_PLAYER_NAME = "Please enter a valid name!";
-    private static final String MSG_INVALID_GROUP_NAME = "Please enter a valid group name!";
+    public static final String MSG_INVALID_GROUP_NAME = "Please enter a valid group name!";
 
     public static final int DIALOG_SAVE_GROUP = 1;
     public static final int DIALOG_EDIT_GROUP_NAME = 2;
@@ -31,7 +32,7 @@ public class AddPlayersViewModel extends ViewModel {
     private MediatorLiveData<List<Player>> mPlayerListLiveData;
     private MutableLiveData<String> mGroupNameLiveData;
     private MutableLiveData<Integer> mTotalPlayersLiveData;
-    private MutableLiveData<AddPlayersActionResource<Integer>> mAddPlayersActionLiveData;
+    private MutableLiveData<AddPlayersAction<Integer>> mAddPlayersActionLiveData;
 
     private Group mCurrentGroup;
 
@@ -61,7 +62,7 @@ public class AddPlayersViewModel extends ViewModel {
     }
 
     void addPlayer(String name) {
-        if (!validatePlayerName(name)) {
+        if (!ValidationUtil.validatePlayerName(name)) {
             showMessage(MSG_INVALID_PLAYER_NAME);
             return;
         }
@@ -77,7 +78,7 @@ public class AddPlayersViewModel extends ViewModel {
             }
 
             playerList.add(player);
-            mAddPlayersActionLiveData.setValue(AddPlayersActionResource.playerAdded(playerList.size() - 1, null));
+            mAddPlayersActionLiveData.setValue(AddPlayersAction.playerAdded(playerList.size() - 1, null));
             mTotalPlayersLiveData.setValue(playerList.size());
         }
     }
@@ -87,7 +88,7 @@ public class AddPlayersViewModel extends ViewModel {
 
         if (playerList != null) {
             playerList.remove(pos);
-            mAddPlayersActionLiveData.setValue(AddPlayersActionResource.playerDeleted(pos, null));
+            mAddPlayersActionLiveData.setValue(AddPlayersAction.playerDeleted(pos, null));
             mTotalPlayersLiveData.setValue(playerList.size());
         }
     }
@@ -103,7 +104,7 @@ public class AddPlayersViewModel extends ViewModel {
         if (playerList != null) {
             Player player = playerList.get(pos);
             player.setIncluded(!player.isIncluded());
-            mAddPlayersActionLiveData.setValue(AddPlayersActionResource.playerCheckboxToggled(pos, null));
+            mAddPlayersActionLiveData.setValue(AddPlayersAction.playerCheckboxToggled(pos, null));
 
             if (mTotalPlayersLiveData.getValue() != null) {
                 if (player.isIncluded()) {
@@ -152,7 +153,7 @@ public class AddPlayersViewModel extends ViewModel {
                 }
             }
 
-            mAddPlayersActionLiveData.setValue(AddPlayersActionResource.checkboxButtonToggled(playerList.size(), null));
+            mAddPlayersActionLiveData.setValue(AddPlayersAction.checkboxButtonToggled(playerList.size(), null));
         }
     }
 
@@ -161,7 +162,7 @@ public class AddPlayersViewModel extends ViewModel {
     }
 
     public void editGroupName(String groupName) {
-        if(validateGroupName(groupName)) {
+        if(ValidationUtil.validateGroupName(groupName)) {
             mGroupNameLiveData.setValue(groupName);
 
         }else{
@@ -170,20 +171,9 @@ public class AddPlayersViewModel extends ViewModel {
     }
 
 
-    // Validations
-
-    private boolean validatePlayerName(String playerName) {
-        return playerName != null && !playerName.trim().isEmpty() && !playerName.contains(ListUtil.NAME_SEPARATOR);
-    }
-
-    private boolean validateGroupName(String groupName) {
-        return groupName != null && !groupName.trim().isEmpty() && !groupName.trim().equals(GroupDatabase.NEW_GROUP_NAME);
-    }
-
-
     // Database operations
 
-    public void showNameDialogOrSaveGroup(String groupName) {
+    void showNameDialogOrSaveGroup(String groupName) {
         // groupName comes from the textView
         if (mCurrentGroup == null || mCurrentGroup.getName().equals(GroupDatabase.NEW_GROUP_NAME)) {
             showDialog(DIALOG_SAVE_GROUP);
@@ -212,8 +202,8 @@ public class AddPlayersViewModel extends ViewModel {
         });
     }
 
-    public void saveGroup(String groupName) {
-        if (validateGroupName(groupName)) {
+    void saveGroup(String groupName) {
+        if (ValidationUtil.validateGroupName(groupName)) {
             final LiveData<Resource<Integer>> source;
 
             if (mCurrentGroup == null || mCurrentGroup.getName().equals(GroupDatabase.NEW_GROUP_NAME)) {
@@ -286,19 +276,19 @@ public class AddPlayersViewModel extends ViewModel {
         return mTotalPlayersLiveData;
     }
 
-    public LiveData<AddPlayersActionResource<Integer>> getAddPlayersActionLiveData() {
+    LiveData<AddPlayersAction<Integer>> getAddPlayersActionLiveData() {
         return mAddPlayersActionLiveData;
     }
 
-    public void clearAddPlayersActionLiveData() {
+    void clearAddPlayersActionLiveData() {
         mAddPlayersActionLiveData.setValue(null);
     }
 
     private void showDialog(int dialog){
-        mAddPlayersActionLiveData.setValue(AddPlayersActionResource.showDialog(dialog, null));
+        mAddPlayersActionLiveData.setValue(AddPlayersAction.showDialog(dialog, null));
     }
 
     private void showMessage(String message){
-        mAddPlayersActionLiveData.setValue(AddPlayersActionResource.showMessage((Integer)null, message));
+        mAddPlayersActionLiveData.setValue(AddPlayersAction.showMessage((Integer)null, message));
     }
 }

@@ -11,9 +11,8 @@ import dagger.multibindings.IntoMap;
 
 @Module
 public abstract class AddPlayersModule {
-
     @Binds
     @IntoMap
     @ViewModelKey(AddPlayersViewModel.class)
-    public abstract ViewModel bindAddPlayersViewModel(AddPlayersViewModel addPlayersViewModel);
+    public abstract ViewModel bindAddPlayersViewModel(AddPlayersViewModel viewModel);
 }
