@@ -202,7 +202,7 @@ public class AddPlayersViewModel extends ViewModel {
         });
     }
 
-    void saveGroup(String groupName) {
+    void saveGroup(final String groupName) {
         if (ValidationUtil.validateGroupName(groupName)) {
             final LiveData<Resource<Integer>> source;
 
@@ -216,8 +216,11 @@ public class AddPlayersViewModel extends ViewModel {
             // Piggyback on lifecycle
             mPlayerListLiveData.addSource(source, new Observer<Resource<Integer>>() {
                 @Override
-                public void onChanged(Resource<Integer> integerResource) {
-                    showMessage(integerResource.message);
+                public void onChanged(Resource<Integer> resource) {
+                    if(resource.status == Resource.Status.SUCCESS){
+                        mGroupNameLiveData.setValue(groupName);
+                    }
+                    showMessage(resource.message);
                     mPlayerListLiveData.removeSource(source);
                 }
             });

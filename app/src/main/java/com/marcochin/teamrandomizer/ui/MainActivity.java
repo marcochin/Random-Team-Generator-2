@@ -5,14 +5,16 @@ import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.marcochin.teamrandomizer.R;
+import com.marcochin.teamrandomizer.ui.addplayers.AddPlayersFragment;
+import com.marcochin.teamrandomizer.ui.addplayers.savegroup.SaveGroupDialog;
+import com.marcochin.teamrandomizer.ui.load.LoadFragment;
 
-public class MainActivity extends AppCompatActivity {
-    private Fragment mAddPlayersFragment;
-    private Fragment mLoadFragment;
+public class MainActivity extends AppCompatActivity implements SaveGroupDialog.GroupNameReceiver {
+    private AddPlayersFragment mAddPlayersFragment;
+    private LoadFragment mLoadFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,8 +25,8 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.main_bottom_nav);
 
         // Find Fragments
-        mAddPlayersFragment = getSupportFragmentManager().findFragmentById(R.id.addPlayersFragment);
-        mLoadFragment = getSupportFragmentManager().findFragmentById(R.id.loadFragment);
+        mAddPlayersFragment = (AddPlayersFragment) getSupportFragmentManager().findFragmentById(R.id.addPlayersFragment);
+        mLoadFragment = (LoadFragment) getSupportFragmentManager().findFragmentById(R.id.loadFragment);
 
         // Hide the LoadFragment initially
         getSupportFragmentManager().beginTransaction().hide(mLoadFragment).commit();
@@ -53,5 +55,10 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    @Override
+    public void onReceiveNameFromSaveGroupDialog(String groupName) {
+        mAddPlayersFragment.saveGroup(groupName);
     }
 }

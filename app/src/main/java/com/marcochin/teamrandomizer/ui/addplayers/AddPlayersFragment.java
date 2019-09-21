@@ -56,8 +56,18 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     private RecyclerView.ItemAnimator mListItemAnimator;
     private AddPlayersViewModel mViewModel;
 
+
+    /** Used to determine where to show Snackbar */
     private boolean mIsKeyboardShowing;
     private int[] mTopConstraintOriginalCoords;
+
+    /** When we show a dialog fragment with a soft keyboard on top of THIS fragment and want to
+     * show a msg in THIS fragment after the dialog closes, it might give a false positive that the
+     * keyboard is showing. Thus the snackbar might popup in the wrong location.
+     * The keyboard showing is technically correct, but in the wrong context. Since it's a
+     * DialogFragment on top of a fragment, onPause won't get called cause they are both in the same
+     * Activity and so LiveData won't be considered inactive.*/
+    private boolean mIsKeyboardShowingFalsePositive;
 
     /**
      * There is a edge case in which multiple KeyboardLayoutListeners can be add at the same time.
@@ -357,7 +367,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     private void showSnackbar(String message) {
         View parentView;
 
-        if (mIsKeyboardShowing) {
+        if (mIsKeyboardShowing && !mIsKeyboardShowingFalsePositive) {
             parentView = mNestedCoordinatorLayout;
 
         } else {
@@ -366,6 +376,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
             // passed in has a CoordinatorLayout in it's parent hierarchy.  This will find the
             // activity's CoordinatorLayout.
             parentView = mNameEditText;
+            mIsKeyboardShowingFalsePositive = false;
         }
         Snackbar.make(parentView, message, Snackbar.LENGTH_SHORT).show();
     }
@@ -386,6 +397,13 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
             getView().getViewTreeObserver().removeOnGlobalLayoutListener(mKeyboardLayoutListener);
             mIsKeyboardLayoutListenerAdded = false;
         }
+    }
+
+    // This method be called from this origin SaveGroupDialog -> MainActivity -> saveGroup(...)
+    public void saveGroup(String groupName){
+        // We set this to true here because the user needs to use the keyboard to enter the group name.
+        mIsKeyboardShowingFalsePositive = true;
+        mViewModel.saveGroup(groupName);
     }
 
 
