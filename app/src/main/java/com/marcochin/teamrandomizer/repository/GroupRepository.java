@@ -1,5 +1,7 @@
 package com.marcochin.teamrandomizer.repository;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.LiveDataReactiveStreams;
 
@@ -68,6 +70,7 @@ public class GroupRepository {
                         .onErrorReturn(new Function<Throwable, Integer>() {
                             @Override
                             public Integer apply(Throwable throwable) throws Exception {
+                                Log.d("meme", throwable.getMessage());
                                 return -1;
                             }
                         })

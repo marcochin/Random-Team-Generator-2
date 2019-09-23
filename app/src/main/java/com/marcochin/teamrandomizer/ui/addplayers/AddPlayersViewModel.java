@@ -184,65 +184,79 @@ public class AddPlayersViewModel extends ViewModel {
     }
 
     void autoSaveGroup() {
-        final LiveData<Resource<Integer>> source;
-
         if (mCurrentGroup == null) {
-            source = insertGroup(GroupDatabase.NEW_GROUP_NAME);
+            insertGroup(GroupDatabase.NEW_GROUP_NAME, false);
 
         } else {
-            source = updateGroup();
+            updateGroup(false);
         }
-
-        // Piggyback on lifecycle
-        mPlayerListLiveData.addSource(source, new Observer<Resource<Integer>>() {
-            @Override
-            public void onChanged(Resource<Integer> integerResource) {
-                mPlayerListLiveData.removeSource(source);
-            }
-        });
     }
 
-    void saveGroup(final String groupName) {
+    void saveGroup(String groupName) {
         if (ValidationUtil.validateGroupName(groupName)) {
-            final LiveData<Resource<Integer>> source;
-
             if (mCurrentGroup == null || mCurrentGroup.getName().equals(GroupDatabase.NEW_GROUP_NAME)) {
-                source = insertGroup(groupName);
+                insertGroup(groupName, true);
 
             } else {
-                source = updateGroup();
+                updateGroup(true);
             }
 
-            // Piggyback on lifecycle
-            mPlayerListLiveData.addSource(source, new Observer<Resource<Integer>>() {
-                @Override
-                public void onChanged(Resource<Integer> resource) {
-                    if(resource.status == Resource.Status.SUCCESS){
-                        mGroupNameLiveData.setValue(groupName);
-                    }
-                    showMessage(resource.message);
-                    mPlayerListLiveData.removeSource(source);
-                }
-            });
         }else{
             showMessage(MSG_INVALID_GROUP_NAME);
         }
     }
 
-    private LiveData<Resource<Integer>> insertGroup(String groupName) {
-        Group group = new Group(groupName,
+    private void insertGroup(String groupName, final boolean showMsg) {
+        final Group group = new Group(groupName,
                 ListUtil.playerListToCsv(mPlayerListLiveData.getValue()),
                 System.currentTimeMillis());
 
-        return mGroupRepository.insertGroup(group);
+        final LiveData<Resource<Integer>> source = mGroupRepository.insertGroup(group);
+
+        // Piggyback on lifecycle
+        mPlayerListLiveData.addSource(source, new Observer<Resource<Integer>>() {
+            @Override
+            public void onChanged(Resource<Integer> resource) {
+                if(resource.status == Resource.Status.SUCCESS){
+                    mGroupNameLiveData.setValue(group.getName());
+
+                    if(resource.data != null){
+                        group.setId(resource.data);
+                    }
+                    mCurrentGroup = group;
+                }
+
+                if(showMsg){
+                    showMessage(resource.message);
+                }
+                mPlayerListLiveData.removeSource(source);
+            }
+        });
     }
 
-    private LiveData<Resource<Integer>> updateGroup() {
-        mCurrentGroup.setName(mGroupNameLiveData.getValue());
-        mCurrentGroup.setPlayers(ListUtil.playerListToCsv(mPlayerListLiveData.getValue()));
-        mCurrentGroup.setUpdatedAt(System.currentTimeMillis());
+    private void updateGroup(final boolean showMsg) {
+        final Group group = new Group(mCurrentGroup.getId(),
+                mGroupNameLiveData.getValue(),
+                ListUtil.playerListToCsv(mPlayerListLiveData.getValue()),
+                System.currentTimeMillis());
 
-        return mGroupRepository.updateGroup(mCurrentGroup);
+        final LiveData<Resource<Integer>> source = mGroupRepository.updateGroup(group);
+
+        // Piggyback on lifecycle
+        mPlayerListLiveData.addSource(source, new Observer<Resource<Integer>>() {
+            @Override
+            public void onChanged(Resource<Integer> resource) {
+                if(resource.status == Resource.Status.SUCCESS){
+                    mGroupNameLiveData.setValue(group.getName());
+                    mCurrentGroup = group;
+                }
+
+                if(showMsg) {
+                    showMessage(resource.message);
+                }
+                mPlayerListLiveData.removeSource(source);
+            }
+        });
     }
 
     void loadMostRecentGroup() {

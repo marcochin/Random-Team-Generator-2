@@ -2,6 +2,7 @@ package com.marcochin.teamrandomizer.model;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "group_table")
@@ -27,6 +28,14 @@ public class Group {
     private long updatedAt;
 
     public Group(String name, String players, long updatedAt) {
+        this.name = name;
+        this.players = players;
+        this.updatedAt = updatedAt;
+    }
+
+    @Ignore
+    public Group(int id, String name, String players, long updatedAt) {
+        this.id = id;
         this.name = name;
         this.players = players;
         this.updatedAt = updatedAt;
