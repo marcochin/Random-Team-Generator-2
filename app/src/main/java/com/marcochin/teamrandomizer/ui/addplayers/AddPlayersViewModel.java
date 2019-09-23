@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
-import com.marcochin.teamrandomizer.database.GroupDatabase;
 import com.marcochin.teamrandomizer.model.Group;
 import com.marcochin.teamrandomizer.model.Player;
 import com.marcochin.teamrandomizer.repository.GroupRepository;
@@ -50,15 +49,16 @@ public class AddPlayersViewModel extends ViewModel {
         mTotalPlayersLiveData = new MutableLiveData<>();
         mAddPlayersActionLiveData = new MutableLiveData<>();
 
-        List<Player> playerList = new ArrayList<>();
-
+        mCurrentGroup = new Group(Group.NEW_GROUP_NAME, null, System.currentTimeMillis());
+        List<Player> playerList = ListUtil.csvToPlayerList(mCurrentGroup.getPlayers());
         //TODO remove test code
 //        for (int i = 0; i < 100; i++) {
 //            playerList.add(new Player(i + ""));
 //        }
         mPlayerListLiveData.setValue(playerList);
         mTotalPlayersLiveData.setValue(playerList.size());
-        mGroupNameLiveData.setValue(GroupDatabase.NEW_GROUP_NAME);
+        mGroupNameLiveData.setValue(mCurrentGroup.getName());
+
     }
 
     void addPlayer(String name) {
@@ -175,7 +175,7 @@ public class AddPlayersViewModel extends ViewModel {
 
     void showNameDialogOrSaveGroup(String groupName) {
         // groupName comes from the textView
-        if (mCurrentGroup == null || mCurrentGroup.getName().equals(GroupDatabase.NEW_GROUP_NAME)) {
+        if (mCurrentGroup.getId() == Group.NO_ID) {
             showDialog(DIALOG_SAVE_GROUP);
 
         } else {
@@ -184,8 +184,8 @@ public class AddPlayersViewModel extends ViewModel {
     }
 
     void autoSaveGroup() {
-        if (mCurrentGroup == null) {
-            insertGroup(GroupDatabase.NEW_GROUP_NAME, false);
+        if (mCurrentGroup.getId() == Group.NO_ID) {
+            insertGroup(Group.NEW_GROUP_NAME, false);
 
         } else {
             updateGroup(false);
@@ -194,7 +194,7 @@ public class AddPlayersViewModel extends ViewModel {
 
     void saveGroup(String groupName) {
         if (ValidationUtil.validateGroupName(groupName)) {
-            if (mCurrentGroup == null || mCurrentGroup.getName().equals(GroupDatabase.NEW_GROUP_NAME)) {
+            if (mCurrentGroup.getId() == Group.NO_ID) {
                 insertGroup(groupName, true);
 
             } else {

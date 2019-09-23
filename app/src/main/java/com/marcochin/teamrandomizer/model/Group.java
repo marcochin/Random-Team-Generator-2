@@ -7,9 +7,14 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "group_table")
 public class Group {
+    @Ignore
+    public static final int NO_ID = 0; // Primary key can't be negative
+
+    @Ignore
+    public static String NEW_GROUP_NAME = "";
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private int id = NO_ID;
 
     /**
      * The name of the group of players

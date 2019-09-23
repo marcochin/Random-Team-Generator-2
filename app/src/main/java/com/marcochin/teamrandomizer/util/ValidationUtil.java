@@ -1,6 +1,6 @@
 package com.marcochin.teamrandomizer.util;
 
-import com.marcochin.teamrandomizer.database.GroupDatabase;
+import com.marcochin.teamrandomizer.model.Group;
 
 public class ValidationUtil {
     public static boolean validatePlayerName(String playerName) {
@@ -8,6 +8,6 @@ public class ValidationUtil {
     }
 
     public static boolean validateGroupName(String groupName) {
-        return groupName != null && !groupName.trim().isEmpty() && !groupName.trim().equals(GroupDatabase.NEW_GROUP_NAME);
+        return groupName != null && !groupName.trim().isEmpty() && !groupName.trim().equals(Group.NEW_GROUP_NAME);
     }
 }
