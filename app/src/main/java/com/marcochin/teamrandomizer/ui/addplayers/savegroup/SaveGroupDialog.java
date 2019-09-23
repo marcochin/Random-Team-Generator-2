@@ -73,18 +73,6 @@ public class SaveGroupDialog extends DialogFragment implements View.OnClickListe
         observeLiveData();
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        // NOTE: the editText automatically gets focused, but keyboard doesn't come up
-        // so we can show the soft keyboard in a dialog fragment like this
-        if(getDialog() != null && getDialog().getWindow() != null){
-            getDialog().getWindow().setSoftInputMode(
-                    WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        }
-    }
-
     private void setupEditText(TextInputEditText editText) {
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -96,6 +84,17 @@ public class SaveGroupDialog extends DialogFragment implements View.OnClickListe
                 return true;
             }
         });
+
+        // Some phones focus editText automatically, some don't.
+        // Add this here for the phones that don't
+        editText.requestFocus();
+
+        // Some phones show the keyboard automatically when editText is programmatically focused. Some don't.
+        // Show soft keyboard here for the phones that don't.
+        if(getDialog() != null && getDialog().getWindow() != null){
+            getDialog().getWindow().setSoftInputMode(
+                    WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        }
     }
 
 
