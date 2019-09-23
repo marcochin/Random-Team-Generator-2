@@ -1,7 +1,5 @@
 package com.marcochin.teamrandomizer.repository;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.LiveDataReactiveStreams;
 
@@ -21,8 +19,6 @@ import io.reactivex.schedulers.Schedulers;
 public class GroupRepository {
     public static final String SAVE_SUCCESS = "Saved";
     public static final String SAVE_FAILED = "Save failed";
-    public static final String UPDATE_SUCCESS = "Updated";
-    public static final String UPDATE_FAILED = "Update failed";
     public static final String DELETE_SUCCESS = "Deleted";
     public static final String DELETE_FAILED = "Delete failed";
 
@@ -70,7 +66,6 @@ public class GroupRepository {
                         .onErrorReturn(new Function<Throwable, Integer>() {
                             @Override
                             public Integer apply(Throwable throwable) throws Exception {
-                                Log.d("meme", throwable.getMessage());
                                 return -1;
                             }
                         })
@@ -78,9 +73,9 @@ public class GroupRepository {
                             @Override
                             public Resource<Integer> apply(Integer integer) throws Exception {
                                 if (integer > 0) {
-                                    return Resource.success(integer, UPDATE_SUCCESS);
+                                    return Resource.success(integer, SAVE_SUCCESS);
                                 } else {
-                                    return Resource.error(null, UPDATE_FAILED);
+                                    return Resource.error(null, SAVE_FAILED);
                                 }
                             }
                         })
