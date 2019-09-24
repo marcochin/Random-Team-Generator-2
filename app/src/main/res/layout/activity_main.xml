@@ -29,7 +29,7 @@
 
             <fragment
                 android:id="@+id/loadFragment"
-                android:name="com.marcochin.teamrandomizer.ui.load.LoadFragment"
+                android:name="com.marcochin.teamrandomizer.ui.loadgroup.LoadGroupFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:label="@string/nav_load"

@@ -16,7 +16,7 @@ public class AddPlayersAction<T> {
 
     public enum AddPlayersActionType {
         PLAYER_ADDED, PLAYER_DELETED, PLAYER_CHECKBOX_TOGGLED, CHECKBOX_BUTTON_TOGGLED,
-        SHOW_SAVE_GROUP_DIALOG, SHOW_MSG
+        SHOW_DIALOG, SHOW_MSG
     }
 
     public AddPlayersAction(@NonNull AddPlayersActionType action) {
@@ -50,7 +50,7 @@ public class AddPlayersAction<T> {
     }
 
     public static <T> AddPlayersAction<T> showDialog(@Nullable T data, @Nullable String msg) {
-        return new AddPlayersAction<>(AddPlayersActionType.SHOW_SAVE_GROUP_DIALOG, data, msg);
+        return new AddPlayersAction<>(AddPlayersActionType.SHOW_DIALOG, data, msg);
     }
 
     public static <T> AddPlayersAction<T> showMessage(@Nullable T data, @Nullable String msg) {

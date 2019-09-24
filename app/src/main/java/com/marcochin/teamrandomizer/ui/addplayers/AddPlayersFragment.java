@@ -29,8 +29,9 @@ import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.di.viewmodelfactory.ViewModelProviderFactory;
 import com.marcochin.teamrandomizer.model.Player;
 import com.marcochin.teamrandomizer.ui.addplayers.adapters.PlayerListAdapter;
+import com.marcochin.teamrandomizer.ui.addplayers.editgroupname.EditGroupNameDialog;
 import com.marcochin.teamrandomizer.ui.addplayers.savegroup.SaveGroupDialog;
-import com.marcochin.teamrandomizer.ui.customclasses.NestedCoordinatorLayout;
+import com.marcochin.teamrandomizer.ui.custom.NestedCoordinatorLayout;
 
 import java.util.List;
 
@@ -39,7 +40,7 @@ import javax.inject.Inject;
 import dagger.android.support.DaggerFragment;
 
 public class AddPlayersFragment extends DaggerFragment implements View.OnClickListener {
-    private static final String TAG = "AddPlayersFragment";
+    private static final String TAG = AddPlayersFragment.class.getSimpleName();
 
     @Inject
     ViewModelProviderFactory mViewModelProviderFactory;
@@ -99,6 +100,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         ImageButton saveButton = view.findViewById(R.id.fap_save_btn);
         ImageButton checkboxButton = view.findViewById(R.id.fap_checkbox_btn);
 
+        mGroupNameText.setOnClickListener(this);
         addButton.setOnClickListener(this);
         clearButton.setOnClickListener(this);
         saveButton.setOnClickListener(this);
@@ -215,7 +217,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
             }
         });
 
-        mViewModel.getAddPlayersActionLiveData().observe(this, new Observer<AddPlayersAction<Integer>>() {
+        mViewModel.getActionLiveData().observe(this, new Observer<AddPlayersAction<Integer>>() {
             @Override
             public void onChanged(AddPlayersAction<Integer> addPlayersAction) {
                 if (addPlayersAction == null) {
@@ -225,32 +227,32 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
                 switch (addPlayersAction.action) {
                     case PLAYER_ADDED:
                         handlePlayerAddedAction(addPlayersAction);
-                        mViewModel.clearAddPlayersActionLiveData();
+                        mViewModel.clearActionLiveData();
                         break;
 
                     case PLAYER_DELETED:
                         handlePlayerDeletedAction(addPlayersAction);
-                        mViewModel.clearAddPlayersActionLiveData();
+                        mViewModel.clearActionLiveData();
                         break;
 
                     case PLAYER_CHECKBOX_TOGGLED:
                         handlePlayerCheckboxToggledAction(addPlayersAction);
-                        mViewModel.clearAddPlayersActionLiveData();
+                        mViewModel.clearActionLiveData();
                         break;
 
                     case CHECKBOX_BUTTON_TOGGLED:
                         handleCheckboxButtonToggledAction(addPlayersAction);
-                        mViewModel.clearAddPlayersActionLiveData();
+                        mViewModel.clearActionLiveData();
                         break;
 
-                    case SHOW_SAVE_GROUP_DIALOG:
-                        handleShowSaveGroupDialogAction(addPlayersAction);
-                        mViewModel.clearAddPlayersActionLiveData();
+                    case SHOW_DIALOG:
+                        handleShowDialogAction(addPlayersAction);
+                        mViewModel.clearActionLiveData();
                         break;
 
                     case SHOW_MSG:
                         handleShowMessageAction(addPlayersAction);
-                        mViewModel.clearAddPlayersActionLiveData();
+                        mViewModel.clearActionLiveData();
                         break;
                 }
             }
@@ -293,11 +295,15 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
                 break;
 
             case R.id.fap_save_btn:
-                mViewModel.showNameDialogOrSaveGroup(mGroupNameText.getText().toString());
+                mViewModel.showSaveDialogOrSaveGroup(mGroupNameText.getText().toString());
                 break;
 
             case R.id.fap_checkbox_btn:
                 mViewModel.toggleCheckBoxButton();
+                break;
+
+            case R.id.fap_group_name_text:
+                mViewModel.showEditNameDialog();
                 break;
         }
     }
@@ -340,7 +346,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         }
     }
 
-    private void handleShowSaveGroupDialogAction(AddPlayersAction<Integer> addPlayersAction) {
+    private void handleShowDialogAction(AddPlayersAction<Integer> addPlayersAction) {
         if (addPlayersAction.data != null) {
             switch (addPlayersAction.data) {
                 case AddPlayersViewModel.DIALOG_SAVE_GROUP:
@@ -352,6 +358,11 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
                     break;
 
                 case AddPlayersViewModel.DIALOG_EDIT_GROUP_NAME:
+                    if (getActivity() != null) {
+                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        EditGroupNameDialog editGroupNameDialog = new EditGroupNameDialog();
+                        editGroupNameDialog.show(fragmentManager, EditGroupNameDialog.TAG);
+                    }
                     break;
             }
         }
@@ -404,6 +415,13 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         // We set this to true here because the user needs to use the keyboard to enter the group name.
         mIsKeyboardShowingFalsePositive = true;
         mViewModel.saveGroup(groupName);
+    }
+
+    // This method be called from this origin EditGroupNameDialog -> MainActivity -> setGroupName(...)
+    public void setGroupName(String groupName){
+        // We set this to true here because the user needs to use the keyboard to enter the group name.
+        mIsKeyboardShowingFalsePositive = true;
+        mViewModel.setGroupName(groupName);
     }
 
 

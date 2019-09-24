@@ -9,12 +9,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.ui.addplayers.AddPlayersFragment;
+import com.marcochin.teamrandomizer.ui.addplayers.editgroupname.EditGroupNameDialog;
 import com.marcochin.teamrandomizer.ui.addplayers.savegroup.SaveGroupDialog;
-import com.marcochin.teamrandomizer.ui.load.LoadFragment;
+import com.marcochin.teamrandomizer.ui.loadgroup.LoadGroupFragment;
 
-public class MainActivity extends AppCompatActivity implements SaveGroupDialog.GroupNameReceiver {
+public class MainActivity extends AppCompatActivity implements SaveGroupDialog.GroupNameReceiver,
+        EditGroupNameDialog.GroupNameReceiver {
     private AddPlayersFragment mAddPlayersFragment;
-    private LoadFragment mLoadFragment;
+    private LoadGroupFragment mLoadGroupFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,10 +28,10 @@ public class MainActivity extends AppCompatActivity implements SaveGroupDialog.G
 
         // Find Fragments
         mAddPlayersFragment = (AddPlayersFragment) getSupportFragmentManager().findFragmentById(R.id.addPlayersFragment);
-        mLoadFragment = (LoadFragment) getSupportFragmentManager().findFragmentById(R.id.loadFragment);
+        mLoadGroupFragment = (LoadGroupFragment) getSupportFragmentManager().findFragmentById(R.id.loadFragment);
 
         // Hide the LoadFragment initially
-        getSupportFragmentManager().beginTransaction().hide(mLoadFragment).commit();
+        getSupportFragmentManager().beginTransaction().hide(mLoadGroupFragment).commit();
 
         // Setup the BottomNavigationView callback
         setupBottomViewNavigation(bottomNavigationView);
@@ -42,14 +44,14 @@ public class MainActivity extends AppCompatActivity implements SaveGroupDialog.G
                 switch (menuItem.getItemId()) {
                     case R.id.addPlayersFragment:
                         getSupportFragmentManager().beginTransaction()
-                                .hide(mLoadFragment)
+                                .hide(mLoadGroupFragment)
                                 .show(mAddPlayersFragment).commit();
                         break;
 
                     case R.id.loadFragment:
                         getSupportFragmentManager().beginTransaction()
                                 .hide(mAddPlayersFragment)
-                                .show(mLoadFragment).commit();
+                                .show(mLoadGroupFragment).commit();
                         break;
                 }
                 return true;
@@ -57,8 +59,15 @@ public class MainActivity extends AppCompatActivity implements SaveGroupDialog.G
         });
     }
 
+    // SaveGroupDialog.GroupNameReceiver
     @Override
     public void onReceiveNameFromSaveGroupDialog(String groupName) {
         mAddPlayersFragment.saveGroup(groupName);
+    }
+
+    // EditGroupNameDialog.GroupNameReceiver
+    @Override
+    public void onReceiveNameFromEditGroupNameDialog(String groupName) {
+        mAddPlayersFragment.setGroupName(groupName);
     }
 }

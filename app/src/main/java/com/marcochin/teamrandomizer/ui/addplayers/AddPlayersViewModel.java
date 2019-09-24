@@ -19,8 +19,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class AddPlayersViewModel extends ViewModel {
-    private static final String MSG_INVALID_PLAYER_NAME = "Please enter a valid name!";
-    public static final String MSG_INVALID_GROUP_NAME = "Please enter a valid group name!";
+    private static final String MSG_INVALID_PLAYER_NAME = "Please enter a valid player name";
+    public static final String MSG_INVALID_GROUP_NAME = "Please enter a valid group name";
+    public static final String MSG_GROUP_NAME_UPDATED = "Updated";
 
     public static final int DIALOG_SAVE_GROUP = 1;
     public static final int DIALOG_EDIT_GROUP_NAME = 2;
@@ -31,7 +32,7 @@ public class AddPlayersViewModel extends ViewModel {
     private MediatorLiveData<List<Player>> mPlayerListLiveData;
     private MutableLiveData<String> mGroupNameLiveData;
     private MutableLiveData<Integer> mTotalPlayersLiveData;
-    private MutableLiveData<AddPlayersAction<Integer>> mAddPlayersActionLiveData;
+    private MutableLiveData<AddPlayersAction<Integer>> mActionLiveData;
 
     private Group mCurrentGroup;
 
@@ -47,7 +48,7 @@ public class AddPlayersViewModel extends ViewModel {
         mPlayerListLiveData = new MediatorLiveData<>();
         mGroupNameLiveData = new MutableLiveData<>();
         mTotalPlayersLiveData = new MutableLiveData<>();
-        mAddPlayersActionLiveData = new MutableLiveData<>();
+        mActionLiveData = new MutableLiveData<>();
 
         mCurrentGroup = new Group(Group.NEW_GROUP_NAME, null, System.currentTimeMillis());
         List<Player> playerList = ListUtil.csvToPlayerList(mCurrentGroup.getPlayers());
@@ -78,7 +79,7 @@ public class AddPlayersViewModel extends ViewModel {
             }
 
             playerList.add(player);
-            mAddPlayersActionLiveData.setValue(AddPlayersAction.playerAdded(playerList.size() - 1, null));
+            mActionLiveData.setValue(AddPlayersAction.playerAdded(playerList.size() - 1, null));
             mTotalPlayersLiveData.setValue(playerList.size());
         }
     }
@@ -88,7 +89,7 @@ public class AddPlayersViewModel extends ViewModel {
 
         if (playerList != null) {
             playerList.remove(pos);
-            mAddPlayersActionLiveData.setValue(AddPlayersAction.playerDeleted(pos, null));
+            mActionLiveData.setValue(AddPlayersAction.playerDeleted(pos, null));
             mTotalPlayersLiveData.setValue(playerList.size());
         }
     }
@@ -104,7 +105,7 @@ public class AddPlayersViewModel extends ViewModel {
         if (playerList != null) {
             Player player = playerList.get(pos);
             player.setIncluded(!player.isIncluded());
-            mAddPlayersActionLiveData.setValue(AddPlayersAction.playerCheckboxToggled(pos, null));
+            mActionLiveData.setValue(AddPlayersAction.playerCheckboxToggled(pos, null));
 
             if (mTotalPlayersLiveData.getValue() != null) {
                 if (player.isIncluded()) {
@@ -153,7 +154,7 @@ public class AddPlayersViewModel extends ViewModel {
                 }
             }
 
-            mAddPlayersActionLiveData.setValue(AddPlayersAction.checkboxButtonToggled(playerList.size(), null));
+            mActionLiveData.setValue(AddPlayersAction.checkboxButtonToggled(playerList.size(), null));
         }
     }
 
@@ -161,19 +162,25 @@ public class AddPlayersViewModel extends ViewModel {
         mCurrentGroup = group;
     }
 
-    public void editGroupName(String groupName) {
+    void setGroupName(String groupName) {
         if(ValidationUtil.validateGroupName(groupName)) {
             mGroupNameLiveData.setValue(groupName);
+            showMessage(MSG_GROUP_NAME_UPDATED);
 
         }else{
             showMessage(MSG_INVALID_GROUP_NAME);
         }
     }
 
+    // Dialogs
 
-    // Database operations
+    void showEditNameDialog(){
+        if(mGroupNameLiveData.getValue() != null && !mGroupNameLiveData.getValue().equals(Group.NEW_GROUP_NAME)){
+            showDialog(DIALOG_EDIT_GROUP_NAME);
+        }
+    }
 
-    void showNameDialogOrSaveGroup(String groupName) {
+    void showSaveDialogOrSaveGroup(String groupName) {
         // groupName comes from the textView
         if (mCurrentGroup.getId() == Group.NO_ID) {
             showDialog(DIALOG_SAVE_GROUP);
@@ -182,6 +189,9 @@ public class AddPlayersViewModel extends ViewModel {
             saveGroup(groupName);
         }
     }
+
+
+    // Database operations
 
     void autoSaveGroup() {
         if (mCurrentGroup.getId() == Group.NO_ID) {
@@ -293,19 +303,19 @@ public class AddPlayersViewModel extends ViewModel {
         return mTotalPlayersLiveData;
     }
 
-    LiveData<AddPlayersAction<Integer>> getAddPlayersActionLiveData() {
-        return mAddPlayersActionLiveData;
+    LiveData<AddPlayersAction<Integer>> getActionLiveData() {
+        return mActionLiveData;
     }
 
-    void clearAddPlayersActionLiveData() {
-        mAddPlayersActionLiveData.setValue(null);
+    void clearActionLiveData() {
+        mActionLiveData.setValue(null);
     }
 
     private void showDialog(int dialog){
-        mAddPlayersActionLiveData.setValue(AddPlayersAction.showDialog(dialog, null));
+        mActionLiveData.setValue(AddPlayersAction.showDialog(dialog, null));
     }
 
     private void showMessage(String message){
-        mAddPlayersActionLiveData.setValue(AddPlayersAction.showMessage((Integer)null, message));
+        mActionLiveData.setValue(AddPlayersAction.showMessage((Integer)null, message));
     }
 }

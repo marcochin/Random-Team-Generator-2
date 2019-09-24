@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/loadFragment"
-        android:name="com.marcochin.teamrandomizer.ui.load.LoadFragment"
+        android:name="com.marcochin.teamrandomizer.ui.loadgroup.LoadGroupFragment"
         android:label="@string/nav_load"
         tools:layout="@layout/fragment_load" />
 

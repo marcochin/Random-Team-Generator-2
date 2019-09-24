@@ -13,6 +13,11 @@
 
     <!-- Dialog Save Group-->
     <string name="dsg_group_name">Group Name</string>
+    <string name="dsg_save">Save</string>
+
+    <!-- Dialog Edit Group Name-->
+    <string name="degn_edit_group_name">Edit Group Name</string>
+    <string name="degn_update">Update</string>
 
     <!-- Content Descriptions -->
     <string name="cd_toggle_checkboxes">Toggle checkboxes</string>
