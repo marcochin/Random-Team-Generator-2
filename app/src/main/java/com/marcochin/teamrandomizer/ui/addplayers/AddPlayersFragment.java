@@ -18,6 +18,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -29,8 +30,9 @@ import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.di.viewmodelfactory.ViewModelProviderFactory;
 import com.marcochin.teamrandomizer.model.Player;
 import com.marcochin.teamrandomizer.ui.addplayers.adapters.PlayerListAdapter;
-import com.marcochin.teamrandomizer.ui.addplayers.editgroupname.EditGroupNameDialog;
-import com.marcochin.teamrandomizer.ui.addplayers.savegroup.SaveGroupDialog;
+import com.marcochin.teamrandomizer.ui.addplayers.dialogs.editgroupname.EditGroupNameDialog;
+import com.marcochin.teamrandomizer.ui.addplayers.dialogs.numberofteams.NumberOfTeamsDialog;
+import com.marcochin.teamrandomizer.ui.addplayers.dialogs.savegroup.SaveGroupDialog;
 import com.marcochin.teamrandomizer.ui.custom.NestedCoordinatorLayout;
 
 import java.util.List;
@@ -55,6 +57,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     private LinearLayoutManager mLinearLayoutManager;
     private PlayerListAdapter mListAdapter;
     private RecyclerView.ItemAnimator mListItemAnimator;
+
     private AddPlayersViewModel mViewModel;
 
 
@@ -95,12 +98,14 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         mNameEditText = view.findViewById(R.id.fap_name_edit_text);
         mNumPlayersText = view.findViewById(R.id.fap_total_players_text);
         mRecyclerView = view.findViewById(R.id.fap_players_recycler_view);
+        Button randomizeButton = view.findViewById(R.id.fap_randomize_btn);
         Button addButton = view.findViewById(R.id.fap_add_btn);
         Button clearButton = view.findViewById(R.id.fap_clear_btn);
         ImageButton saveButton = view.findViewById(R.id.fap_save_btn);
         ImageButton checkboxButton = view.findViewById(R.id.fap_checkbox_btn);
 
         mGroupNameText.setOnClickListener(this);
+        randomizeButton.setOnClickListener(this);
         addButton.setOnClickListener(this);
         clearButton.setOnClickListener(this);
         saveButton.setOnClickListener(this);
@@ -286,6 +291,10 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.fap_randomize_btn:
+                mViewModel.showNumberOfTeamsDialog();
+                break;
+
             case R.id.fap_add_btn:
                 onAddPlayerButtonClick();
                 break;
@@ -295,7 +304,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
                 break;
 
             case R.id.fap_save_btn:
-                mViewModel.showSaveDialogOrSaveGroup(mGroupNameText.getText().toString());
+                mViewModel.showSaveDialogOrSaveGroup();
                 break;
 
             case R.id.fap_checkbox_btn:
@@ -348,22 +357,33 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
 
     private void handleShowDialogAction(AddPlayersAction<Integer> addPlayersAction) {
         if (addPlayersAction.data != null) {
+            FragmentManager fragmentManager = null;
+            DialogFragment dialogFragment = null;
+            String fragmentTag = null;
+
+            if(getActivity() != null){
+                fragmentManager = getActivity().getSupportFragmentManager();
+            }
+
             switch (addPlayersAction.data) {
                 case AddPlayersViewModel.DIALOG_SAVE_GROUP:
-                    if (getActivity() != null) {
-                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        SaveGroupDialog saveGroupDialog = new SaveGroupDialog();
-                        saveGroupDialog.show(fragmentManager, SaveGroupDialog.TAG);
-                    }
+                    dialogFragment = new SaveGroupDialog();
+                    fragmentTag = SaveGroupDialog.TAG;
                     break;
 
                 case AddPlayersViewModel.DIALOG_EDIT_GROUP_NAME:
-                    if (getActivity() != null) {
-                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        EditGroupNameDialog editGroupNameDialog = new EditGroupNameDialog();
-                        editGroupNameDialog.show(fragmentManager, EditGroupNameDialog.TAG);
-                    }
+                    dialogFragment = new EditGroupNameDialog();
+                    fragmentTag = EditGroupNameDialog.TAG;
                     break;
+
+                case AddPlayersViewModel.DIALOG_NUMBER_OF_TEAMS:
+                    dialogFragment = new NumberOfTeamsDialog();
+                    fragmentTag = NumberOfTeamsDialog.TAG;
+                    break;
+            }
+
+            if(fragmentManager != null && dialogFragment != null){
+                dialogFragment.show(fragmentManager, fragmentTag);
             }
         }
     }

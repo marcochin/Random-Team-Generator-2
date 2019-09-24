@@ -12,12 +12,16 @@
     <string name="fap_edit_text_hint">Name</string>
 
     <!-- Dialog Save Group-->
-    <string name="dsg_group_name">Group Name</string>
-    <string name="dsg_save">Save</string>
+    <string name="dsg_hint">Group Name</string>
+    <string name="dsg_positive_btn">Save</string>
 
     <!-- Dialog Edit Group Name-->
-    <string name="degn_edit_group_name">Edit Group Name</string>
-    <string name="degn_update">Update</string>
+    <string name="degn_hint">Edit Group Name</string>
+    <string name="degn_positive_btn">Update</string>
+
+    <!-- Dialog Number Of Teams-->
+    <string name="dnot_hint">Enter Number of Teams</string>
+    <string name="dnot_positive_btn">Go</string>
 
     <!-- Content Descriptions -->
     <string name="cd_toggle_checkboxes">Toggle checkboxes</string>

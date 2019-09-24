@@ -19,12 +19,16 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class AddPlayersViewModel extends ViewModel {
-    private static final String MSG_INVALID_PLAYER_NAME = "Please enter a valid player name";
+    private static final String MSG_INVALID_PLAYER_NAME = "Please enter a valid name";
     public static final String MSG_INVALID_GROUP_NAME = "Please enter a valid group name";
+    public static final String MSG_TOO_FEW_PLAYERS = "You must have at least 2 players";
     public static final String MSG_GROUP_NAME_UPDATED = "Updated";
 
     public static final int DIALOG_SAVE_GROUP = 1;
     public static final int DIALOG_EDIT_GROUP_NAME = 2;
+    public static final int DIALOG_NUMBER_OF_TEAMS = 3;
+
+    private static final int MIN_PLAYERS_FOR_RANDOMIZATION = 2;
 
     // Injected
     private GroupRepository mGroupRepository;
@@ -180,13 +184,22 @@ public class AddPlayersViewModel extends ViewModel {
         }
     }
 
-    void showSaveDialogOrSaveGroup(String groupName) {
+    void showSaveDialogOrSaveGroup() {
         // groupName comes from the textView
-        if (mCurrentGroup.getId() == Group.NO_ID) {
+        if (mCurrentGroup.getName().equals(Group.NEW_GROUP_NAME)) {
             showDialog(DIALOG_SAVE_GROUP);
 
         } else {
-            saveGroup(groupName);
+            saveGroup(mGroupNameLiveData.getValue());
+        }
+    }
+
+    void showNumberOfTeamsDialog(){
+        List<Player> playerList = mPlayerListLiveData.getValue();
+        if(playerList != null && playerList.size() < MIN_PLAYERS_FOR_RANDOMIZATION){
+            showMessage(MSG_TOO_FEW_PLAYERS);
+        }else{
+            showDialog(DIALOG_NUMBER_OF_TEAMS);
         }
     }
 

@@ -9,8 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.ui.addplayers.AddPlayersFragment;
-import com.marcochin.teamrandomizer.ui.addplayers.editgroupname.EditGroupNameDialog;
-import com.marcochin.teamrandomizer.ui.addplayers.savegroup.SaveGroupDialog;
+import com.marcochin.teamrandomizer.ui.addplayers.dialogs.editgroupname.EditGroupNameDialog;
+import com.marcochin.teamrandomizer.ui.addplayers.dialogs.savegroup.SaveGroupDialog;
 import com.marcochin.teamrandomizer.ui.loadgroup.LoadGroupFragment;
 
 public class MainActivity extends AppCompatActivity implements SaveGroupDialog.GroupNameReceiver,

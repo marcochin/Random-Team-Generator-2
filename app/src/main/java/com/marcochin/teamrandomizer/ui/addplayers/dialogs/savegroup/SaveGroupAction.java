@@ -1,9 +1,9 @@
-package com.marcochin.teamrandomizer.ui.addplayers.savegroup;
+package com.marcochin.teamrandomizer.ui.addplayers.dialogs.savegroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class SaveGroupAction<T> {
+class SaveGroupAction<T> {
 
     @NonNull
     public final SaveGroupActionType action;

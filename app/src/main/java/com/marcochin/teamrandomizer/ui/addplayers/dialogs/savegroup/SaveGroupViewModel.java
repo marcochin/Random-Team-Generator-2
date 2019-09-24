@@ -1,4 +1,4 @@
-package com.marcochin.teamrandomizer.ui.addplayers.savegroup;
+package com.marcochin.teamrandomizer.ui.addplayers.dialogs.savegroup;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -19,10 +19,12 @@ public class SaveGroupViewModel extends ViewModel {
             mActionLiveData.setValue(SaveGroupAction.groupValidated((Integer) null, null));
         } else {
             // Show error msg
-            mActionLiveData.setValue(
-                    SaveGroupAction.showMessage((Integer) null, AddPlayersViewModel.MSG_INVALID_GROUP_NAME));
+            showMessage(AddPlayersViewModel.MSG_INVALID_GROUP_NAME);
         }
     }
+
+
+    // LiveData
 
     LiveData<SaveGroupAction<Integer>> getActionLiveData() {
         return mActionLiveData;
@@ -30,5 +32,9 @@ public class SaveGroupViewModel extends ViewModel {
 
     void clearActionLiveData() {
         mActionLiveData.setValue(null);
+    }
+
+    private void showMessage(String message){
+        mActionLiveData.setValue(SaveGroupAction.showMessage((Integer)null, message));
     }
 }

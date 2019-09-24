@@ -1,9 +1,9 @@
-package com.marcochin.teamrandomizer.ui.addplayers.editgroupname;
+package com.marcochin.teamrandomizer.ui.addplayers.dialogs.editgroupname;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class EditGroupNameAction<T> {
+class EditGroupNameAction<T> {
 
     @NonNull
     public final EditGroupNameActionType action;

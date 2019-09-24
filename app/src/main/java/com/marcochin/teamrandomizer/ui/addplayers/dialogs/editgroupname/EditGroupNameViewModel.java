@@ -1,4 +1,4 @@
-package com.marcochin.teamrandomizer.ui.addplayers.editgroupname;
+package com.marcochin.teamrandomizer.ui.addplayers.dialogs.editgroupname;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -19,10 +19,12 @@ public class EditGroupNameViewModel extends ViewModel {
             mActionLiveData.setValue(EditGroupNameAction.groupValidated((Integer) null, null));
         } else {
             // Show error msg
-            mActionLiveData.setValue(
-                    EditGroupNameAction.showMessage((Integer) null, AddPlayersViewModel.MSG_INVALID_GROUP_NAME));
+            showMessage(AddPlayersViewModel.MSG_INVALID_GROUP_NAME);
         }
     }
+
+
+    // LiveData
 
     LiveData<EditGroupNameAction<Integer>> getActionLiveData() {
         return mActionLiveData;
@@ -30,5 +32,9 @@ public class EditGroupNameViewModel extends ViewModel {
 
     void clearActionLiveData() {
         mActionLiveData.setValue(null);
+    }
+
+    private void showMessage(String message){
+        mActionLiveData.setValue(EditGroupNameAction.showMessage((Integer)null, message));
     }
 }

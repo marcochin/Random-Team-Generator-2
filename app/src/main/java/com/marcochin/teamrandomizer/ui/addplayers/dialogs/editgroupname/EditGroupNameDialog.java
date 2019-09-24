@@ -1,4 +1,4 @@
-package com.marcochin.teamrandomizer.ui.addplayers.editgroupname;
+package com.marcochin.teamrandomizer.ui.addplayers.dialogs.editgroupname;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -60,10 +60,10 @@ public class EditGroupNameDialog extends DialogFragment implements View.OnClickL
         mTextInputLayout = view.findViewById(R.id.degn_group_name_input_layout);
         mGroupNameEditText = view.findViewById(R.id.degn_group_name_edit_text);
         Button cancelButton = view.findViewById(R.id.degn_cancel_btn);
-        Button editButton = view.findViewById(R.id.degn_update_btn);
+        Button positiveButton = view.findViewById(R.id.degn_positive_btn);
 
         cancelButton.setOnClickListener(this);
-        editButton.setOnClickListener(this);
+        positiveButton.setOnClickListener(this);
 
         setupEditText(mGroupNameEditText);
 
@@ -78,7 +78,7 @@ public class EditGroupNameDialog extends DialogFragment implements View.OnClickL
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    onUpdateButtonClick();
+                    onPositiveButtonClick();
                 }
                 // Return true if you want to keep the keyboard open after hitting the enter button
                 return true;
@@ -124,8 +124,8 @@ public class EditGroupNameDialog extends DialogFragment implements View.OnClickL
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.degn_update_btn:
-                onUpdateButtonClick();
+            case R.id.degn_positive_btn:
+                onPositiveButtonClick();
                 break;
 
             case R.id.degn_cancel_btn:
@@ -134,7 +134,7 @@ public class EditGroupNameDialog extends DialogFragment implements View.OnClickL
         }
     }
 
-    private void onUpdateButtonClick(){
+    private void onPositiveButtonClick(){
         if (mGroupNameEditText.getText() != null) {
             mViewModel.validateGroupName(mGroupNameEditText.getText().toString());
         }
