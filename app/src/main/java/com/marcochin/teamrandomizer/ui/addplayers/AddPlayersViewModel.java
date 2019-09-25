@@ -231,7 +231,7 @@ public class AddPlayersViewModel extends ViewModel {
 
     void saveGroup(String groupName) {
         if (ValidationUtil.validateGroupName(groupName)) {
-            if (mCurrentGroup.getId() == Group.NO_ID) {
+            if (mCurrentGroup.getName().equals(Group.NEW_GROUP_NAME)) {
                 insertGroup(groupName, true);
 
             } else {
