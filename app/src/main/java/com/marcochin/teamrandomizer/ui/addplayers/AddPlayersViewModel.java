@@ -33,11 +33,12 @@ public class AddPlayersViewModel extends ViewModel {
     // Injected
     private GroupRepository mGroupRepository;
 
-    private MediatorLiveData<List<Player>> mPlayerListLiveData;
+    private MediatorLiveData<ArrayList<Player>> mPlayerListLiveData;
     private MutableLiveData<String> mGroupNameLiveData;
     private MutableLiveData<Integer> mTotalPlayersLiveData;
     private MutableLiveData<AddPlayersAction<Integer>> mActionLiveData;
 
+    private ArrayList<Player> mIncludedPlayersList;
     private Group mCurrentGroup;
 
     private CheckboxButtonState mCheckBoxButtonState = CheckboxButtonState.GONE;
@@ -53,9 +54,10 @@ public class AddPlayersViewModel extends ViewModel {
         mGroupNameLiveData = new MutableLiveData<>();
         mTotalPlayersLiveData = new MutableLiveData<>();
         mActionLiveData = new MutableLiveData<>();
+        mIncludedPlayersList = new ArrayList<>();
 
         mCurrentGroup = new Group(Group.NEW_GROUP_NAME, null, System.currentTimeMillis());
-        List<Player> playerList = ListUtil.csvToPlayerList(mCurrentGroup.getPlayers());
+        ArrayList<Player> playerList = ListUtil.csvToPlayerList(mCurrentGroup.getPlayers());
         //TODO remove test code
 //        for (int i = 0; i < 100; i++) {
 //            playerList.add(new Player(i + ""));
@@ -76,7 +78,6 @@ public class AddPlayersViewModel extends ViewModel {
 
         if (playerList != null) {
             Player player = new Player(name);
-            player.setIncluded(true); // default new player to always be included...aww how nice
 
             if (!mCheckBoxButtonState.equals(CheckboxButtonState.GONE)) {
                 player.setCheckboxVisible(true);
@@ -138,9 +139,7 @@ public class AddPlayersViewModel extends ViewModel {
                 mTotalPlayersLiveData.setValue(playerList.size());
             }
 
-            for (int i = 0; i <= playerList.size() - 1; i++) {
-                Player player = playerList.get(i);
-
+            for (Player player : playerList) {
                 switch (mCheckBoxButtonState) {
                     case GONE:
                         player.setCheckboxVisible(false);
@@ -176,6 +175,10 @@ public class AddPlayersViewModel extends ViewModel {
         }
     }
 
+    ArrayList<Player> getIncludedPlayersList(){
+        return mIncludedPlayersList;
+    }
+
     // Dialogs
 
     void showEditNameDialog(){
@@ -196,7 +199,18 @@ public class AddPlayersViewModel extends ViewModel {
 
     void showNumberOfTeamsDialog(){
         List<Player> playerList = mPlayerListLiveData.getValue();
-        if(playerList != null && playerList.size() < MIN_PLAYERS_FOR_RANDOMIZATION){
+
+        if(playerList != null) {
+            mIncludedPlayersList.clear();
+
+            for (Player player : playerList) {
+                if (player.isIncluded()) {
+                    mIncludedPlayersList.add(player);
+                }
+            }
+        }
+
+        if(mIncludedPlayersList.size() < MIN_PLAYERS_FOR_RANDOMIZATION){
             showMessage(MSG_TOO_FEW_PLAYERS);
         }else{
             showDialog(DIALOG_NUMBER_OF_TEAMS);
@@ -290,7 +304,7 @@ public class AddPlayersViewModel extends ViewModel {
             @Override
             public void onChanged(Group group) {
                 if (group != null) {
-                    List<Player> playerList = ListUtil.csvToPlayerList(group.getPlayers());
+                    ArrayList<Player> playerList = ListUtil.csvToPlayerList(group.getPlayers());
                     mPlayerListLiveData.setValue(playerList);
                     mTotalPlayersLiveData.setValue(playerList.size());
                     mGroupNameLiveData.setValue(group.getName());
@@ -304,7 +318,7 @@ public class AddPlayersViewModel extends ViewModel {
 
     // LiveData
 
-    LiveData<List<Player>> getPlayerListLiveData() {
+    LiveData<ArrayList<Player>> getPlayerListLiveData() {
         return mPlayerListLiveData;
     }
 

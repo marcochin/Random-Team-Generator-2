@@ -43,6 +43,6 @@
         android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:text="@android:string/cancel"
-        app:layout_constraintEnd_toStartOf="@+id/degn_positive_btn"
-        app:layout_constraintTop_toBottomOf="@+id/degn_group_name_input_layout" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/degn_positive_btn"
+        app:layout_constraintEnd_toStartOf="@+id/degn_positive_btn" />
 </androidx.constraintlayout.widget.ConstraintLayout>

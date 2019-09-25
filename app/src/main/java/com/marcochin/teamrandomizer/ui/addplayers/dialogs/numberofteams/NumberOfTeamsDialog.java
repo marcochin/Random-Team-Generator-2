@@ -19,12 +19,17 @@ import androidx.lifecycle.ViewModelProviders;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.marcochin.teamrandomizer.R;
+import com.marcochin.teamrandomizer.model.Player;
+
+import java.util.ArrayList;
 
 public class NumberOfTeamsDialog extends DialogFragment implements View.OnClickListener {
     public static final String TAG = NumberOfTeamsDialog.class.getSimpleName();
+    public static final String BUNDLE_KEY_PLAYERS_LIST = "players_list";
 
     private TextInputLayout mTextInputLayout;
     private TextInputEditText mNumberOfTeamsEditText;
+    private TextView mTotalPlayerText;
 
     private NumberOfTeamsViewModel mViewModel;
 
@@ -40,6 +45,7 @@ public class NumberOfTeamsDialog extends DialogFragment implements View.OnClickL
 
         mTextInputLayout = view.findViewById(R.id.dnot_number_of_teams_input_layout);
         mNumberOfTeamsEditText = view.findViewById(R.id.dnot_number_of_teams_edit_text);
+        mTotalPlayerText = view.findViewById(R.id.dnot_total_players_text);
         Button cancelButton = view.findViewById(R.id.dnot_cancel_btn);
         Button positiveButton = view.findViewById(R.id.dnot_positive_btn);
 
@@ -52,6 +58,7 @@ public class NumberOfTeamsDialog extends DialogFragment implements View.OnClickL
         // We don't need to inject our view model with anything so we don't need the factory
         mViewModel = ViewModelProviders.of(this).get(NumberOfTeamsViewModel.class);
         observeLiveData();
+        setupArguments();
     }
 
     private void setupEditText(TextInputEditText editText) {
@@ -78,7 +85,24 @@ public class NumberOfTeamsDialog extends DialogFragment implements View.OnClickL
         }
     }
 
+    private void setupArguments(){
+        Bundle bundle = getArguments();
+        if(bundle != null){
+            ArrayList<Player> playerList = bundle.getParcelableArrayList(BUNDLE_KEY_PLAYERS_LIST);
+            mViewModel.setPlayerList(playerList);
+        }
+    }
+
     private void observeLiveData(){
+        mViewModel.getPlayerListLiveData().observe(this, new Observer<ArrayList<Player>>() {
+            @Override
+            public void onChanged(ArrayList<Player> players) {
+                if(players != null) {
+                    mTotalPlayerText.setText(getString(R.string.ph_total_players, Integer.toString(players.size())));
+                }
+            }
+        });
+
         mViewModel.getActionLiveData().observe(this, new Observer<NumberOfTeamsAction<Integer>>() {
             @Override
             public void onChanged(NumberOfTeamsAction<Integer> numberOfTeamsAction) {

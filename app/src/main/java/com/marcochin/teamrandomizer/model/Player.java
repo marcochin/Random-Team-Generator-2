@@ -10,6 +10,7 @@ public class Player implements Parcelable {
 
     public Player(String name) {
         this.name = name;
+        this.included = true; // Player is included by default
     }
 
     public boolean isCheckboxVisible() {

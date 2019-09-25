@@ -8,8 +8,8 @@ import java.util.List;
 public class ListUtil {
     public static final String NAME_SEPARATOR = ",";
 
-    public static List<Player> csvToPlayerList(String csvNames){
-        List<Player> playerList = new ArrayList<>();
+    public static ArrayList<Player> csvToPlayerList(String csvNames){
+        ArrayList<Player> playerList = new ArrayList<>();
 
         if(csvNames != null){
             String[] names = csvNames.split(NAME_SEPARATOR);

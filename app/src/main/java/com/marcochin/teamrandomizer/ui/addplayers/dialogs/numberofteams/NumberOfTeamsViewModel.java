@@ -6,6 +6,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.marcochin.teamrandomizer.model.Player;
+
+import java.util.ArrayList;
+
 public class NumberOfTeamsViewModel extends ViewModel {
     public static final String TAG = NumberOfTeamsViewModel.class.getSimpleName();
 
@@ -13,10 +17,11 @@ public class NumberOfTeamsViewModel extends ViewModel {
     public static final String MSG_TOO_MANY_TEAMS = "The number of teams cannot exceed the number of players";
     public static final String MSG_INVALID_NUMBER = "Please enter a valid number";
 
-    private int mNumberOfPlayers;
+    private MutableLiveData<ArrayList<Player>> mPlayerListLiveData;
     private MutableLiveData<NumberOfTeamsAction<Integer>> mActionLiveData;
 
     public NumberOfTeamsViewModel() {
+        mPlayerListLiveData = new MutableLiveData<>();
         mActionLiveData = new MutableLiveData<>();
     }
 
@@ -27,7 +32,7 @@ public class NumberOfTeamsViewModel extends ViewModel {
             if(numTeams < 2){
                 showMessage(MSG_TOO_FEW_TEAMS);
 
-            }else if(numTeams > mNumberOfPlayers){
+            }else if(mPlayerListLiveData.getValue() != null && numTeams > mPlayerListLiveData.getValue().size()){
                 showMessage(MSG_TOO_MANY_TEAMS);
             }
 
@@ -37,12 +42,17 @@ public class NumberOfTeamsViewModel extends ViewModel {
         }
     }
 
-    void setNumberOfPlayers(int numberOfPlayers){
-        mNumberOfPlayers = numberOfPlayers;
+    void setPlayerList(ArrayList<Player> playerList){
+        mPlayerListLiveData.setValue(playerList);
     }
 
 
     // LiveData
+
+    LiveData<ArrayList<Player>> getPlayerListLiveData() {
+        return mPlayerListLiveData;
+    }
+
     LiveData<NumberOfTeamsAction<Integer>> getActionLiveData() {
         return mActionLiveData;
     }

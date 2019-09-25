@@ -377,7 +377,12 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
                     break;
 
                 case AddPlayersViewModel.DIALOG_NUMBER_OF_TEAMS:
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelableArrayList(NumberOfTeamsDialog.BUNDLE_KEY_PLAYERS_LIST,
+                            mViewModel.getIncludedPlayersList());
+
                     dialogFragment = new NumberOfTeamsDialog();
+                    dialogFragment.setArguments(bundle);
                     fragmentTag = NumberOfTeamsDialog.TAG;
                     break;
             }
