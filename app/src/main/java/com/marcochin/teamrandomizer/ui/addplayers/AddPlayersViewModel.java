@@ -174,8 +174,7 @@ public class AddPlayersViewModel extends ViewModel {
     void setGroupName(String groupName) {
         if(ValidationUtil.validateGroupName(groupName)) {
             mGroupNameLiveData.setValue(groupName);
-            // TODO save
-            showMessage(MSG_GROUP_NAME_UPDATED);
+            updateGroup(true, MSG_GROUP_NAME_UPDATED);
 
         }else{
             showMessage(MSG_INVALID_GROUP_NAME);
@@ -284,7 +283,11 @@ public class AddPlayersViewModel extends ViewModel {
         });
     }
 
-    private void updateGroup(final boolean showMsg) {
+    private void updateGroup(boolean showMsg){
+        updateGroup(showMsg, null);
+    }
+
+    private void updateGroup(final boolean showMsg, final String overrideMsg) {
         final Group group = new Group(mCurrentGroup.getId(),
                 mGroupNameLiveData.getValue(),
                 ListUtil.playerListToCsv(mPlayerListLiveData.getValue()),
@@ -302,7 +305,11 @@ public class AddPlayersViewModel extends ViewModel {
                 }
 
                 if(showMsg) {
-                    showMessage(resource.message);
+                    if(overrideMsg != null){
+                        showMessage(overrideMsg);
+                    }else {
+                        showMessage(resource.message);
+                    }
                 }
                 mPlayerListLiveData.removeSource(source);
             }
