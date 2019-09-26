@@ -19,8 +19,14 @@ import io.reactivex.schedulers.Schedulers;
 public class GroupRepository {
     public static final String SAVE_SUCCESS = "Saved";
     public static final String SAVE_FAILED = "Save failed";
+    public static final String UPDATE_SUCCESS = "Updated";
+    public static final String UPDATE_FAILED = "Update Failed";
     public static final String DELETE_SUCCESS = "Deleted";
     public static final String DELETE_FAILED = "Delete failed";
+
+    public enum UpdateMessage {
+        TYPE_SAVE, TYPE_UPDATE
+    }
 
     // Injected
     private GroupDao mGroupDao;
@@ -60,7 +66,7 @@ public class GroupRepository {
                         .toFlowable());
     }
 
-    public LiveData<Resource<Integer>> updateGroup(Group group) {
+    public LiveData<Resource<Integer>> updateGroup(Group group, final UpdateMessage msgType) {
         return LiveDataReactiveStreams.fromPublisher(
                 mGroupDao.update(group)
                         .onErrorReturn(new Function<Throwable, Integer>() {
@@ -72,10 +78,22 @@ public class GroupRepository {
                         .map(new Function<Integer, Resource<Integer>>() {
                             @Override
                             public Resource<Integer> apply(Integer integer) throws Exception {
+                                String message;
                                 if (integer > 0) {
-                                    return Resource.success(integer, SAVE_SUCCESS);
+                                    if (msgType == UpdateMessage.TYPE_UPDATE) {
+                                        message = UPDATE_SUCCESS;
+                                    } else {
+                                        message = SAVE_SUCCESS;
+                                    }
+                                    return Resource.success(integer, message);
+
                                 } else {
-                                    return Resource.error(null, SAVE_FAILED);
+                                    if (msgType == UpdateMessage.TYPE_UPDATE) {
+                                        message = UPDATE_FAILED;
+                                    } else {
+                                        message = SAVE_FAILED;
+                                    }
+                                    return Resource.error(integer, message);
                                 }
                             }
                         })

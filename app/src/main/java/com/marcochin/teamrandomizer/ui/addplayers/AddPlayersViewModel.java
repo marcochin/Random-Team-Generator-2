@@ -22,7 +22,6 @@ public class AddPlayersViewModel extends ViewModel {
     private static final String MSG_INVALID_PLAYER_NAME = "Please enter a valid name";
     public static final String MSG_INVALID_GROUP_NAME = "Please enter a valid group name";
     public static final String MSG_TOO_FEW_PLAYERS = "You must have at least 2 players";
-    public static final String MSG_GROUP_NAME_UPDATED = "Updated";
 
     public static final int DIALOG_SAVE_GROUP = 1;
     public static final int DIALOG_EDIT_GROUP_NAME = 2;
@@ -172,23 +171,23 @@ public class AddPlayersViewModel extends ViewModel {
     }
 
     void setGroupName(String groupName) {
-        if(ValidationUtil.validateGroupName(groupName)) {
+        if (ValidationUtil.validateGroupName(groupName)) {
             mGroupNameLiveData.setValue(groupName);
-            updateGroup(true, MSG_GROUP_NAME_UPDATED);
+            updateGroup(true, GroupRepository.UpdateMessage.TYPE_UPDATE);
 
-        }else{
+        } else {
             showMessage(MSG_INVALID_GROUP_NAME);
         }
     }
 
-    ArrayList<Player> getIncludedPlayersList(){
+    ArrayList<Player> getIncludedPlayersList() {
         return mIncludedPlayersList;
     }
 
     // Dialogs
 
-    void showEditNameDialog(){
-        if(mGroupNameLiveData.getValue() != null && !mGroupNameLiveData.getValue().equals(Group.NEW_GROUP_NAME)){
+    void showEditNameDialog() {
+        if (mGroupNameLiveData.getValue() != null && !mGroupNameLiveData.getValue().equals(Group.NEW_GROUP_NAME)) {
             showDialog(DIALOG_EDIT_GROUP_NAME);
         }
     }
@@ -203,10 +202,10 @@ public class AddPlayersViewModel extends ViewModel {
         }
     }
 
-    void showNumberOfTeamsDialog(){
+    void showNumberOfTeamsDialog() {
         List<Player> playerList = mPlayerListLiveData.getValue();
 
-        if(playerList != null) {
+        if (playerList != null) {
             mIncludedPlayersList.clear();
 
             for (Player player : playerList) {
@@ -216,9 +215,9 @@ public class AddPlayersViewModel extends ViewModel {
             }
         }
 
-        if(mIncludedPlayersList.size() < MIN_PLAYERS_FOR_RANDOMIZATION){
+        if (mIncludedPlayersList.size() < MIN_PLAYERS_FOR_RANDOMIZATION) {
             showMessage(MSG_TOO_FEW_PLAYERS);
-        }else{
+        } else {
             showDialog(DIALOG_NUMBER_OF_TEAMS);
         }
     }
@@ -229,7 +228,7 @@ public class AddPlayersViewModel extends ViewModel {
     void autoSaveGroup() {
         // If app is starting and trying to load the most recent group.
         // We can't let auto save activate or else it will override the most recent group.
-        if(mLoadingGroupInProgress){
+        if (mLoadingGroupInProgress) {
             return;
         }
 
@@ -250,7 +249,7 @@ public class AddPlayersViewModel extends ViewModel {
                 updateGroup(true);
             }
 
-        }else{
+        } else {
             showMessage(MSG_INVALID_GROUP_NAME);
         }
     }
@@ -266,16 +265,16 @@ public class AddPlayersViewModel extends ViewModel {
         mPlayerListLiveData.addSource(source, new Observer<Resource<Integer>>() {
             @Override
             public void onChanged(Resource<Integer> resource) {
-                if(resource.status == Resource.Status.SUCCESS){
+                if (resource.status == Resource.Status.SUCCESS) {
                     mGroupNameLiveData.setValue(group.getName());
 
-                    if(resource.data != null){
+                    if (resource.data != null) {
                         group.setId(resource.data);
                     }
                     mCurrentGroup = group;
                 }
 
-                if(showMsg){
+                if (showMsg) {
                     showMessage(resource.message);
                 }
                 mPlayerListLiveData.removeSource(source);
@@ -283,33 +282,29 @@ public class AddPlayersViewModel extends ViewModel {
         });
     }
 
-    private void updateGroup(boolean showMsg){
-        updateGroup(showMsg, null);
+    private void updateGroup(final boolean showMsg){
+        updateGroup(showMsg, GroupRepository.UpdateMessage.TYPE_SAVE);
     }
 
-    private void updateGroup(final boolean showMsg, final String overrideMsg) {
+    private void updateGroup(final boolean showMsg, GroupRepository.UpdateMessage msgType) {
         final Group group = new Group(mCurrentGroup.getId(),
                 mGroupNameLiveData.getValue(),
                 ListUtil.playerListToCsv(mPlayerListLiveData.getValue()),
                 System.currentTimeMillis());
 
-        final LiveData<Resource<Integer>> source = mGroupRepository.updateGroup(group);
+        final LiveData<Resource<Integer>> source = mGroupRepository.updateGroup(group, msgType);
 
         // Piggyback on lifecycle
         mPlayerListLiveData.addSource(source, new Observer<Resource<Integer>>() {
             @Override
             public void onChanged(Resource<Integer> resource) {
-                if(resource.status == Resource.Status.SUCCESS){
+                if (resource.status == Resource.Status.SUCCESS) {
                     mGroupNameLiveData.setValue(group.getName());
                     mCurrentGroup = group;
                 }
 
-                if(showMsg) {
-                    if(overrideMsg != null){
-                        showMessage(overrideMsg);
-                    }else {
-                        showMessage(resource.message);
-                    }
+                if (showMsg) {
+                    showMessage(resource.message);
                 }
                 mPlayerListLiveData.removeSource(source);
             }
@@ -361,11 +356,11 @@ public class AddPlayersViewModel extends ViewModel {
         mActionLiveData.setValue(null);
     }
 
-    private void showDialog(int dialog){
+    private void showDialog(int dialog) {
         mActionLiveData.setValue(AddPlayersAction.showDialog(dialog, null));
     }
 
-    private void showMessage(String message){
-        mActionLiveData.setValue(AddPlayersAction.showMessage((Integer)null, message));
+    private void showMessage(String message) {
+        mActionLiveData.setValue(AddPlayersAction.showMessage((Integer) null, message));
     }
 }
