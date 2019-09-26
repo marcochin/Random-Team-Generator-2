@@ -10,6 +10,7 @@ import com.marcochin.teamrandomizer.model.Group;
 import com.marcochin.teamrandomizer.model.Player;
 import com.marcochin.teamrandomizer.repository.GroupRepository;
 import com.marcochin.teamrandomizer.ui.Resource;
+import com.marcochin.teamrandomizer.ui.UIAction;
 import com.marcochin.teamrandomizer.util.ListUtil;
 import com.marcochin.teamrandomizer.util.ValidationUtil;
 
@@ -35,7 +36,7 @@ public class AddPlayersViewModel extends ViewModel {
     private MediatorLiveData<ArrayList<Player>> mPlayerListLiveData;
     private MutableLiveData<String> mGroupNameLiveData;
     private MutableLiveData<Integer> mTotalPlayersLiveData;
-    private MutableLiveData<AddPlayersAction<Integer>> mActionLiveData;
+    private MutableLiveData<UIAction<Integer>> mActionLiveData;
 
     private ArrayList<Player> mIncludedPlayersList;
     private Group mCurrentGroup;
@@ -348,7 +349,7 @@ public class AddPlayersViewModel extends ViewModel {
         return mTotalPlayersLiveData;
     }
 
-    LiveData<AddPlayersAction<Integer>> getActionLiveData() {
+    LiveData<UIAction<Integer>> getActionLiveData() {
         return mActionLiveData;
     }
 

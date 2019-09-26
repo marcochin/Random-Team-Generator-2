@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.marcochin.teamrandomizer.model.Player;
+import com.marcochin.teamrandomizer.ui.UIAction;
 
 import java.util.ArrayList;
 
@@ -18,7 +19,7 @@ public class NumberOfTeamsViewModel extends ViewModel {
     public static final String MSG_INVALID_NUMBER = "Please enter a valid number";
 
     private MutableLiveData<ArrayList<Player>> mPlayerListLiveData;
-    private MutableLiveData<NumberOfTeamsAction<Integer>> mActionLiveData;
+    private MutableLiveData<UIAction<Integer>> mActionLiveData;
 
     public NumberOfTeamsViewModel() {
         mPlayerListLiveData = new MutableLiveData<>();
@@ -53,7 +54,7 @@ public class NumberOfTeamsViewModel extends ViewModel {
         return mPlayerListLiveData;
     }
 
-    LiveData<NumberOfTeamsAction<Integer>> getActionLiveData() {
+    LiveData<UIAction<Integer>> getActionLiveData() {
         return mActionLiveData;
     }
 

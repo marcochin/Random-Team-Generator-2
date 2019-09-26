@@ -4,11 +4,12 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.marcochin.teamrandomizer.ui.UIAction;
 import com.marcochin.teamrandomizer.ui.addplayers.AddPlayersViewModel;
 import com.marcochin.teamrandomizer.util.ValidationUtil;
 
 public class EditGroupNameViewModel extends ViewModel {
-    private MutableLiveData<EditGroupNameAction<Integer>> mActionLiveData;
+    private MutableLiveData<UIAction<Integer>> mActionLiveData;
 
     public EditGroupNameViewModel() {
         mActionLiveData = new MutableLiveData<>();
@@ -26,7 +27,7 @@ public class EditGroupNameViewModel extends ViewModel {
 
     // LiveData
 
-    LiveData<EditGroupNameAction<Integer>> getActionLiveData() {
+    LiveData<UIAction<Integer>> getActionLiveData() {
         return mActionLiveData;
     }
 

@@ -4,11 +4,12 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.marcochin.teamrandomizer.ui.UIAction;
 import com.marcochin.teamrandomizer.ui.addplayers.AddPlayersViewModel;
 import com.marcochin.teamrandomizer.util.ValidationUtil;
 
 public class SaveGroupViewModel extends ViewModel {
-    private MutableLiveData<SaveGroupAction<Integer>> mActionLiveData;
+    private MutableLiveData<UIAction<Integer>> mActionLiveData;
 
     public SaveGroupViewModel() {
         mActionLiveData = new MutableLiveData<>();
@@ -26,7 +27,7 @@ public class SaveGroupViewModel extends ViewModel {
 
     // LiveData
 
-    LiveData<SaveGroupAction<Integer>> getActionLiveData() {
+    LiveData<UIAction<Integer>> getActionLiveData() {
         return mActionLiveData;
     }
 

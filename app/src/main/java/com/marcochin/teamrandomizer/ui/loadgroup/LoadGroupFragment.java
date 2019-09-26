@@ -68,7 +68,7 @@ public class LoadGroupFragment extends DaggerFragment {
 
             @Override
             public void onDeleteClick(int position, Group group) {
-//                mViewModel.deletePlayer(position);
+                mViewModel.deleteGroup(position);
             }
         });
     }

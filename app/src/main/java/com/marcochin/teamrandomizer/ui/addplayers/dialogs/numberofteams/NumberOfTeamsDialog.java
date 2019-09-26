@@ -20,6 +20,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.model.Player;
+import com.marcochin.teamrandomizer.ui.UIAction;
 
 import java.util.ArrayList;
 
@@ -106,20 +107,20 @@ public class NumberOfTeamsDialog extends DialogFragment implements View.OnClickL
             }
         });
 
-        mViewModel.getActionLiveData().observe(this, new Observer<NumberOfTeamsAction<Integer>>() {
+        mViewModel.getActionLiveData().observe(this, new Observer<UIAction<Integer>>() {
             @Override
-            public void onChanged(NumberOfTeamsAction<Integer> numberOfTeamsAction) {
+            public void onChanged(UIAction<Integer> numberOfTeamsAction) {
                 if (numberOfTeamsAction == null) {
                     return;
                 }
 
                 switch (numberOfTeamsAction.action) {
-                    case TEAMS_VALIDATED:
+                    case NumberOfTeamsAction.TEAMS_VALIDATED:
                         handleTeamsValidatedAction(numberOfTeamsAction);
                         mViewModel.clearActionLiveData();
                         break;
 
-                    case SHOW_MSG:
+                    case NumberOfTeamsAction.SHOW_MSG:
                         handleShowMessageAction(numberOfTeamsAction);
                         mViewModel.clearActionLiveData();
                         break;
@@ -148,11 +149,11 @@ public class NumberOfTeamsDialog extends DialogFragment implements View.OnClickL
     }
 
 
-    private void handleTeamsValidatedAction(NumberOfTeamsAction<Integer> numberOfTeamsAction) {
+    private void handleTeamsValidatedAction(UIAction<Integer> numberOfTeamsAction) {
         // Start Randomize Activity
     }
 
-    private void handleShowMessageAction(NumberOfTeamsAction<Integer> numberOfTeamsAction) {
+    private void handleShowMessageAction(UIAction<Integer> numberOfTeamsAction) {
         mTextInputLayout.setError(numberOfTeamsAction.message);
     }
 }

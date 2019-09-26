@@ -1,72 +1,25 @@
 package com.marcochin.teamrandomizer.ui.addplayers.dialogs.editgroupname;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-class EditGroupNameAction<T> {
+import com.marcochin.teamrandomizer.ui.UIAction;
 
-    @NonNull
-    public final EditGroupNameActionType action;
+class EditGroupNameAction<T> extends UIAction<T> {
+    public static final int GROUP_VALIDATED = 0;
 
-    @Nullable
-    public final T data;
-
-    @Nullable
-    public final String message;
-
-    public enum EditGroupNameActionType {
-        GROUP_VALIDATED, SHOW_MSG
-    }
-
-    public EditGroupNameAction(@NonNull EditGroupNameActionType action) {
+    public EditGroupNameAction(int action) {
         this(action, null, null);
     }
 
-    public EditGroupNameAction(@NonNull EditGroupNameActionType action, @Nullable T data) {
+    public EditGroupNameAction(int action, @Nullable T data) {
         this(action, data, null);
     }
 
-    public EditGroupNameAction(@NonNull EditGroupNameActionType action, @Nullable T data, @Nullable String message) {
-        this.action = action;
-        this.data = data;
-        this.message = message;
+    public EditGroupNameAction(int action, @Nullable T data, @Nullable String message) {
+        super(action, data, message);
     }
 
     public static <T> EditGroupNameAction<T> groupValidated(@Nullable T data, @Nullable String msg) {
-        return new EditGroupNameAction<>(EditGroupNameAction.EditGroupNameActionType.GROUP_VALIDATED, data, msg);
-    }
-
-    public static <T> EditGroupNameAction<T> showMessage(@Nullable T data, @Nullable String msg) {
-        return new EditGroupNameAction<>(EditGroupNameAction.EditGroupNameActionType.SHOW_MSG, data, msg);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if(obj.getClass() != getClass() || obj.getClass() != EditGroupNameAction.class){
-            return false;
-        }
-
-        EditGroupNameAction<T> resource = (EditGroupNameAction) obj;
-
-        if(resource.action != this.action){
-            return false;
-        }
-
-        if(this.data != null){
-            if(resource.data != this.data){
-                return false;
-            }
-        }
-
-        if(resource.message != null){
-            if(this.message == null){
-                return false;
-            }
-            if(!resource.message.equals(this.message)){
-                return false;
-            }
-        }
-
-        return true;
+        return new EditGroupNameAction<>(GROUP_VALIDATED, data, msg);
     }
 }

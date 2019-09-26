@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.marcochin.teamrandomizer.R;
+import com.marcochin.teamrandomizer.ui.UIAction;
 
 public class EditGroupNameDialog extends DialogFragment implements View.OnClickListener {
     public static final String TAG = EditGroupNameDialog.class.getSimpleName();
@@ -111,20 +112,20 @@ public class EditGroupNameDialog extends DialogFragment implements View.OnClickL
     }
 
     private void observeLiveData() {
-        mViewModel.getActionLiveData().observe(this, new Observer<EditGroupNameAction<Integer>>() {
+        mViewModel.getActionLiveData().observe(this, new Observer<UIAction<Integer>>() {
             @Override
-            public void onChanged(EditGroupNameAction<Integer> editGroupNameAction) {
+            public void onChanged(UIAction<Integer> editGroupNameAction) {
                 if (editGroupNameAction == null) {
                     return;
                 }
 
                 switch (editGroupNameAction.action) {
-                    case GROUP_VALIDATED:
+                    case EditGroupNameAction.GROUP_VALIDATED:
                         handleGroupValidatedAction(editGroupNameAction);
                         mViewModel.clearActionLiveData();
                         break;
 
-                    case SHOW_MSG:
+                    case EditGroupNameAction.SHOW_MSG:
                         handleShowMessageAction(editGroupNameAction);
                         mViewModel.clearActionLiveData();
                         break;
@@ -152,14 +153,14 @@ public class EditGroupNameDialog extends DialogFragment implements View.OnClickL
         }
     }
 
-    private void handleGroupValidatedAction(EditGroupNameAction<Integer> editGroupNameAction) {
+    private void handleGroupValidatedAction(UIAction<Integer> editGroupNameAction) {
         if(mGroupNameReceiver != null && mGroupNameEditText.getText() != null){
             mGroupNameReceiver.onReceiveNameFromEditGroupNameDialog(mGroupNameEditText.getText().toString());
             dismiss();
         }
     }
 
-    private void handleShowMessageAction(EditGroupNameAction<Integer> editGroupNameAction) {
+    private void handleShowMessageAction(UIAction<Integer> editGroupNameAction) {
         mTextInputLayout.setError(editGroupNameAction.message);
     }
 }

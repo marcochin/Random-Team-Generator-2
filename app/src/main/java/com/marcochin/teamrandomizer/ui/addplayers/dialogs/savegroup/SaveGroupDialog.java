@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.marcochin.teamrandomizer.R;
+import com.marcochin.teamrandomizer.ui.UIAction;
 
 public class SaveGroupDialog extends DialogFragment implements View.OnClickListener {
     public static final String TAG = SaveGroupDialog.class.getSimpleName();
@@ -99,20 +100,20 @@ public class SaveGroupDialog extends DialogFragment implements View.OnClickListe
 
 
     private void observeLiveData() {
-        mViewModel.getActionLiveData().observe(this, new Observer<SaveGroupAction<Integer>>() {
+        mViewModel.getActionLiveData().observe(this, new Observer<UIAction<Integer>>() {
             @Override
-            public void onChanged(SaveGroupAction<Integer> saveGroupAction) {
+            public void onChanged(UIAction<Integer> saveGroupAction) {
                 if (saveGroupAction == null) {
                     return;
                 }
 
                 switch (saveGroupAction.action) {
-                    case GROUP_VALIDATED:
+                    case SaveGroupAction.GROUP_VALIDATED:
                         handleGroupValidatedAction(saveGroupAction);
                         mViewModel.clearActionLiveData();
                         break;
 
-                    case SHOW_MSG:
+                    case SaveGroupAction.SHOW_MSG:
                         handleShowMessageAction(saveGroupAction);
                         mViewModel.clearActionLiveData();
                         break;
@@ -140,14 +141,14 @@ public class SaveGroupDialog extends DialogFragment implements View.OnClickListe
         }
     }
 
-    private void handleGroupValidatedAction(SaveGroupAction<Integer> saveGroupAction) {
+    private void handleGroupValidatedAction(UIAction<Integer> saveGroupAction) {
         if(mGroupNameReceiver != null && mGroupNameEditText.getText() != null){
             mGroupNameReceiver.onReceiveNameFromSaveGroupDialog(mGroupNameEditText.getText().toString());
             dismiss();
         }
     }
 
-    private void handleShowMessageAction(SaveGroupAction<Integer> saveGroupAction) {
+    private void handleShowMessageAction(UIAction<Integer> saveGroupAction) {
         mTextInputLayout.setError(saveGroupAction.message);
     }
 }

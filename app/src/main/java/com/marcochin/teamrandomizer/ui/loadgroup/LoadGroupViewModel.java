@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.marcochin.teamrandomizer.model.Group;
 import com.marcochin.teamrandomizer.repository.GroupRepository;
+import com.marcochin.teamrandomizer.ui.Resource;
 
 import java.util.List;
 
@@ -34,6 +35,21 @@ public class LoadGroupViewModel extends ViewModel {
                 mGroupListLiveData.setValue(groups);
             }
         });
+    }
+
+    void deleteGroup(int position){
+        if(mGroupListLiveData.getValue() != null) {
+            Group group = mGroupListLiveData.getValue().get(position);
+
+            final LiveData<Resource<Integer>> source = mGroupRepository.deleteGroup(group);
+            mGroupListLiveData.addSource(source, new Observer<Resource<Integer>>() {
+                @Override
+                public void onChanged(Resource<Integer> integerResource) {
+                    mGroupListLiveData.removeSource(source);
+                }
+            });
+            // Ui will update on its own because we are observing live data straight from the source.
+        }
     }
 
     // LiveData
