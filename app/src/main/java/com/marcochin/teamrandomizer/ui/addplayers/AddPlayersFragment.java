@@ -371,12 +371,18 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
                     fragmentTag = SaveGroupDialog.TAG;
                     break;
 
-                case AddPlayersViewModel.DIALOG_EDIT_GROUP_NAME:
+                case AddPlayersViewModel.DIALOG_EDIT_GROUP_NAME: {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(EditGroupNameDialog.BUNDLE_KEY_GROUP_NAME,
+                            mViewModel.getGroupNameLiveData().getValue());
+
                     dialogFragment = new EditGroupNameDialog();
+                    dialogFragment.setArguments(bundle);
                     fragmentTag = EditGroupNameDialog.TAG;
                     break;
+                }
 
-                case AddPlayersViewModel.DIALOG_NUMBER_OF_TEAMS:
+                case AddPlayersViewModel.DIALOG_NUMBER_OF_TEAMS: {
                     Bundle bundle = new Bundle();
                     bundle.putParcelableArrayList(NumberOfTeamsDialog.BUNDLE_KEY_PLAYERS_LIST,
                             mViewModel.getIncludedPlayersList());
@@ -385,6 +391,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
                     dialogFragment.setArguments(bundle);
                     fragmentTag = NumberOfTeamsDialog.TAG;
                     break;
+                }
             }
 
             if(fragmentManager != null && dialogFragment != null){

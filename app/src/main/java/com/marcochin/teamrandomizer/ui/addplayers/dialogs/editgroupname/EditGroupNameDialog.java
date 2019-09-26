@@ -23,9 +23,11 @@ import com.marcochin.teamrandomizer.R;
 
 public class EditGroupNameDialog extends DialogFragment implements View.OnClickListener {
     public static final String TAG = EditGroupNameDialog.class.getSimpleName();
+    public static final String BUNDLE_KEY_GROUP_NAME = "group_name";
 
     private TextInputLayout mTextInputLayout;
     private TextInputEditText mGroupNameEditText;
+    private String mCurrentGroupName;
 
     private EditGroupNameViewModel mViewModel;
 
@@ -65,12 +67,20 @@ public class EditGroupNameDialog extends DialogFragment implements View.OnClickL
         cancelButton.setOnClickListener(this);
         positiveButton.setOnClickListener(this);
 
-        setupEditText(mGroupNameEditText);
-
         // Retrieve the viewModel
         // We don't need to inject our view model with anything so we don't need the factory
         mViewModel = ViewModelProviders.of(this).get(EditGroupNameViewModel.class);
         observeLiveData();
+
+        setupArguments();
+        setupEditText(mGroupNameEditText);
+    }
+
+    private void setupArguments(){
+        Bundle bundle = getArguments();
+        if(bundle != null){
+            mCurrentGroupName = bundle.getString(BUNDLE_KEY_GROUP_NAME);
+        }
     }
 
     private void setupEditText(TextInputEditText editText) {
@@ -85,6 +95,9 @@ public class EditGroupNameDialog extends DialogFragment implements View.OnClickL
             }
         });
 
+        editText.setText(mCurrentGroupName);
+        editText.setSelectAllOnFocus(true); // highlights the entire edit on focus
+
         // Some phones focus editText automatically, some don't.
         // Add this here for the phones that don't
         editText.requestFocus();
@@ -96,7 +109,6 @@ public class EditGroupNameDialog extends DialogFragment implements View.OnClickL
                     WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }
     }
-
 
     private void observeLiveData() {
         mViewModel.getActionLiveData().observe(this, new Observer<EditGroupNameAction<Integer>>() {

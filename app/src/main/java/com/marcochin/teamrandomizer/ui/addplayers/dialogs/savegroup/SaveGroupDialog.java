@@ -65,12 +65,12 @@ public class SaveGroupDialog extends DialogFragment implements View.OnClickListe
         cancelButton.setOnClickListener(this);
         positiveButton.setOnClickListener(this);
 
-        setupEditText(mGroupNameEditText);
-
         // Retrieve the viewModel
         // We don't need to inject our view model with anything so we don't need the factory
         mViewModel = ViewModelProviders.of(this).get(SaveGroupViewModel.class);
         observeLiveData();
+
+        setupEditText(mGroupNameEditText);
     }
 
     private void setupEditText(TextInputEditText editText) {

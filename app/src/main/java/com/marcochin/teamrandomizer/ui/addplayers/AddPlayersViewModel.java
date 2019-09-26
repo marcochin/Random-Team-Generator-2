@@ -130,7 +130,7 @@ public class AddPlayersViewModel extends ViewModel {
     void toggleCheckBoxButton() {
         List<Player> playerList = mPlayerListLiveData.getValue();
 
-        if (playerList != null) {
+        if (playerList != null && !playerList.isEmpty()) {
             if (mCheckBoxButtonState == CheckboxButtonState.GONE) {
                 mCheckBoxButtonState = CheckboxButtonState.ALL_CHECKED;
                 // Don't need to set total players here because GONE -> ALL CHECKED wont change the total

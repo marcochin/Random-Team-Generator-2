@@ -52,13 +52,24 @@ public class NumberOfTeamsDialog extends DialogFragment implements View.OnClickL
         cancelButton.setOnClickListener(this);
         positiveButton.setOnClickListener(this);
 
-        setupEditText(mNumberOfTeamsEditText);
-
         // Retrieve the viewModel
         // We don't need to inject our view model with anything so we don't need the factory
         mViewModel = ViewModelProviders.of(this).get(NumberOfTeamsViewModel.class);
         observeLiveData();
+
         setupArguments();
+        setupEditText(mNumberOfTeamsEditText);
+    }
+
+    private void setupArguments(){
+        Bundle bundle = getArguments();
+        if(bundle != null){
+            ArrayList<Player> playerList = bundle.getParcelableArrayList(BUNDLE_KEY_PLAYERS_LIST);
+
+            if(playerList != null) {
+                mViewModel.setPlayerList(playerList);
+            }
+        }
     }
 
     private void setupEditText(TextInputEditText editText) {
@@ -82,14 +93,6 @@ public class NumberOfTeamsDialog extends DialogFragment implements View.OnClickL
         if(getDialog() != null && getDialog().getWindow() != null){
             getDialog().getWindow().setSoftInputMode(
                     WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        }
-    }
-
-    private void setupArguments(){
-        Bundle bundle = getArguments();
-        if(bundle != null){
-            ArrayList<Player> playerList = bundle.getParcelableArrayList(BUNDLE_KEY_PLAYERS_LIST);
-            mViewModel.setPlayerList(playerList);
         }
     }
 
