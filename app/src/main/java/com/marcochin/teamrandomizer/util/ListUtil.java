@@ -11,7 +11,7 @@ public class ListUtil {
     public static ArrayList<Player> csvToPlayerList(String csvNames){
         ArrayList<Player> playerList = new ArrayList<>();
 
-        if(csvNames != null){
+        if(csvNames != null && !csvNames.isEmpty()){
             String[] names = csvNames.split(NAME_SEPARATOR);
             for (String name: names){
                 playerList.add(new Player(name));
@@ -23,7 +23,7 @@ public class ListUtil {
 
     public static String playerListToCsv(List<Player> playerList){
         if(playerList == null || playerList.isEmpty()){
-            return null;
+            return "";
         }
 
         StringBuilder sb = new StringBuilder();

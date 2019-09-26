@@ -1,7 +1,9 @@
 package com.marcochin.teamrandomizer.ui.loadgroup.adapters;
 
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
@@ -24,7 +26,7 @@ public class GroupListAdapter extends ListAdapter<Group, GroupListAdapter.GroupH
         @Override
         public boolean areItemsTheSame(@NonNull Group oldItem, @NonNull Group newItem) {
             // These Player items aren't coming from the db, so they don't have an id associated
-            // w them.
+            // w/ them.
             return oldItem.getId() == newItem.getId();
         }
 
@@ -43,12 +45,14 @@ public class GroupListAdapter extends ListAdapter<Group, GroupListAdapter.GroupH
     @NonNull
     @Override
     public GroupHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_group, parent, false);
+        return new GroupHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull GroupHolder holder, int position) {
-
+        Group group = getItem(position);
+        holder.groupNameText.setText(group.getName());
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -58,12 +62,14 @@ public class GroupListAdapter extends ListAdapter<Group, GroupListAdapter.GroupH
     class GroupHolder extends RecyclerView.ViewHolder {
         ViewGroup itemContainer;
         ViewGroup deleteContainer;
+        TextView groupNameText;
 
         GroupHolder(@NonNull View itemView) {
             super(itemView);
 
-            itemContainer = itemView.findViewById(R.id.ip_item_container);
-            deleteContainer = itemView.findViewById(R.id.ip_del_player_container);
+            itemContainer = itemView.findViewById(R.id.ig_item_container);
+            deleteContainer = itemView.findViewById(R.id.ig_del_group_container);
+            groupNameText = itemView.findViewById(R.id.ig_group_name_text);
 
             itemContainer.setOnClickListener(new View.OnClickListener() {
                 @Override

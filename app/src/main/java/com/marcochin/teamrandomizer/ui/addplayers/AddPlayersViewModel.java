@@ -41,6 +41,12 @@ public class AddPlayersViewModel extends ViewModel {
     private ArrayList<Player> mIncludedPlayersList;
     private Group mCurrentGroup;
 
+    /**
+     * If you press the home button immediately when you open the app, it will trigger autoSave
+     * while it is trying to loadMostRecentGroup and will cause a crash. This is to prevent that.
+     */
+    private boolean mLoadingGroupInProgress;
+
     private CheckboxButtonState mCheckBoxButtonState = CheckboxButtonState.GONE;
 
     private enum CheckboxButtonState {
@@ -168,6 +174,7 @@ public class AddPlayersViewModel extends ViewModel {
     void setGroupName(String groupName) {
         if(ValidationUtil.validateGroupName(groupName)) {
             mGroupNameLiveData.setValue(groupName);
+            // TODO save
             showMessage(MSG_GROUP_NAME_UPDATED);
 
         }else{
@@ -221,6 +228,12 @@ public class AddPlayersViewModel extends ViewModel {
     // Database operations
 
     void autoSaveGroup() {
+        // If app is starting and trying to load the most recent group.
+        // We can't let auto save activate or else it will override the most recent group.
+        if(mLoadingGroupInProgress){
+            return;
+        }
+
         if (mCurrentGroup.getId() == Group.NO_ID) {
             insertGroup(Group.NEW_GROUP_NAME, false);
 
@@ -297,6 +310,8 @@ public class AddPlayersViewModel extends ViewModel {
     }
 
     void loadMostRecentGroup() {
+        mLoadingGroupInProgress = true;
+
         // We piggyback on PlayerLists active/inactive states but also use liveData as our async
         // callback for fetching from db.
         final LiveData<Group> source = mGroupRepository.getMostRecentGroup();
@@ -311,6 +326,7 @@ public class AddPlayersViewModel extends ViewModel {
                     mCurrentGroup = group;
                 }
                 mPlayerListLiveData.removeSource(source);
+                mLoadingGroupInProgress = false;
             }
         });
     }
