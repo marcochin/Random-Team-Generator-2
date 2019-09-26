@@ -97,7 +97,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         mGroupNameText = view.findViewById(R.id.fap_group_name_text);
         mNameEditText = view.findViewById(R.id.fap_name_edit_text);
         mNumPlayersText = view.findViewById(R.id.fap_total_players_text);
-        mRecyclerView = view.findViewById(R.id.fap_players_recycler_view);
+        mRecyclerView = view.findViewById(R.id.fap_recycler_view);
         Button randomizeButton = view.findViewById(R.id.fap_randomize_btn);
         Button addButton = view.findViewById(R.id.fap_add_btn);
         Button clearButton = view.findViewById(R.id.fap_clear_btn);
@@ -168,7 +168,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         // Set RecyclerView OnItemClickListener
         mListAdapter.setOnItemClickListener(new PlayerListAdapter.OnItemClickListener() {
             @Override
-            public void onCheckboxClick(int position, Player player) {
+            public void onItemClick(int position, Player player) {
                 mViewModel.togglePlayerCheckBox(position);
             }
 

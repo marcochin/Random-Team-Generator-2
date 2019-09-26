@@ -43,7 +43,7 @@
         app:layout_constraintTop_toBottomOf="@+id/fap_checkbox_btn">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/fap_players_recycler_view"
+            android:id="@+id/fap_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

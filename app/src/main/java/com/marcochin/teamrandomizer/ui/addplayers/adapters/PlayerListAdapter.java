@@ -18,7 +18,7 @@ public class PlayerListAdapter extends ListAdapter<Player, PlayerListAdapter.Pla
     private OnItemClickListener mOnItemClickListener;
 
     public interface OnItemClickListener {
-        void onCheckboxClick(int position, Player player);
+        void onItemClick(int position, Player player);
 
         void onDeleteClick(int position, Player player);
     }
@@ -26,6 +26,8 @@ public class PlayerListAdapter extends ListAdapter<Player, PlayerListAdapter.Pla
     private static final DiffUtil.ItemCallback<Player> DIFF_CALLBACK = new DiffUtil.ItemCallback<Player>() {
         @Override
         public boolean areItemsTheSame(@NonNull Player oldItem, @NonNull Player newItem) {
+            // These Player items aren't coming from the db, so they don't have an id associated
+            // w them.
             return oldItem == newItem;
         }
 
@@ -74,19 +76,19 @@ public class PlayerListAdapter extends ListAdapter<Player, PlayerListAdapter.Pla
     class PlayerHolder extends RecyclerView.ViewHolder {
         CheckBox checkbox;
         TextView playerNameText;
-        ViewGroup checkboxNameContainer;
+        ViewGroup itemContainer;
         ViewGroup deleteContainer;
 
         PlayerHolder(@NonNull View itemView) {
             super(itemView);
 
-            checkbox = itemView.findViewById(R.id.checkbox);
-            playerNameText = itemView.findViewById(R.id.player_name_text);
-            checkboxNameContainer = itemView.findViewById(R.id.checkbox_name_container);
-            deleteContainer = itemView.findViewById(R.id.del_name_container);
+            itemContainer = itemView.findViewById(R.id.ip_item_container);
+            deleteContainer = itemView.findViewById(R.id.ip_del_player_container);
+            checkbox = itemView.findViewById(R.id.ip_checkbox);
+            playerNameText = itemView.findViewById(R.id.ip_player_name_text);
 
             checkbox.setOnClickListener(checkBoxOnClickListener);
-            checkboxNameContainer.setOnClickListener(checkBoxOnClickListener);
+            itemContainer.setOnClickListener(checkBoxOnClickListener);
 
             deleteContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -104,7 +106,7 @@ public class PlayerListAdapter extends ListAdapter<Player, PlayerListAdapter.Pla
             public void onClick(View view) {
                 int position = getAdapterPosition();
                 if (mOnItemClickListener != null && position != RecyclerView.NO_POSITION) {
-                    mOnItemClickListener.onCheckboxClick(position, getItem(position));
+                    mOnItemClickListener.onItemClick(position, getItem(position));
                 }
             }
         };

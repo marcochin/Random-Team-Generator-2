@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/checkbox_name_container"
+    android:id="@+id/ip_item_container"
     android:layout_width="match_parent"
     android:layout_height="49dp"
     android:background="?android:selectableItemBackground"
@@ -13,13 +13,13 @@
     android:paddingEnd="0dp">
 
     <CheckBox
-        android:id="@+id/checkbox"
+        android:id="@+id/ip_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical" />
 
     <TextView
-        android:id="@+id/player_name_text"
+        android:id="@+id/ip_player_name_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
@@ -32,7 +32,7 @@
         tools:text="Heidi Von YackkerBackston the III of Yorkshire" />
 
     <FrameLayout
-        android:id="@+id/del_name_container"
+        android:id="@+id/ip_del_player_container"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:background="?android:selectableItemBackgroundBorderless"
@@ -42,7 +42,6 @@
         android:paddingEnd="15dp">
 
         <ImageView
-            android:id="@+id/del_name_btn"
             android:layout_width="18dp"
             android:layout_height="18dp"
             android:layout_gravity="center"

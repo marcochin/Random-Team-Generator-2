@@ -4,15 +4,31 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.marcochin.teamrandomizer.R;
+import com.marcochin.teamrandomizer.di.viewmodelfactory.ViewModelProviderFactory;
+import com.marcochin.teamrandomizer.model.Group;
+import com.marcochin.teamrandomizer.ui.loadgroup.adapters.GroupListAdapter;
 
-public class LoadGroupFragment extends Fragment {
+import javax.inject.Inject;
+
+import dagger.android.support.DaggerFragment;
+
+public class LoadGroupFragment extends DaggerFragment {
+    @Inject
+    ViewModelProviderFactory mViewModelProviderFactory;
+
+    private RecyclerView mRecyclerView;
+    private LinearLayoutManager mLinearLayoutManager;
+    private GroupListAdapter mListAdapter;
+
+    private LoadGroupViewModel mViewModel;
 
     @Nullable
     @Override
@@ -22,13 +38,42 @@ public class LoadGroupFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        final Button button = view.findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
+        super.onViewCreated(view, savedInstanceState);
+        mRecyclerView = view.findViewById(R.id.fl_recycler_view);
+
+        setupRecyclerView(mRecyclerView);
+
+        // Retrieve the viewModel
+        mViewModel = ViewModelProviders.of(this, mViewModelProviderFactory).get(LoadGroupViewModel.class);
+        observeLiveData();
+    }
+
+    private void setupRecyclerView(RecyclerView recyclerView) {
+        recyclerView.setHasFixedSize(true);
+
+        // Set adapter
+        mListAdapter = new GroupListAdapter();
+        recyclerView.setAdapter(mListAdapter);
+
+        // Set LayoutManager
+        mLinearLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(mLinearLayoutManager);
+
+        // Set RecyclerView OnItemClickListener
+        mListAdapter.setOnItemClickListener(new GroupListAdapter.OnItemClickListener() {
             @Override
-            public void onClick(View view) {
-                button.setText("New Button");
+            public void onItemClick(int position, Group group) {
+//                mViewModel.togglePlayerCheckBox(position);
+            }
+
+            @Override
+            public void onDeleteClick(int position, Group group) {
+//                mViewModel.deletePlayer(position);
             }
         });
-        super.onViewCreated(view, savedInstanceState);
+    }
+
+    private void observeLiveData(){
+
     }
 }
