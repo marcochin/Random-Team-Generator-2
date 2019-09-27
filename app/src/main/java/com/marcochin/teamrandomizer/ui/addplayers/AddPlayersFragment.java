@@ -119,6 +119,8 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         // Retrieve the viewModel
         mViewModel = ViewModelProviders.of(this, mViewModelProviderFactory).get(AddPlayersViewModel.class);
         observeLiveData();
+
+        // We load the last opened group for convenience.
         loadLastOpenedGroup();
     }
 
@@ -353,6 +355,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     private void handleCheckboxButtonToggledAction(UIAction<Integer> addPlayersAction) {
         if (addPlayersAction.data != null) {
             mRecyclerView.setItemAnimator(null);
+            // We don't use notifyDataSetChanged becaue we don't want the recyclerView to flash
             mListAdapter.notifyItemRangeChanged(0, addPlayersAction.data); // data = playerListSize
         }
     }

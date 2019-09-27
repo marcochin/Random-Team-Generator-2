@@ -85,12 +85,16 @@ public class AddPlayersViewModel extends ViewModel {
         if (playerList != null) {
             Player player = new Player(name);
 
+            // If checkBox state is on ALL_CHECKED or NONE_CHECKED we need to show the checkbox
             if (!mCheckBoxButtonState.equals(CheckboxButtonState.GONE)) {
                 player.setCheckboxVisible(true);
             }
 
             playerList.add(player);
+
+            // Update player item UI
             mActionLiveData.setValue(AddPlayersAction.playerAdded(playerList.size() - 1, null));
+            // Update total player's UI
             mTotalPlayersLiveData.setValue(playerList.size());
         }
     }
@@ -100,24 +104,39 @@ public class AddPlayersViewModel extends ViewModel {
 
         if (playerList != null) {
             playerList.remove(pos);
+
+            // Update player item UI
             mActionLiveData.setValue(AddPlayersAction.playerDeleted(pos, null));
+            // Update total player's UI
             mTotalPlayersLiveData.setValue(playerList.size());
         }
     }
 
     void clearAllPlayers() {
+        // Update RecyclcerView UI
         mPlayerListLiveData.setValue(new ArrayList<Player>());
+        // Update total player's UI
         mTotalPlayersLiveData.setValue(0);
     }
 
     void togglePlayerCheckBox(int pos) {
+        // If checkBox button state is gone, we disallow toggling a player's included state
+        if (mCheckBoxButtonState == CheckboxButtonState.GONE) {
+            return;
+        }
+
         List<Player> playerList = mPlayerListLiveData.getValue();
 
         if (playerList != null) {
             Player player = playerList.get(pos);
+
+            // Toggle player's included state
             player.setIncluded(!player.isIncluded());
+
+            // Update the player item UI
             mActionLiveData.setValue(AddPlayersAction.playerCheckboxToggled(pos, null));
 
+            // Update the total player's UI
             if (mTotalPlayersLiveData.getValue() != null) {
                 if (player.isIncluded()) {
                     mTotalPlayersLiveData.setValue(mTotalPlayersLiveData.getValue() + 1);
@@ -132,6 +151,7 @@ public class AddPlayersViewModel extends ViewModel {
         List<Player> playerList = mPlayerListLiveData.getValue();
 
         if (playerList != null && !playerList.isEmpty()) {
+            // Switching checkBox states
             if (mCheckBoxButtonState == CheckboxButtonState.GONE) {
                 mCheckBoxButtonState = CheckboxButtonState.ALL_CHECKED;
                 // Don't need to set total players here because GONE -> ALL CHECKED wont change the total
@@ -145,6 +165,7 @@ public class AddPlayersViewModel extends ViewModel {
                 mTotalPlayersLiveData.setValue(playerList.size());
             }
 
+            // Update player items to match the checkBox state
             for (Player player : playerList) {
                 switch (mCheckBoxButtonState) {
                     case GONE:
@@ -163,29 +184,37 @@ public class AddPlayersViewModel extends ViewModel {
                 }
             }
 
+            // Update the playerList UI
             mActionLiveData.setValue(AddPlayersAction.checkboxButtonToggled(playerList.size(), null));
         }
     }
 
-    public void startNewGroup(){
-        if(mCurrentGroup.getName().equals(Group.NEW_GROUP_NAME)){
+    public void startNewGroup() {
+        if (mCurrentGroup.getName().equals(Group.NEW_GROUP_NAME)) {
             // The current group is a new group
+            // so we just carry over the id and clear everything else
             Group group = Group.createNewGroup();
-            group.setId(mCurrentGroup.getId()); // carry over the id
+            group.setId(mCurrentGroup.getId());
             setGroup(group, false);
 
-        }else{
+        } else {
             // The current group is a saved group
+            // so we try to pull the new group from the db if there is one.
+            // If it exists we just carry over the id and clear everything else
+            // If it doesn't exist we just create a new group ourselves.
             final LiveData<Group> source = mGroupRepository.getTheNewGroup();
             mPlayerListLiveData.addSource(source, new Observer<Group>() {
                 @Override
                 public void onChanged(Group group) {
-                    if(group != null){
+                    if (group != null) {
                         Group newGroup = Group.createNewGroup();
                         newGroup.setId(group.getId());
+
+                        // setGroup autosaves only if the prevGroup is not a new group
                         setGroup(newGroup, true);
 
-                    }else{
+                    } else {
+                        // setGroup autosaves only if the prevGroup is not a new group
                         setGroup(Group.createNewGroup(), true);
                     }
 
@@ -196,21 +225,21 @@ public class AddPlayersViewModel extends ViewModel {
     }
 
     public void setGroup(Group group, boolean autoSavePrevGroup) {
-        // Don't auto save if it has no id. It's ok new groups are disposable!
-        if(autoSavePrevGroup && mCurrentGroup.getId() != Group.NO_ID) {
-            updateGroup(false, false,  GroupRepository.UpdateMessage.TYPE_SAVE);
+        // Don't auto save if it's a "new" group
+        if (autoSavePrevGroup && !mCurrentGroup.getName().equals(Group.NEW_GROUP_NAME)) {
+            updateGroup(false, false, GroupRepository.UpdateMessage.TYPE_SAVE);
         }
 
         ArrayList<Player> playerList = ListUtil.csvToPlayerList(group.getPlayers());
-        mPlayerListLiveData.setValue(playerList);
-        mTotalPlayersLiveData.setValue(playerList.size());
-        mGroupNameLiveData.setValue(group.getName());
+        mPlayerListLiveData.setValue(playerList); // Update playerList UI
+        mTotalPlayersLiveData.setValue(playerList.size()); // Update totalPLayer's UI
+        mGroupNameLiveData.setValue(group.getName()); // Update groupName UI
 
         mCurrentGroup = group;
     }
 
-    public void syncGroupDeletion(int deletedGroupId){
-        if(deletedGroupId == mCurrentGroup.getId()){
+    public void syncGroupDeletion(int deletedGroupId) {
+        if (deletedGroupId == mCurrentGroup.getId()) {
             startNewGroup();
         }
     }
@@ -240,6 +269,7 @@ public class AddPlayersViewModel extends ViewModel {
     void showNumberOfTeamsDialog() {
         List<Player> playerList = mPlayerListLiveData.getValue();
 
+        // Extracting the included players
         if (playerList != null) {
             mIncludedPlayersList.clear();
 
@@ -250,6 +280,7 @@ public class AddPlayersViewModel extends ViewModel {
             }
         }
 
+        // Check if we have enough included players
         if (mIncludedPlayersList.size() < MIN_PLAYERS_FOR_RANDOMIZATION) {
             showMessage(MSG_TOO_FEW_PLAYERS);
         } else {
@@ -271,7 +302,7 @@ public class AddPlayersViewModel extends ViewModel {
             insertGroup(Group.NEW_GROUP_NAME, false);
 
         } else {
-            updateGroup( false);
+            updateGroup(false);
         }
     }
 
@@ -301,8 +332,10 @@ public class AddPlayersViewModel extends ViewModel {
             @Override
             public void onChanged(Resource<Integer> resource) {
                 if (resource.status == Resource.Status.SUCCESS) {
+                    // Update group name UI
                     mGroupNameLiveData.setValue(group.getName());
 
+                    // Save the rowId that wes returned to us so we can use it to update the group later on
                     if (resource.data != null) {
                         group.setId(resource.data);
                     }
@@ -317,7 +350,7 @@ public class AddPlayersViewModel extends ViewModel {
         });
     }
 
-    private void updateGroup(boolean showMsg){
+    private void updateGroup(boolean showMsg) {
         updateGroup(true, showMsg, GroupRepository.UpdateMessage.TYPE_SAVE);
     }
 
@@ -333,6 +366,8 @@ public class AddPlayersViewModel extends ViewModel {
         mPlayerListLiveData.addSource(source, new Observer<Resource<Integer>>() {
             @Override
             public void onChanged(Resource<Integer> resource) {
+                // Sometimes we don't want successCallback to execute because it the mCurrentGroup
+                // might override mCurrentGroup setGroup().
                 if (allowSuccessCallback && resource.status == Resource.Status.SUCCESS) {
                     mGroupNameLiveData.setValue(group.getName());
                     mCurrentGroup = group;
@@ -366,11 +401,7 @@ public class AddPlayersViewModel extends ViewModel {
             @Override
             public void onChanged(Group group) {
                 if (group != null) {
-                    ArrayList<Player> playerList = ListUtil.csvToPlayerList(group.getPlayers());
-                    mPlayerListLiveData.setValue(playerList);
-                    mTotalPlayersLiveData.setValue(playerList.size());
-                    mGroupNameLiveData.setValue(group.getName());
-                    mCurrentGroup = group;
+                    setGroup(group, false);
                 }
                 mPlayerListLiveData.removeSource(source);
                 mLoadingMostRecentGroup = false;

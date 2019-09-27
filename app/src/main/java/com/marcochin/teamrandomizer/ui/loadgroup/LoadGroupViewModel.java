@@ -50,6 +50,7 @@ public class LoadGroupViewModel extends ViewModel {
                 @Override
                 public void onChanged(Resource<Integer> integerResource) {
                     if (integerResource.status == Resource.Status.SUCCESS) {
+                        // Update group item UI
                         mActionLiveData.setValue(LoadGroupAction.groupDeleted(groupId, null));
 
                     } else if (integerResource.status == Resource.Status.ERROR) {
