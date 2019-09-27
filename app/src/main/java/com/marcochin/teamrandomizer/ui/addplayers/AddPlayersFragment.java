@@ -466,6 +466,10 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         mViewModel.setGroup(group, true);
     }
 
+    public void syncGroupDeletion(int deletedGroupId){
+        mViewModel.syncGroupDeletion(deletedGroupId);
+    }
+
 
     // Anonymous Inner Classes
 

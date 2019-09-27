@@ -88,4 +88,10 @@ public class MainActivity extends AppCompatActivity implements SaveGroupDialog.G
         mAddPlayersFragment.setGroup(group);
         mBottomNavigationView.setSelectedItemId(R.id.addPlayersFragment);
     }
+
+    // LoadGroupFragment.OnActionReceiver
+    @Override
+    public void onGroupDeleted(int deletedGroupId) {
+        mAddPlayersFragment.syncGroupDeletion(deletedGroupId);
+    }
 }

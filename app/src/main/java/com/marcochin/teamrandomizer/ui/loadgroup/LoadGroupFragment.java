@@ -40,6 +40,7 @@ public class LoadGroupFragment extends DaggerFragment implements View.OnClickLis
     public interface OnActionReceiver{
         void onNewGroupRequested();
         void onGroupSelected(Group group);
+        void onGroupDeleted(int deletedGroupId);
     }
 
     @Override
@@ -146,11 +147,13 @@ public class LoadGroupFragment extends DaggerFragment implements View.OnClickLis
         }
     }
 
-    private void handleGroupDeletedAction(UIAction uiAction){
-        // Check if the deleted group is in current loaded group. If so clear. MAYYBE.
+    private void handleGroupDeletedAction(UIAction<Integer> uiAction){
+        if(mOnActionReciever != null && uiAction.data != null) {
+            mOnActionReciever.onGroupDeleted(uiAction.data); // data = deleted group id
+        }
     }
 
-    private void handleShowMessageAction(UIAction uiAction){
+    private void handleShowMessageAction(UIAction<Integer> uiAction){
         if(uiAction.message != null) {
             Snackbar.make(mRecyclerView, uiAction.message, Snackbar.LENGTH_SHORT);
         }

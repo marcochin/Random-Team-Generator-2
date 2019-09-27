@@ -209,6 +209,12 @@ public class AddPlayersViewModel extends ViewModel {
         mCurrentGroup = group;
     }
 
+    public void syncGroupDeletion(int deletedGroupId){
+        if(deletedGroupId == mCurrentGroup.getId()){
+            startNewGroup();
+        }
+    }
+
     ArrayList<Player> getIncludedPlayersList() {
         return mIncludedPlayersList;
     }
