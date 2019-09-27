@@ -28,6 +28,9 @@ public interface GroupDao {
     @Query("SELECT * FROM group_table ORDER BY updated_at DESC LIMIT 1")
     LiveData<Group> getMostRecentGroup();
 
+    @Query("SELECT * FROM group_table WHERE name = ''")
+    LiveData<Group> getTheNewGroup();
+
     @Query("SELECT * FROM group_table WHERE name != '' ORDER BY updated_at DESC")
     LiveData<List<Group>> getAllGroups();
 }

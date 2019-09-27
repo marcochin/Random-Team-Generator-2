@@ -49,6 +49,10 @@ public class Group implements Parcelable {
         this.updatedAt = updatedAt;
     }
 
+    public static Group createNewGroup(){
+        return new Group(NEW_GROUP_NAME, null, System.currentTimeMillis());
+    }
+
     // Id should not go in constructor because it is auto-generated. If it was in constructor
     // we would have no way to create the object correctly ourselves. We have a setter for
     // id that is only used by Room to create the obj.

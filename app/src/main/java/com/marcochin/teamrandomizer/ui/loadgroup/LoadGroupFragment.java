@@ -1,5 +1,6 @@
 package com.marcochin.teamrandomizer.ui.loadgroup;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +13,11 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.di.viewmodelfactory.ViewModelProviderFactory;
 import com.marcochin.teamrandomizer.model.Group;
+import com.marcochin.teamrandomizer.ui.UIAction;
 import com.marcochin.teamrandomizer.ui.loadgroup.adapters.GroupListAdapter;
 
 import java.util.List;
@@ -23,12 +26,33 @@ import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
-public class LoadGroupFragment extends DaggerFragment {
+public class LoadGroupFragment extends DaggerFragment implements View.OnClickListener{
     @Inject
     ViewModelProviderFactory mViewModelProviderFactory;
 
     private GroupListAdapter mListAdapter;
+    private RecyclerView mRecyclerView;
+
     private LoadGroupViewModel mViewModel;
+
+    private OnActionReceiver mOnActionReciever;
+
+    public interface OnActionReceiver{
+        void onNewGroupRequested();
+        void onGroupSelected(Group group);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        if(context instanceof OnActionReceiver){
+            mOnActionReciever = (OnActionReceiver) context;
+        }else{
+            throw new RuntimeException(
+                    context.toString() + " must implement " + OnActionReceiver.class.getSimpleName());
+        }
+    }
 
     @Nullable
     @Override
@@ -39,9 +63,11 @@ public class LoadGroupFragment extends DaggerFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        RecyclerView recyclerView = view.findViewById(R.id.fl_recycler_view);
+        mRecyclerView = view.findViewById(R.id.fl_recycler_view);
+        ViewGroup newGroupButton = view.findViewById(R.id.fl_new_group_btn);
+        newGroupButton.setOnClickListener(this);
 
-        setupRecyclerView(recyclerView);
+        setupRecyclerView(mRecyclerView);
 
         // Retrieve the viewModel
         mViewModel = ViewModelProviders.of(this, mViewModelProviderFactory).get(LoadGroupViewModel.class);
@@ -63,14 +89,20 @@ public class LoadGroupFragment extends DaggerFragment {
         mListAdapter.setOnItemClickListener(new GroupListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position, Group group) {
-//                mViewModel.togglePlayerCheckBox(position);
+                if(mOnActionReciever != null){
+                    mOnActionReciever.onGroupSelected(group);
+                }
             }
 
             @Override
             public void onDeleteClick(int position, Group group) {
-                mViewModel.deleteGroup(position);
+                mViewModel.deleteGroup(group.getId(), position);
             }
         });
+    }
+
+    private void loadAllGroups() {
+        mViewModel.loadAllGroups();
     }
 
     private void observeLiveData(){
@@ -80,9 +112,47 @@ public class LoadGroupFragment extends DaggerFragment {
                 mListAdapter.submitList(groups);
             }
         });
+
+        mViewModel.getActionLiveData().observe(this, new Observer<UIAction<Integer>>() {
+            @Override
+            public void onChanged(UIAction<Integer> uiAction) {
+                if (uiAction == null) {
+                    return;
+                }
+
+                switch (uiAction.action) {
+                    case LoadGroupAction.GROUP_DELETED:
+                        handleGroupDeletedAction(uiAction);
+                        mViewModel.clearActionLiveData();
+                        break;
+
+                    case LoadGroupAction.SHOW_MSG:
+                        handleShowMessageAction(uiAction);
+                        mViewModel.clearActionLiveData();
+                        break;
+                }
+            }
+        });
     }
 
-    private void loadAllGroups() {
-        mViewModel.loadAllGroups();
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.fl_new_group_btn:
+                if(mOnActionReciever != null) {
+                    mOnActionReciever.onNewGroupRequested();
+                }
+                break;
+        }
+    }
+
+    private void handleGroupDeletedAction(UIAction uiAction){
+        // Check if the deleted group is in current loaded group. If so clear. MAYYBE.
+    }
+
+    private void handleShowMessageAction(UIAction uiAction){
+        if(uiAction.message != null) {
+            Snackbar.make(mRecyclerView, uiAction.message, Snackbar.LENGTH_SHORT);
+        }
     }
 }

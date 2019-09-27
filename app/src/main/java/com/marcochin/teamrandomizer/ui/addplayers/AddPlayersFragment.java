@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.Snackbar;
 import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.di.viewmodelfactory.ViewModelProviderFactory;
+import com.marcochin.teamrandomizer.model.Group;
 import com.marcochin.teamrandomizer.model.Player;
 import com.marcochin.teamrandomizer.ui.UIAction;
 import com.marcochin.teamrandomizer.ui.addplayers.adapters.PlayerListAdapter;
@@ -454,7 +455,15 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     public void setGroupName(String groupName){
         // We set this to true here because the user needs to use the keyboard to enter the group name.
         mIsKeyboardShowingFalsePositive = true;
-        mViewModel.setGroupName(groupName);
+        mViewModel.updateGroupName(groupName);
+    }
+
+    public void startNewGroup(){
+        mViewModel.startNewGroup();
+    }
+
+    public void setGroup(Group group){
+        mViewModel.setGroup(group, true);
     }
 
 

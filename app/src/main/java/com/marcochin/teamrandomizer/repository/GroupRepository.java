@@ -128,6 +128,10 @@ public class GroupRepository {
         return mGroupDao.getMostRecentGroup();
     }
 
+    public LiveData<Group> getTheNewGroup(){
+        return mGroupDao.getTheNewGroup();
+    }
+
     public LiveData<List<Group>> getAllGroups() {
         return mGroupDao.getAllGroups();
     }

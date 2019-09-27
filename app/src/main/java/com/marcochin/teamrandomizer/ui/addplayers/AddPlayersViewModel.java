@@ -45,7 +45,7 @@ public class AddPlayersViewModel extends ViewModel {
      * If you press the home button immediately when you open the app, it will trigger autoSave
      * while it is trying to loadMostRecentGroup and will cause a crash. This is to prevent that.
      */
-    private boolean mLoadingGroupInProgress;
+    private boolean mLoadingMostRecentGroup;
 
     private CheckboxButtonState mCheckBoxButtonState = CheckboxButtonState.GONE;
 
@@ -62,7 +62,7 @@ public class AddPlayersViewModel extends ViewModel {
         mActionLiveData = new MutableLiveData<>();
         mIncludedPlayersList = new ArrayList<>();
 
-        mCurrentGroup = new Group(Group.NEW_GROUP_NAME, null, System.currentTimeMillis());
+        mCurrentGroup = Group.createNewGroup();
         ArrayList<Player> playerList = ListUtil.csvToPlayerList(mCurrentGroup.getPlayers());
         //TODO remove test code
 //        for (int i = 0; i < 100; i++) {
@@ -167,18 +167,43 @@ public class AddPlayersViewModel extends ViewModel {
         }
     }
 
-    public void setGroup(Group group) {
-        mCurrentGroup = group;
+    public void startNewGroup(){
+        if(mCurrentGroup.getName().equals(Group.NEW_GROUP_NAME)){
+            // The current group is a new group
+            Group group = Group.createNewGroup();
+            group.setId(mCurrentGroup.getId()); // carry over the id
+            setGroup(group, false);
+
+        }else{
+            // The current group is a saved group
+            final LiveData<Group> source = mGroupRepository.getTheNewGroup();
+            mPlayerListLiveData.addSource(source, new Observer<Group>() {
+                @Override
+                public void onChanged(Group group) {
+                    if(group != null){
+                        setGroup(group, true);
+                    }else{
+                        setGroup(Group.createNewGroup(), true);
+                    }
+
+                    mPlayerListLiveData.removeSource(source);
+                }
+            });
+        }
     }
 
-    void setGroupName(String groupName) {
-        if (ValidationUtil.validateGroupName(groupName)) {
-            mGroupNameLiveData.setValue(groupName);
-            updateGroup(true, GroupRepository.UpdateMessage.TYPE_UPDATE);
-
-        } else {
-            showMessage(MSG_INVALID_GROUP_NAME);
+    public void setGroup(Group group, boolean autoSavePrevGroup) {
+        // Don't auto save if it has no id. It's ok new groups are disposable!
+        if(autoSavePrevGroup && mCurrentGroup.getId() != Group.NO_ID) {
+            updateGroup(false, false,  GroupRepository.UpdateMessage.TYPE_SAVE);
         }
+
+        ArrayList<Player> playerList = ListUtil.csvToPlayerList(group.getPlayers());
+        mPlayerListLiveData.setValue(playerList);
+        mTotalPlayersLiveData.setValue(playerList.size());
+        mGroupNameLiveData.setValue(group.getName());
+
+        mCurrentGroup = group;
     }
 
     ArrayList<Player> getIncludedPlayersList() {
@@ -229,7 +254,7 @@ public class AddPlayersViewModel extends ViewModel {
     void autoSaveGroup() {
         // If app is starting and trying to load the most recent group.
         // We can't let auto save activate or else it will override the most recent group.
-        if (mLoadingGroupInProgress) {
+        if (mLoadingMostRecentGroup) {
             return;
         }
 
@@ -237,7 +262,7 @@ public class AddPlayersViewModel extends ViewModel {
             insertGroup(Group.NEW_GROUP_NAME, false);
 
         } else {
-            updateGroup(false);
+            updateGroup( false);
         }
     }
 
@@ -283,11 +308,11 @@ public class AddPlayersViewModel extends ViewModel {
         });
     }
 
-    private void updateGroup(final boolean showMsg){
-        updateGroup(showMsg, GroupRepository.UpdateMessage.TYPE_SAVE);
+    private void updateGroup(boolean showMsg){
+        updateGroup(true, showMsg, GroupRepository.UpdateMessage.TYPE_SAVE);
     }
 
-    private void updateGroup(final boolean showMsg, GroupRepository.UpdateMessage msgType) {
+    private void updateGroup(final boolean allowSuccessCallback, final boolean showMsg, GroupRepository.UpdateMessage msgType) {
         final Group group = new Group(mCurrentGroup.getId(),
                 mGroupNameLiveData.getValue(),
                 ListUtil.playerListToCsv(mPlayerListLiveData.getValue()),
@@ -299,7 +324,7 @@ public class AddPlayersViewModel extends ViewModel {
         mPlayerListLiveData.addSource(source, new Observer<Resource<Integer>>() {
             @Override
             public void onChanged(Resource<Integer> resource) {
-                if (resource.status == Resource.Status.SUCCESS) {
+                if (allowSuccessCallback && resource.status == Resource.Status.SUCCESS) {
                     mGroupNameLiveData.setValue(group.getName());
                     mCurrentGroup = group;
                 }
@@ -312,8 +337,18 @@ public class AddPlayersViewModel extends ViewModel {
         });
     }
 
+    void updateGroupName(String groupName) {
+        if (ValidationUtil.validateGroupName(groupName)) {
+            mGroupNameLiveData.setValue(groupName);
+            updateGroup(true, true, GroupRepository.UpdateMessage.TYPE_UPDATE);
+
+        } else {
+            showMessage(MSG_INVALID_GROUP_NAME);
+        }
+    }
+
     void loadMostRecentGroup() {
-        mLoadingGroupInProgress = true;
+        mLoadingMostRecentGroup = true;
 
         // We piggyback on PlayerLists active/inactive states but also use liveData as our async
         // callback for fetching from db.
@@ -329,7 +364,7 @@ public class AddPlayersViewModel extends ViewModel {
                     mCurrentGroup = group;
                 }
                 mPlayerListLiveData.removeSource(source);
-                mLoadingGroupInProgress = false;
+                mLoadingMostRecentGroup = false;
             }
         });
     }

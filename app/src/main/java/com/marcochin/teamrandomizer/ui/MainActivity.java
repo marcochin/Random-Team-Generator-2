@@ -8,15 +8,19 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.marcochin.teamrandomizer.R;
+import com.marcochin.teamrandomizer.model.Group;
 import com.marcochin.teamrandomizer.ui.addplayers.AddPlayersFragment;
 import com.marcochin.teamrandomizer.ui.addplayers.dialogs.editgroupname.EditGroupNameDialog;
 import com.marcochin.teamrandomizer.ui.addplayers.dialogs.savegroup.SaveGroupDialog;
 import com.marcochin.teamrandomizer.ui.loadgroup.LoadGroupFragment;
 
 public class MainActivity extends AppCompatActivity implements SaveGroupDialog.GroupNameReceiver,
-        EditGroupNameDialog.GroupNameReceiver {
+        EditGroupNameDialog.GroupNameReceiver, LoadGroupFragment.OnActionReceiver {
+
     private AddPlayersFragment mAddPlayersFragment;
     private LoadGroupFragment mLoadGroupFragment;
+
+    private BottomNavigationView mBottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements SaveGroupDialog.G
         setContentView(R.layout.activity_main);
 
         // Find Ui
-        BottomNavigationView bottomNavigationView = findViewById(R.id.main_bottom_nav);
+        mBottomNavigationView = findViewById(R.id.main_bottom_nav);
 
         // Find Fragments
         mAddPlayersFragment = (AddPlayersFragment) getSupportFragmentManager().findFragmentById(R.id.addPlayersFragment);
@@ -34,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements SaveGroupDialog.G
         getSupportFragmentManager().beginTransaction().hide(mLoadGroupFragment).commit();
 
         // Setup the BottomNavigationView callback
-        setupBottomViewNavigation(bottomNavigationView);
+        setupBottomViewNavigation(mBottomNavigationView);
     }
 
     private void setupBottomViewNavigation(BottomNavigationView bottomNavigationView) {
@@ -69,5 +73,19 @@ public class MainActivity extends AppCompatActivity implements SaveGroupDialog.G
     @Override
     public void onReceiveNameFromEditGroupNameDialog(String groupName) {
         mAddPlayersFragment.setGroupName(groupName);
+    }
+
+    // LoadGroupFragment.OnActionReceiver
+    @Override
+    public void onNewGroupRequested() {
+        mAddPlayersFragment.startNewGroup();
+        mBottomNavigationView.setSelectedItemId(R.id.addPlayersFragment);
+    }
+
+    // LoadGroupFragment.OnActionReceiver
+    @Override
+    public void onGroupSelected(Group group) {
+        mAddPlayersFragment.setGroup(group);
+        mBottomNavigationView.setSelectedItemId(R.id.addPlayersFragment);
     }
 }
