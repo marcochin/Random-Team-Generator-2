@@ -181,7 +181,10 @@ public class AddPlayersViewModel extends ViewModel {
                 @Override
                 public void onChanged(Group group) {
                     if(group != null){
-                        setGroup(group, true);
+                        Group newGroup = Group.createNewGroup();
+                        newGroup.setId(group.getId());
+                        setGroup(newGroup, true);
+
                     }else{
                         setGroup(Group.createNewGroup(), true);
                     }
