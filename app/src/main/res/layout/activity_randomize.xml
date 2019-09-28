@@ -18,18 +18,26 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_share_black_svg" />
 
-    <ImageButton
+    <FrameLayout
         android:id="@+id/ar_copy_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="4dp"
         android:background="?android:selectableItemBackgroundBorderless"
-        android:contentDescription="@string/cd_copy_teams"
-        android:padding="8dp"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintEnd_toStartOf="@+id/ar_share_btn"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_copy_black_svg" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/cd_new_group"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_copy_black_svg" />
+    </FrameLayout>
 
     <ImageButton
         android:id="@+id/ar_back_btn"
