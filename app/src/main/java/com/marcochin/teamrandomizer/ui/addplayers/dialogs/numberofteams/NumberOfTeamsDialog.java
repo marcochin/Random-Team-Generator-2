@@ -1,5 +1,6 @@
 package com.marcochin.teamrandomizer.ui.addplayers.dialogs.numberofteams;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.model.Player;
 import com.marcochin.teamrandomizer.ui.UIAction;
+import com.marcochin.teamrandomizer.ui.randomize.RandomizeActivity;
 
 import java.util.ArrayList;
 
@@ -58,7 +60,7 @@ public class NumberOfTeamsDialog extends DialogFragment implements View.OnClickL
         mViewModel = ViewModelProviders.of(this).get(NumberOfTeamsViewModel.class);
         observeLiveData();
 
-        setupArguments();
+        setupArguments(); // Make this the first setup as other setups might depend on it
         setupEditText(mNumberOfTeamsEditText);
     }
 
@@ -151,6 +153,12 @@ public class NumberOfTeamsDialog extends DialogFragment implements View.OnClickL
 
     private void handleTeamsValidatedAction(UIAction<Integer> numberOfTeamsAction) {
         // Start Randomize Activity
+        Intent randomizeActivityIntent = new Intent(getActivity(), RandomizeActivity.class);
+        randomizeActivityIntent.putParcelableArrayListExtra(RandomizeActivity.BUNDLE_KEY_PLAYER_LIST, mViewModel.getPlayerListLiveData().getValue());
+        if(numberOfTeamsAction.data != null) {
+            randomizeActivityIntent.putExtra(RandomizeActivity.BUNDLE_KEY_NUMBER_OF_TEAMS, (int) numberOfTeamsAction.data); // data = number of teams
+        }
+        startActivity(randomizeActivityIntent);
     }
 
     private void handleShowMessageAction(UIAction<Integer> numberOfTeamsAction) {

@@ -113,12 +113,12 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         saveButton.setOnClickListener(this);
         checkboxButton.setOnClickListener(this);
 
-        setupRecyclerView(mRecyclerView);
-        setupEditText(mNameEditText);
-
         // Retrieve the viewModel
         mViewModel = ViewModelProviders.of(this, mViewModelProviderFactory).get(AddPlayersViewModel.class);
         observeLiveData();
+
+        setupRecyclerView(mRecyclerView);
+        setupEditText(mNameEditText);
 
         // We load the last opened group for convenience.
         loadLastOpenedGroup();

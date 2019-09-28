@@ -35,6 +35,10 @@ public class NumberOfTeamsViewModel extends ViewModel {
 
             }else if(mPlayerListLiveData.getValue() != null && numTeams > mPlayerListLiveData.getValue().size()){
                 showMessage(MSG_TOO_MANY_TEAMS);
+
+            }else{
+                // User entered valid number of teams
+                mActionLiveData.setValue(NumberOfTeamsAction.teamsValidated(numTeams, null));
             }
 
         }catch (NumberFormatException e){

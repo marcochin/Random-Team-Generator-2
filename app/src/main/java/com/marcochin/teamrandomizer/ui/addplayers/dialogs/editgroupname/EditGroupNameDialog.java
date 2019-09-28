@@ -73,7 +73,7 @@ public class EditGroupNameDialog extends DialogFragment implements View.OnClickL
         mViewModel = ViewModelProviders.of(this).get(EditGroupNameViewModel.class);
         observeLiveData();
 
-        setupArguments();
+        setupArguments(); // Make this the first setup as other setups might depend on it
         setupEditText(mGroupNameEditText);
     }
 
