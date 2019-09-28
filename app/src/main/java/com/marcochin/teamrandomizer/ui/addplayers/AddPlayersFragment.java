@@ -3,6 +3,7 @@ package com.marcochin.teamrandomizer.ui.addplayers;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -139,7 +140,16 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         // hits home button etc even if fragment if hidden.
 
         removeKeyboardLayoutListener();
-        // Call autoSaveGroup before onPause super method just as a precaution before LiveData inactive state
+
+        // When RandomizeActivity comes in front of the AddPlayersFragment, onPause will get called
+        // and calls removeKeyboardLayoutListener(). Our mKeyboardLayoutListener will be removed
+        // so we have to manually set this to false, to sync keyboard state back up or else layout might
+        // get messed up.
+        onKeyboardVisibilityChanged(false);
+
+        // Call autoSaveGroup before onPause super method is called because LiveData will go into
+        // inactive state and our call won't go through. Calling autoSaveGroup in onStop is too late
+        // as LiveData will go in inactive state while onPause.
         mViewModel.autoSaveGroup();
 
         super.onPause();
@@ -290,6 +300,8 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
             layoutParams.topMargin = 0;
             mTopConstraint.setLayoutParams(layoutParams);
         }
+
+        mIsKeyboardShowing = opened;
     }
 
     @Override
@@ -506,13 +518,13 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
                 if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
                     // Keyboard is opened
                     if (!mIsKeyboardShowing) {
-                        mIsKeyboardShowing = true;
+                        Log.d("meme", "onKeyboardVisibilityChanged: true");
                         onKeyboardVisibilityChanged(true);
                     }
                 } else {
                     // Keyboard is closed
                     if (mIsKeyboardShowing) {
-                        mIsKeyboardShowing = false;
+                        Log.d("meme", "onKeyboardVisibilityChanged: false");
                         onKeyboardVisibilityChanged(false);
                     }
                 }
