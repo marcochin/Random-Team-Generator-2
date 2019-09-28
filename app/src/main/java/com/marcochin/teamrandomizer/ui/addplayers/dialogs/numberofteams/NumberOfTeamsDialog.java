@@ -30,6 +30,8 @@ public class NumberOfTeamsDialog extends DialogFragment implements View.OnClickL
     public static final String TAG = NumberOfTeamsDialog.class.getSimpleName();
     public static final String BUNDLE_KEY_PLAYERS_LIST = "players_list";
 
+    private static final String DEFAULT_TEAMS = "2";
+
     private TextInputLayout mTextInputLayout;
     private TextInputEditText mNumberOfTeamsEditText;
     private TextView mTotalPlayerText;
@@ -86,6 +88,8 @@ public class NumberOfTeamsDialog extends DialogFragment implements View.OnClickL
                 return true;
             }
         });
+
+        editText.setText(DEFAULT_TEAMS);
 
         // Some phones focus editText automatically, some don't.
         // Add this here for the phones that don't
@@ -159,6 +163,8 @@ public class NumberOfTeamsDialog extends DialogFragment implements View.OnClickL
             randomizeActivityIntent.putExtra(RandomizeActivity.BUNDLE_KEY_NUMBER_OF_TEAMS, (int) numberOfTeamsAction.data); // data = number of teams
         }
         startActivity(randomizeActivityIntent);
+
+        dismiss();
     }
 
     private void handleShowMessageAction(UIAction<Integer> numberOfTeamsAction) {
