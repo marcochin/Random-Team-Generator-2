@@ -3,6 +3,7 @@ package com.marcochin.teamrandomizer.ui.randomize;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.marcochin.teamrandomizer.R;
@@ -10,9 +11,7 @@ import com.marcochin.teamrandomizer.model.Player;
 
 import java.util.List;
 
-import dagger.android.support.DaggerAppCompatActivity;
-
-public class RandomizeActivity extends DaggerAppCompatActivity {
+public class RandomizeActivity extends AppCompatActivity {
     public static final String BUNDLE_KEY_PLAYER_LIST = "player_list";
     public static final String BUNDLE_KEY_NUMBER_OF_TEAMS = "number_of_teams";
 
