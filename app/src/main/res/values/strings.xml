@@ -32,5 +32,7 @@
     <string name="cd_back">Back</string>
 
     <!-- Placeholder Strings-->
-    <string name="ph_total_players">Total Players: %1$s</string>
+    <string name="ph_total_players">Total Players: %1$d</string> <!-- Total Player: 16 -->
+    <string name="ph_team_number">Team %1$d</string> <!-- Team 1 -->
+    <string name="ph_player_number">%1$d. %2$s\n</string> <!-- 9. Marco -->
 </resources>

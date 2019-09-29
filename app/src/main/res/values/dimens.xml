@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="dialog_edit_text_width">280dp</dimen>
+    <!-- EditNameDialog && SaveGroupDialog -->
+    <!-- 288dp just feels like a good size for small phones...-->
+    <dimen name="dialog_edit_text_width">288dp</dimen>
     <dimen name="dialog_edit_text_width_numeric">220dp</dimen>
+
+    <!-- item_team.xml -->
+    <dimen name="it_padding_top">8dp</dimen>
+    <dimen name="it_padding_bottom">16dp</dimen>
+    <dimen name="it_text_size">16sp</dimen>
+    <dimen name="it_players_text_margin_top">4dp</dimen>
 </resources>

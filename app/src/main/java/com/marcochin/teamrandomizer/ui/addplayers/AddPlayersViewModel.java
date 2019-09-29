@@ -236,6 +236,7 @@ public class AddPlayersViewModel extends ViewModel {
         mGroupNameLiveData.setValue(group.getName()); // Update groupName UI
 
         mCurrentGroup = group;
+        mCurrentGroup = group;
     }
 
     public void syncGroupDeletion(int deletedGroupId) {

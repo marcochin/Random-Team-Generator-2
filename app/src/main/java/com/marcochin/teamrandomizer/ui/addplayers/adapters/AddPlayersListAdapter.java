@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.model.Player;
 
-public class PlayerListAdapter extends ListAdapter<Player, PlayerListAdapter.PlayerHolder> {
+public class AddPlayersListAdapter extends ListAdapter<Player, AddPlayersListAdapter.PlayerHolder> {
     private OnItemClickListener mOnItemClickListener;
 
     public interface OnItemClickListener {
@@ -39,7 +39,7 @@ public class PlayerListAdapter extends ListAdapter<Player, PlayerListAdapter.Pla
         }
     };
 
-    public PlayerListAdapter() {
+    public AddPlayersListAdapter() {
         super(DIFF_CALLBACK);
     }
 

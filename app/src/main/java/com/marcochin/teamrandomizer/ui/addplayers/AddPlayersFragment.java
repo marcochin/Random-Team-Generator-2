@@ -31,7 +31,7 @@ import com.marcochin.teamrandomizer.di.viewmodelfactory.ViewModelProviderFactory
 import com.marcochin.teamrandomizer.model.Group;
 import com.marcochin.teamrandomizer.model.Player;
 import com.marcochin.teamrandomizer.ui.UIAction;
-import com.marcochin.teamrandomizer.ui.addplayers.adapters.PlayerListAdapter;
+import com.marcochin.teamrandomizer.ui.addplayers.adapters.AddPlayersListAdapter;
 import com.marcochin.teamrandomizer.ui.addplayers.dialogs.editgroupname.EditGroupNameDialog;
 import com.marcochin.teamrandomizer.ui.addplayers.dialogs.numberofteams.NumberOfTeamsDialog;
 import com.marcochin.teamrandomizer.ui.addplayers.dialogs.savegroup.SaveGroupDialog;
@@ -57,7 +57,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
 
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
-    private PlayerListAdapter mListAdapter;
+    private AddPlayersListAdapter mListAdapter;
     private RecyclerView.ItemAnimator mListItemAnimator;
 
     private AddPlayersViewModel mViewModel;
@@ -179,7 +179,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         recyclerView.setHasFixedSize(true);
 
         // Set adapter
-        mListAdapter = new PlayerListAdapter();
+        mListAdapter = new AddPlayersListAdapter();
         recyclerView.setAdapter(mListAdapter);
 
         // Set LayoutManager
@@ -187,7 +187,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         recyclerView.setLayoutManager(mLinearLayoutManager);
 
         // Set RecyclerView OnItemClickListener
-        mListAdapter.setOnItemClickListener(new PlayerListAdapter.OnItemClickListener() {
+        mListAdapter.setOnItemClickListener(new AddPlayersListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position, Player player) {
                 mViewModel.togglePlayerCheckBox(position);
@@ -239,7 +239,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         mViewModel.getTotalPlayersLiveData().observe(this, new Observer<Integer>() {
             @Override
             public void onChanged(Integer integer) {
-                mNumPlayersText.setText(getString(R.string.ph_total_players, integer.toString()));
+                mNumPlayersText.setText(getString(R.string.ph_total_players, integer));
             }
         });
 

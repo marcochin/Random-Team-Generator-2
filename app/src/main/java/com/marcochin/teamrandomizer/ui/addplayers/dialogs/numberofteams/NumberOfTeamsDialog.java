@@ -108,7 +108,7 @@ public class NumberOfTeamsDialog extends DialogFragment implements View.OnClickL
             @Override
             public void onChanged(ArrayList<Player> players) {
                 if(players != null) {
-                    mTotalPlayerText.setText(getString(R.string.ph_total_players, Integer.toString(players.size())));
+                    mTotalPlayerText.setText(getString(R.string.ph_total_players, players.size()));
                 }
             }
         });

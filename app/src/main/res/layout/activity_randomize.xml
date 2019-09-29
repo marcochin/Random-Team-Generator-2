@@ -53,6 +53,7 @@
         app:srcCompat="@drawable/ic_back_black_svg" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ar_recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"

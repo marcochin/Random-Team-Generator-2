@@ -1,15 +1,12 @@
 package com.marcochin.teamrandomizer.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "group_table")
-public class Group implements Parcelable {
+public class Group {
     @Ignore
     public static final int NO_ID = 0; // Primary key can't be negative
 
@@ -87,41 +84,5 @@ public class Group implements Parcelable {
 
     public void setUpdatedAt(long updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-
-    // ---------------------------------------------------------------------------
-    // Parcelable implementation
-
-    protected Group(Parcel in) {
-        id = in.readInt();
-        name = in.readString();
-        players = in.readString();
-        updatedAt = in.readLong();
-    }
-
-    public static final Creator<Group> CREATOR = new Creator<Group>() {
-        @Override
-        public Group createFromParcel(Parcel in) {
-            return new Group(in);
-        }
-
-        @Override
-        public Group[] newArray(int size) {
-            return new Group[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(id);
-        parcel.writeString(name);
-        parcel.writeString(players);
-        parcel.writeLong(updatedAt);
     }
 }

@@ -1,5 +1,8 @@
 package com.marcochin.teamrandomizer.util;
 
+import android.content.Context;
+import android.util.DisplayMetrics;
+
 import com.marcochin.teamrandomizer.model.Player;
 
 import java.util.ArrayList;
@@ -33,5 +36,17 @@ public class ListUtil {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Use to calculate the number of columns for the GridLayoutManager to fill the width of the screen
+     * https://stackoverflow.com/a/38472370/5673746
+     * @param context Context
+     * @param columnWidthPx - Width of the grid item in px
+     * @return Numbers of columns to fill width of screen
+     */
+    public static int calculateGridColumns(Context context, float columnWidthPx) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        return (int)(displayMetrics.widthPixels / columnWidthPx);
     }
 }

@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.model.Group;
 
-public class GroupListAdapter extends ListAdapter<Group, GroupListAdapter.GroupHolder> {
+public class LoadGroupListAdapter extends ListAdapter<Group, LoadGroupListAdapter.GroupHolder> {
     private OnItemClickListener mOnItemClickListener;
 
     public interface OnItemClickListener {
@@ -38,7 +38,7 @@ public class GroupListAdapter extends ListAdapter<Group, GroupListAdapter.GroupH
         }
     };
 
-    public GroupListAdapter() {
+    public LoadGroupListAdapter() {
         super(DIFF_CALLBACK);
     }
 

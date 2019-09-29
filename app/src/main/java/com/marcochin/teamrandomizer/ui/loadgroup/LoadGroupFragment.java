@@ -18,7 +18,7 @@ import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.di.viewmodelfactory.ViewModelProviderFactory;
 import com.marcochin.teamrandomizer.model.Group;
 import com.marcochin.teamrandomizer.ui.UIAction;
-import com.marcochin.teamrandomizer.ui.loadgroup.adapters.GroupListAdapter;
+import com.marcochin.teamrandomizer.ui.loadgroup.adapters.LoadGroupListAdapter;
 
 import java.util.List;
 
@@ -30,12 +30,12 @@ public class LoadGroupFragment extends DaggerFragment implements View.OnClickLis
     @Inject
     ViewModelProviderFactory mViewModelProviderFactory;
 
-    private GroupListAdapter mListAdapter;
+    private LoadGroupListAdapter mListAdapter;
     private RecyclerView mRecyclerView;
 
     private LoadGroupViewModel mViewModel;
 
-    private OnActionReceiver mOnActionReciever;
+    private OnActionReceiver mOnActionReceiver;
 
     public interface OnActionReceiver{
         void onNewGroupRequested();
@@ -48,7 +48,7 @@ public class LoadGroupFragment extends DaggerFragment implements View.OnClickLis
         super.onAttach(context);
 
         if(context instanceof OnActionReceiver){
-            mOnActionReciever = (OnActionReceiver) context;
+            mOnActionReceiver = (OnActionReceiver) context;
         }else{
             throw new RuntimeException(
                     context.toString() + " must implement " + OnActionReceiver.class.getSimpleName());
@@ -80,18 +80,18 @@ public class LoadGroupFragment extends DaggerFragment implements View.OnClickLis
         recyclerView.setHasFixedSize(true);
 
         // Set adapter
-        mListAdapter = new GroupListAdapter();
+        mListAdapter = new LoadGroupListAdapter();
         recyclerView.setAdapter(mListAdapter);
 
         // Set LayoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         // Set RecyclerView OnItemClickListener
-        mListAdapter.setOnItemClickListener(new GroupListAdapter.OnItemClickListener() {
+        mListAdapter.setOnItemClickListener(new LoadGroupListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position, Group group) {
-                if(mOnActionReciever != null){
-                    mOnActionReciever.onGroupSelected(group);
+                if(mOnActionReceiver != null){
+                    mOnActionReceiver.onGroupSelected(group);
                 }
             }
 
@@ -140,16 +140,16 @@ public class LoadGroupFragment extends DaggerFragment implements View.OnClickLis
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.fl_new_group_btn:
-                if(mOnActionReciever != null) {
-                    mOnActionReciever.onNewGroupRequested();
+                if(mOnActionReceiver != null) {
+                    mOnActionReceiver.onNewGroupRequested();
                 }
                 break;
         }
     }
 
     private void handleGroupDeletedAction(UIAction<Integer> uiAction){
-        if(mOnActionReciever != null && uiAction.data != null) {
-            mOnActionReciever.onGroupDeleted(uiAction.data); // data = deleted group id
+        if(mOnActionReceiver != null && uiAction.data != null) {
+            mOnActionReceiver.onGroupDeleted(uiAction.data); // data = deleted group id
         }
     }
 
