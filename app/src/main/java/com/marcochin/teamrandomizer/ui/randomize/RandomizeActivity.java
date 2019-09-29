@@ -57,7 +57,8 @@ public class RandomizeActivity extends AppCompatActivity {
         recyclerView.setAdapter(mListAdapter);
 
         // Set LayoutManager
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        int columnCount = getResources().getInteger(R.integer.ar_grid_column_count);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, columnCount);
         recyclerView.setLayoutManager(gridLayoutManager);
     }
 

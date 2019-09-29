@@ -25,5 +25,4 @@
         android:layout_marginTop="@dimen/it_players_text_margin_top"
         android:textSize="@dimen/it_text_size"
         tools:text="1. Marco" />
-
 </LinearLayout>
