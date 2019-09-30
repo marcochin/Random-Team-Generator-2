@@ -1,19 +1,20 @@
 package com.marcochin.teamrandomizer.ui.randomize;
 
+import android.view.View;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.marcochin.teamrandomizer.model.Player;
 import com.marcochin.teamrandomizer.model.Team;
+import com.marcochin.teamrandomizer.ui.UIAction;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
-
-import javax.inject.Named;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -24,17 +25,17 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class RandomizeViewModel extends ViewModel {
+    private static final String TAG = RandomizeViewModel.class.getSimpleName();
+
     private int mNumberOfTeams;
     private List<Player> mPlayerList;
 
     private MutableLiveData<List<Team>> mTeamListLiveData;
+    private MutableLiveData<UIAction<Integer>> mActionLiveData;
 
-    public RandomizeViewModel(@Named("players_list") List<Player> playerList,
-                              @Named("number_of_teams") int numberOfTeams) {
-
-        mPlayerList = playerList;
-        mNumberOfTeams = numberOfTeams;
+    public RandomizeViewModel() {
         mTeamListLiveData = new MutableLiveData<>();
+        mActionLiveData = new MutableLiveData<>();
     }
 
     void setRandomizeParams(List<Player> playerList, int numberOfTeams) {
@@ -43,10 +44,7 @@ public class RandomizeViewModel extends ViewModel {
     }
 
     void randomize() {
-        // TODO Might have to show something in the beginning before delay animation
-        // or user might see blank screen
-
-        Observable.range(0, 5)
+        Observable.range(0, 7)
                 .concatMap(new Function<Integer, ObservableSource<List<Team>>>() {
                     @Override
                     public ObservableSource<List<Team>> apply(final Integer integer) throws Exception {
@@ -63,8 +61,8 @@ public class RandomizeViewModel extends ViewModel {
                 .subscribe(new Observer<List<Team>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        // Dispose maybe if user goes to onStop
-                        // TODO Hide randomize button
+                        // Hide randomize button
+                        mActionLiveData.setValue(RandomizeAction.changeRandomizeButtonVisiblity(View.INVISIBLE, null));
                     }
 
                     @Override
@@ -79,8 +77,7 @@ public class RandomizeViewModel extends ViewModel {
 
                     @Override
                     public void onComplete() {
-                        // TODO Show randomize again button
-                        // Also show randomize again button when observer is disposed
+                        mActionLiveData.setValue(RandomizeAction.changeRandomizeButtonVisiblity(View.VISIBLE, null));
                     }
                 });
     }
@@ -121,5 +118,9 @@ public class RandomizeViewModel extends ViewModel {
     // LiveData
     LiveData<List<Team>> getTeamListLiveData() {
         return mTeamListLiveData;
+    }
+
+    LiveData<UIAction<Integer>> getActionLiveData() {
+        return mActionLiveData;
     }
 }

@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/addPlayersFragment"
         android:icon="@drawable/ic_randomize_black_svg"
-        android:title="@string/nav_randomize"/>
+        android:title="@string/nav_randomize_tab"/>
 
     <item android:id="@+id/loadFragment"
         android:icon="@drawable/ic_load_black_svg"
-        android:title="@string/nav_load"/>
+        android:title="@string/nav_load_tab"/>
 </menu>

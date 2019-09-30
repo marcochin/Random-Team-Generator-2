@@ -47,9 +47,9 @@ public class AddPlayersViewModel extends ViewModel {
      */
     private boolean mLoadingMostRecentGroup;
 
-    private CheckboxButtonState mCheckBoxButtonState = CheckboxButtonState.GONE;
+    private CheckboxButtonMode mCheckBoxButtonMode = CheckboxButtonMode.GONE;
 
-    private enum CheckboxButtonState {
+    private enum CheckboxButtonMode {
         GONE, ALL_CHECKED, NONE_CHECKED
     }
 
@@ -86,7 +86,7 @@ public class AddPlayersViewModel extends ViewModel {
             Player player = new Player(name);
 
             // If checkBox state is on ALL_CHECKED or NONE_CHECKED we need to show the checkbox
-            if (!mCheckBoxButtonState.equals(CheckboxButtonState.GONE)) {
+            if (!mCheckBoxButtonMode.equals(CheckboxButtonMode.GONE)) {
                 player.setCheckboxVisible(true);
             }
 
@@ -121,7 +121,7 @@ public class AddPlayersViewModel extends ViewModel {
 
     void togglePlayerCheckBox(int pos) {
         // If checkBox button state is gone, we disallow toggling a player's included state
-        if (mCheckBoxButtonState == CheckboxButtonState.GONE) {
+        if (mCheckBoxButtonMode == CheckboxButtonMode.GONE) {
             return;
         }
 
@@ -147,27 +147,27 @@ public class AddPlayersViewModel extends ViewModel {
         }
     }
 
-    void toggleCheckBoxButton() {
+    void toggleCheckBoxMode() {
         List<Player> playerList = mPlayerListLiveData.getValue();
 
         if (playerList != null && !playerList.isEmpty()) {
             // Switching checkBox states
-            if (mCheckBoxButtonState == CheckboxButtonState.GONE) {
-                mCheckBoxButtonState = CheckboxButtonState.ALL_CHECKED;
+            if (mCheckBoxButtonMode == CheckboxButtonMode.GONE) {
+                mCheckBoxButtonMode = CheckboxButtonMode.ALL_CHECKED;
                 // Don't need to set total players here because GONE -> ALL CHECKED wont change the total
 
-            } else if (mCheckBoxButtonState == CheckboxButtonState.ALL_CHECKED) {
-                mCheckBoxButtonState = CheckboxButtonState.NONE_CHECKED;
+            } else if (mCheckBoxButtonMode == CheckboxButtonMode.ALL_CHECKED) {
+                mCheckBoxButtonMode = CheckboxButtonMode.NONE_CHECKED;
                 mTotalPlayersLiveData.setValue(0);
 
-            } else if (mCheckBoxButtonState == CheckboxButtonState.NONE_CHECKED) {
-                mCheckBoxButtonState = CheckboxButtonState.GONE;
+            } else if (mCheckBoxButtonMode == CheckboxButtonMode.NONE_CHECKED) {
+                mCheckBoxButtonMode = CheckboxButtonMode.GONE;
                 mTotalPlayersLiveData.setValue(playerList.size());
             }
 
             // Update player items to match the checkBox state
             for (Player player : playerList) {
-                switch (mCheckBoxButtonState) {
+                switch (mCheckBoxButtonMode) {
                     case GONE:
                         player.setCheckboxVisible(false);
                         player.setIncluded(true);

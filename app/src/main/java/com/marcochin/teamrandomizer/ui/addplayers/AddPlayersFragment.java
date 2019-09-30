@@ -104,14 +104,14 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         Button addButton = view.findViewById(R.id.fap_add_btn);
         Button clearButton = view.findViewById(R.id.fap_clear_btn);
         ImageButton saveButton = view.findViewById(R.id.fap_save_btn);
-        ImageButton checkboxButton = view.findViewById(R.id.fap_checkbox_btn);
+        ImageButton checkboxModeButton = view.findViewById(R.id.fap_checkbox_mode_btn);
 
         mGroupNameText.setOnClickListener(this);
         randomizeButton.setOnClickListener(this);
         addButton.setOnClickListener(this);
         clearButton.setOnClickListener(this);
         saveButton.setOnClickListener(this);
-        checkboxButton.setOnClickListener(this);
+        checkboxModeButton.setOnClickListener(this);
 
         // Retrieve the viewModel
         mViewModel = ViewModelProviders.of(this, mViewModelProviderFactory).get(AddPlayersViewModel.class);
@@ -330,8 +330,8 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
                 mViewModel.showSaveDialogOrSaveGroup();
                 break;
 
-            case R.id.fap_checkbox_btn:
-                mViewModel.toggleCheckBoxButton();
+            case R.id.fap_checkbox_mode_btn:
+                mViewModel.toggleCheckBoxMode();
                 break;
 
             case R.id.fap_group_name_text:

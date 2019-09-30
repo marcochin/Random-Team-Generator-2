@@ -54,6 +54,7 @@ public class RandomizeListAdapter extends RecyclerView.Adapter<RandomizeListAdap
 
     public void setList(List<Team> teamList){
         mTeamList = teamList;
+        notifyDataSetChanged();
     }
 
     class RandomTeamHolder extends RecyclerView.ViewHolder {

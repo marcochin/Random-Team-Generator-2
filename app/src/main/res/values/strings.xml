@@ -1,14 +1,17 @@
 <resources>
     <string name="app_name">Random</string>
 
+    <!-- RandomizeActivity -->
+    <string name="ar_randomize_again_btn">Randomize Again</string>
+
     <!-- Bottom Navigation Strings-->
-    <string name="nav_randomize">Randomize</string>
-    <string name="nav_load">Load</string>
+    <string name="nav_randomize_tab">Randomize</string>
+    <string name="nav_load_tab">Load</string>
 
     <!-- Fragment Add Players -->
-    <string name="fap_randomize">Randomize</string>
-    <string name="fap_add">Add</string>
-    <string name="fap_clear">Clear</string>
+    <string name="fap_randomize_btn">Randomize</string>
+    <string name="fap_add_btn">Add</string>
+    <string name="fap_clear_btn">Clear</string>
     <string name="fap_edit_text_hint">Name</string>
 
     <!-- Dialog Save Group-->
@@ -24,7 +27,7 @@
     <string name="dnot_positive_btn">Go</string>
 
     <!-- Content Descriptions -->
-    <string name="cd_toggle_checkboxes">Toggle checkboxes</string>
+    <string name="cd_checkbox_mode">Checkbox mode</string>
     <string name="cd_save">Save</string>
     <string name="cd_new_group">Create new group</string>
     <string name="cd_copy_teams">Copy teams to clipboard</string>

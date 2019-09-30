@@ -24,7 +24,7 @@
                 android:name="com.marcochin.teamrandomizer.ui.addplayers.AddPlayersFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:label="@string/nav_randomize"
+                android:label="@string/nav_randomize_tab"
                 tools:layout="@layout/fragment_add_players" />
 
             <fragment
@@ -32,7 +32,7 @@
                 android:name="com.marcochin.teamrandomizer.ui.loadgroup.LoadGroupFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:label="@string/nav_load"
+                android:label="@string/nav_load_tab"
                 tools:layout="@layout/fragment_load" />
         </FrameLayout>
 
