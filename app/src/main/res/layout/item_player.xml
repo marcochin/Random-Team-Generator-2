@@ -39,7 +39,7 @@
         android:clickable="true"
         android:focusable="true"
         android:paddingStart="15dp"
-        android:paddingEnd="15dp">
+        android:paddingEnd="17dp">
 
         <ImageView
             android:layout_width="18dp"
