@@ -60,8 +60,8 @@ public class EditGroupNameDialog extends DialogFragment implements View.OnClickL
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mTextInputLayout = view.findViewById(R.id.dget_group_name_input_layout);
-        mGroupNameEditText = view.findViewById(R.id.dget_group_name_edit_text);
+        mTextInputLayout = view.findViewById(R.id.dget_text_input_layout);
+        mGroupNameEditText = view.findViewById(R.id.dget_edit_text);
         Button cancelButton = view.findViewById(R.id.dget_cancel_btn);
         Button positiveButton = view.findViewById(R.id.dget_positive_btn);
 
