@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- EditNameDialog && SaveGroupDialog -->
-    <dimen name="dialog_generic_edit_text_width">320dp</dimen>
+    <!-- EditNameDialog, SaveGroupDialog, ClearListDialog, DeleteGroupDialog -->
+    <!-- main_element is the main content of the dialog like EditText, TextView -->
+    <dimen name="dialog_generic_main_element_width">320dp</dimen>
 </resources>

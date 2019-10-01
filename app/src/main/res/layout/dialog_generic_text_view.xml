@@ -7,24 +7,24 @@
 
     <TextView
         android:id="@+id/dgtv_text"
-        android:layout_width="@dimen/dialog_generic_edit_text_width"
+        android:layout_width="@dimen/dialog_generic_main_element_width"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:textSize="16sp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="24dp"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Add you text here">
-    </TextView>
+        tools:text="Add you text here"/>
 
     <Button
         android:id="@+id/dgtv_positive_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
         android:background="?android:selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/dgtv_text"

@@ -1,6 +1,5 @@
 package com.marcochin.teamrandomizer.ui.addplayers.dialogs.savegroup;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -30,22 +29,10 @@ public class SaveGroupDialog extends DialogFragment implements View.OnClickListe
 
     private SaveGroupViewModel mViewModel;
 
-    private GroupNameReceiver mGroupNameReceiver;
+    private OnSaveGroupNameListener mOnSaveGroupNameListener;
 
-    public interface GroupNameReceiver{
-        void onReceiveNameFromSaveGroupDialog(String groupName);
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-
-        if(context instanceof GroupNameReceiver){
-            mGroupNameReceiver = (GroupNameReceiver) context;
-        }else{
-            throw new RuntimeException(
-                    context.toString() + " must implement " + GroupNameReceiver.class.getSimpleName());
-        }
+    public interface OnSaveGroupNameListener {
+        void onSaveGroupNameClicked(String groupName);
     }
 
     @Nullable
@@ -73,6 +60,7 @@ public class SaveGroupDialog extends DialogFragment implements View.OnClickListe
 
         setupEditText(mGroupNameEditText);
         positiveButton.setText(R.string.dsg_positive_btn);
+        mTextInputLayout.setHint(getString(R.string.dsg_hint));
     }
 
     private void setupEditText(TextInputEditText editText) {
@@ -142,13 +130,17 @@ public class SaveGroupDialog extends DialogFragment implements View.OnClickListe
     }
 
     private void handleGroupValidatedAction(UIAction<Integer> saveGroupAction) {
-        if(mGroupNameReceiver != null && mGroupNameEditText.getText() != null){
-            mGroupNameReceiver.onReceiveNameFromSaveGroupDialog(mGroupNameEditText.getText().toString());
+        if(mOnSaveGroupNameListener != null && mGroupNameEditText.getText() != null){
+            mOnSaveGroupNameListener.onSaveGroupNameClicked(mGroupNameEditText.getText().toString());
             dismiss();
         }
     }
 
     private void handleShowMessageAction(UIAction<Integer> saveGroupAction) {
         mTextInputLayout.setError(saveGroupAction.message);
+    }
+
+    public void setOnSaveGroupNameListener(OnSaveGroupNameListener onSaveGroupNameListener){
+        mOnSaveGroupNameListener = onSaveGroupNameListener;
     }
 }

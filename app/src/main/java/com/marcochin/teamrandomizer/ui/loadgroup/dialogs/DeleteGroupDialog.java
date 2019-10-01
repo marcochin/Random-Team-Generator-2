@@ -1,4 +1,4 @@
-package com.marcochin.teamrandomizer.ui.addplayers.dialogs.clearlist;
+package com.marcochin.teamrandomizer.ui.loadgroup.dialogs;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,13 +13,18 @@ import androidx.fragment.app.DialogFragment;
 
 import com.marcochin.teamrandomizer.R;
 
-public class ClearListDialog extends DialogFragment implements View.OnClickListener {
-    public static final String TAG = ClearListDialog.class.getSimpleName();
+public class DeleteGroupDialog extends DialogFragment implements View.OnClickListener {
+    public static final String TAG = DeleteGroupDialog.class.getSimpleName();
+    public static final String BUNDLE_KEY_GROUP_ID = "group_id";
+    public static final String BUNDLE_KEY_GROUP_POSITION = "group_position";
 
-    private OnClearListClickedListener mOnClearListClickedListener;
+    private OnDeleteGroupListener mOnDeleteGroupListener;
 
-    public interface OnClearListClickedListener {
-        void onClearListClicked();
+    private int mDeleteGroupId;
+    private int mDeleteGroupPosition;
+
+    public interface OnDeleteGroupListener {
+        void onDeleteGroupClicked(int groupId, int position);
     }
 
     @Nullable
@@ -39,10 +44,19 @@ public class ClearListDialog extends DialogFragment implements View.OnClickListe
         cancelButton.setOnClickListener(this);
         positiveButton.setOnClickListener(this);
 
-        dialogText.setText(R.string.dcl_text);
-        positiveButton.setText(R.string.dcl_positive_btn);
+        dialogText.setText(R.string.ddg_text);
+        positiveButton.setText(R.string.ddg_positive_btn);
+
+        setupArguments();
     }
 
+    private void setupArguments(){
+        Bundle bundle = getArguments();
+        if(bundle != null) {
+            mDeleteGroupId = getArguments().getInt(BUNDLE_KEY_GROUP_ID);
+            mDeleteGroupPosition = getArguments().getInt(BUNDLE_KEY_GROUP_POSITION);
+        }
+    }
 
     @Override
     public void onClick(View view) {
@@ -52,15 +66,15 @@ public class ClearListDialog extends DialogFragment implements View.OnClickListe
                 break;
 
             case R.id.dgtv_positive_btn:
-                if(mOnClearListClickedListener != null) {
-                    mOnClearListClickedListener.onClearListClicked();
+                if(mOnDeleteGroupListener != null){
+                    mOnDeleteGroupListener.onDeleteGroupClicked(mDeleteGroupId, mDeleteGroupPosition);
                 }
                 dismiss();
                 break;
         }
     }
 
-    public void setOnClearListClickedListener(OnClearListClickedListener onClearListClickedListener){
-        mOnClearListClickedListener = onClearListClickedListener;
+    public void setOnDeleteGroupListener(OnDeleteGroupListener onDeleteGroupListener){
+        mOnDeleteGroupListener = onDeleteGroupListener;
     }
 }

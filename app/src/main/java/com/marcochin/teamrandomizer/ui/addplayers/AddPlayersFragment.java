@@ -32,6 +32,7 @@ import com.marcochin.teamrandomizer.model.Group;
 import com.marcochin.teamrandomizer.model.Player;
 import com.marcochin.teamrandomizer.ui.UIAction;
 import com.marcochin.teamrandomizer.ui.addplayers.adapters.AddPlayersListAdapter;
+import com.marcochin.teamrandomizer.ui.addplayers.dialogs.clearlist.ClearListDialog;
 import com.marcochin.teamrandomizer.ui.addplayers.dialogs.editgroupname.EditGroupNameDialog;
 import com.marcochin.teamrandomizer.ui.addplayers.dialogs.numberofteams.NumberOfTeamsDialog;
 import com.marcochin.teamrandomizer.ui.addplayers.dialogs.savegroup.SaveGroupDialog;
@@ -43,7 +44,8 @@ import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
-public class AddPlayersFragment extends DaggerFragment implements View.OnClickListener {
+public class AddPlayersFragment extends DaggerFragment implements View.OnClickListener{
+
     private static final String TAG = AddPlayersFragment.class.getSimpleName();
 
     @Inject
@@ -67,12 +69,14 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     private boolean mIsKeyboardShowing;
     private int[] mTopConstraintOriginalCoords;
 
-    /** When we show a dialog fragment with a soft keyboard on top of THIS fragment and want to
-     * show a msg in THIS fragment after the dialog closes, it might give a false positive that the
-     * keyboard is showing. Thus the snackbar might popup in the wrong location.
+    /**
+     * When we show a dialog fragment with a soft keyboard on top of THIS fragment and want to
+     * show a snackbar in THIS fragment after the dialog closes, it might give a false positive that
+     * the keyboard is showing. Thus the snackbar might popup in the wrong location.
      * The keyboard showing is technically correct, but in the wrong context. Since it's a
      * DialogFragment on top of a fragment, onPause won't get called cause they are both in the same
-     * Activity and so LiveData won't be considered inactive.*/
+     * Activity and so LiveData won't be considered inactive.
+     * */
     private boolean mIsKeyboardShowingFalsePositive;
 
     /**
@@ -323,7 +327,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
                 break;
 
             case R.id.fap_clear_btn:
-                mViewModel.clearAllPlayers();
+                mViewModel.showClearListDialog();
                 break;
 
             case R.id.fap_save_btn:
@@ -392,6 +396,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
             switch (addPlayersAction.data) {
                 case AddPlayersViewModel.DIALOG_SAVE_GROUP:
                     dialogFragment = new SaveGroupDialog();
+                    ((SaveGroupDialog)dialogFragment).setOnSaveGroupNameListener(mOnSaveGroupNameListener);
                     fragmentTag = SaveGroupDialog.TAG;
                     break;
 
@@ -402,6 +407,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
 
                     dialogFragment = new EditGroupNameDialog();
                     dialogFragment.setArguments(bundle);
+                    ((EditGroupNameDialog)dialogFragment).setOnEditGroupNameListener(mOnEditGroupNameListener);
                     fragmentTag = EditGroupNameDialog.TAG;
                     break;
                 }
@@ -414,6 +420,13 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
                     dialogFragment = new NumberOfTeamsDialog();
                     dialogFragment.setArguments(bundle);
                     fragmentTag = NumberOfTeamsDialog.TAG;
+                    break;
+                }
+
+                case AddPlayersViewModel.DIALOG_CLEAR_LIST: {
+                    dialogFragment = new ClearListDialog();
+                    ((ClearListDialog)dialogFragment).setOnClearListClickedListener(mOnClearListClickedListener);
+                    fragmentTag = ClearListDialog.TAG;
                     break;
                 }
             }
@@ -466,19 +479,8 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         }
     }
 
-    // This method be called from this origin SaveGroupDialog -> MainActivity -> saveGroup(...)
-    public void saveGroup(String groupName){
-        // We set this to true here because the user needs to use the keyboard to enter the group name.
-        mIsKeyboardShowingFalsePositive = true;
-        mViewModel.saveGroup(groupName);
-    }
 
-    // This method be called from this origin EditGroupNameDialog -> MainActivity -> setGroupName(...)
-    public void setGroupName(String groupName){
-        // We set this to true here because the user needs to use the keyboard to enter the group name.
-        mIsKeyboardShowingFalsePositive = true;
-        mViewModel.updateGroupName(groupName);
-    }
+    // Methods needed to communicate with LoadGroupFragment
 
     public void startNewGroup(){
         mViewModel.startNewGroup();
@@ -494,6 +496,33 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
 
 
     // Anonymous Inner Classes
+
+    private SaveGroupDialog.OnSaveGroupNameListener mOnSaveGroupNameListener = new SaveGroupDialog.OnSaveGroupNameListener() {
+        @Override
+        public void onSaveGroupNameClicked(String groupName) {
+            // We set this to true here because the user needs to use the keyboard to enter the group name.
+            // This is for the snackbar.
+            mIsKeyboardShowingFalsePositive = true;
+            mViewModel.saveGroup(groupName);
+        }
+    };
+
+    private EditGroupNameDialog.OnEditGroupNameListener mOnEditGroupNameListener = new EditGroupNameDialog.OnEditGroupNameListener() {
+        @Override
+        public void onEditGroupNameClicked(String groupName) {
+            // We set this to true here because the user needs to use the keyboard to enter the group name.
+            // This is for the snackbar.
+            mIsKeyboardShowingFalsePositive = true;
+            mViewModel.updateGroupName(groupName);
+        }
+    };
+
+    private ClearListDialog.OnClearListClickedListener mOnClearListClickedListener = new ClearListDialog.OnClearListClickedListener() {
+        @Override
+        public void onClearListClicked() {
+            mViewModel.clearAllPlayers();
+        }
+    };
 
     /**
      * Basically the soft keyboard pushes our layout up with adjustPan so we need to push it back

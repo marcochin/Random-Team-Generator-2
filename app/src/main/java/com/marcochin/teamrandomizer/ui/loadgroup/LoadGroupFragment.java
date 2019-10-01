@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +22,7 @@ import com.marcochin.teamrandomizer.di.viewmodelfactory.ViewModelProviderFactory
 import com.marcochin.teamrandomizer.model.Group;
 import com.marcochin.teamrandomizer.ui.UIAction;
 import com.marcochin.teamrandomizer.ui.loadgroup.adapters.LoadGroupListAdapter;
+import com.marcochin.teamrandomizer.ui.loadgroup.dialogs.DeleteGroupDialog;
 
 import java.util.List;
 
@@ -37,10 +40,10 @@ public class LoadGroupFragment extends DaggerFragment implements View.OnClickLis
 
     private LoadGroupViewModel mViewModel;
 
-    private OnActionReceiver mOnActionReceiver;
+    private OnActionListener mOnActionListener;
 
-    public interface OnActionReceiver{
-        void onNewGroupRequested();
+    public interface OnActionListener {
+        void onNewGroupClicked();
         void onGroupSelected(Group group);
         void onGroupDeleted(int deletedGroupId);
     }
@@ -49,11 +52,11 @@ public class LoadGroupFragment extends DaggerFragment implements View.OnClickLis
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        if(context instanceof OnActionReceiver){
-            mOnActionReceiver = (OnActionReceiver) context;
+        if(context instanceof OnActionListener){
+            mOnActionListener = (OnActionListener) context;
         }else{
             throw new RuntimeException(
-                    context.toString() + " must implement " + OnActionReceiver.class.getSimpleName());
+                    context.toString() + " must implement " + OnActionListener.class.getSimpleName());
         }
     }
 
@@ -94,14 +97,14 @@ public class LoadGroupFragment extends DaggerFragment implements View.OnClickLis
         mListAdapter.setOnItemClickListener(new LoadGroupListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position, Group group) {
-                if(mOnActionReceiver != null){
-                    mOnActionReceiver.onGroupSelected(group);
+                if(mOnActionListener != null){
+                    mOnActionListener.onGroupSelected(group);
                 }
             }
 
             @Override
             public void onDeleteClick(int position, Group group) {
-                mViewModel.deleteGroup(group.getId(), position);
+                mViewModel.showDeleteGroupDialog(group.getId(), position);
             }
         });
     }
@@ -137,6 +140,11 @@ public class LoadGroupFragment extends DaggerFragment implements View.OnClickLis
                         mViewModel.clearActionLiveData();
                         break;
 
+                    case LoadGroupAction.SHOW_DIALOG:
+                        handleShowDialogAction(uiAction);
+                        mViewModel.clearActionLiveData();
+                        break;
+
                     case LoadGroupAction.SHOW_MSG:
                         handleShowMessageAction(uiAction);
                         mViewModel.clearActionLiveData();
@@ -150,16 +158,46 @@ public class LoadGroupFragment extends DaggerFragment implements View.OnClickLis
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.fl_new_group_btn:
-                if(mOnActionReceiver != null) {
-                    mOnActionReceiver.onNewGroupRequested();
+                if(mOnActionListener != null) {
+                    mOnActionListener.onNewGroupClicked();
                 }
                 break;
         }
     }
 
     private void handleGroupDeletedAction(UIAction<Integer> uiAction){
-        if(mOnActionReceiver != null && uiAction.data != null) {
-            mOnActionReceiver.onGroupDeleted(uiAction.data); // data = deleted group id
+        if(mOnActionListener != null && uiAction.data != null) {
+            mOnActionListener.onGroupDeleted(uiAction.data); // data = deleted group id
+        }
+    }
+
+    @SuppressWarnings({"CastCanBeRemovedNarrowingVariableType", "SwitchStatementWithTooFewBranches"})
+    private void handleShowDialogAction(UIAction<Integer> addPlayersAction) {
+        if (addPlayersAction.data != null) {
+            FragmentManager fragmentManager = null;
+            DialogFragment dialogFragment = null;
+            String fragmentTag = null;
+
+            if(getActivity() != null){
+                fragmentManager = getActivity().getSupportFragmentManager();
+            }
+
+            switch (addPlayersAction.data) {
+                case LoadGroupViewModel.DIALOG_DELETE_GROUP:
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(DeleteGroupDialog.BUNDLE_KEY_GROUP_ID, mViewModel.getDeleteGroupId());
+                    bundle.putInt(DeleteGroupDialog.BUNDLE_KEY_GROUP_POSITION, mViewModel.getDeleteGroupPosition());
+
+                    dialogFragment = new DeleteGroupDialog();
+                    dialogFragment.setArguments(bundle);
+                    ((DeleteGroupDialog)dialogFragment).setOnDeleteGroupListener(mOnDeleteGroupListener);
+                    fragmentTag = DeleteGroupDialog.TAG;
+                    break;
+            }
+
+            if(fragmentManager != null && dialogFragment != null){
+                dialogFragment.show(fragmentManager, fragmentTag);
+            }
         }
     }
 
@@ -168,4 +206,14 @@ public class LoadGroupFragment extends DaggerFragment implements View.OnClickLis
             Snackbar.make(mRecyclerView, uiAction.message, Snackbar.LENGTH_SHORT);
         }
     }
+
+
+    // Anonymous Inner Classes
+
+    private DeleteGroupDialog.OnDeleteGroupListener mOnDeleteGroupListener = new DeleteGroupDialog.OnDeleteGroupListener() {
+        @Override
+        public void onDeleteGroupClicked(int groupId, int position) {
+            mViewModel.deleteGroup(groupId, position);
+        }
+    };
 }

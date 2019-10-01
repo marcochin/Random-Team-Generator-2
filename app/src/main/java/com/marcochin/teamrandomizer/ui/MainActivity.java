@@ -10,12 +10,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.model.Group;
 import com.marcochin.teamrandomizer.ui.addplayers.AddPlayersFragment;
-import com.marcochin.teamrandomizer.ui.addplayers.dialogs.editgroupname.EditGroupNameDialog;
-import com.marcochin.teamrandomizer.ui.addplayers.dialogs.savegroup.SaveGroupDialog;
 import com.marcochin.teamrandomizer.ui.loadgroup.LoadGroupFragment;
 
-public class MainActivity extends AppCompatActivity implements SaveGroupDialog.GroupNameReceiver,
-        EditGroupNameDialog.GroupNameReceiver, LoadGroupFragment.OnActionReceiver {
+public class MainActivity extends AppCompatActivity implements LoadGroupFragment.OnActionListener {
 
     private AddPlayersFragment mAddPlayersFragment;
     private LoadGroupFragment mLoadGroupFragment;
@@ -63,33 +60,23 @@ public class MainActivity extends AppCompatActivity implements SaveGroupDialog.G
         });
     }
 
-    // SaveGroupDialog.GroupNameReceiver
-    @Override
-    public void onReceiveNameFromSaveGroupDialog(String groupName) {
-        mAddPlayersFragment.saveGroup(groupName);
-    }
 
-    // EditGroupNameDialog.GroupNameReceiver
+    // Interface overrides
+    // LoadGroupFragment.OnActionListener
     @Override
-    public void onReceiveNameFromEditGroupNameDialog(String groupName) {
-        mAddPlayersFragment.setGroupName(groupName);
-    }
-
-    // LoadGroupFragment.OnActionReceiver
-    @Override
-    public void onNewGroupRequested() {
+    public void onNewGroupClicked() {
         mAddPlayersFragment.startNewGroup();
         mBottomNavigationView.setSelectedItemId(R.id.addPlayersFragment);
     }
 
-    // LoadGroupFragment.OnActionReceiver
+    // LoadGroupFragment.OnActionListener
     @Override
     public void onGroupSelected(Group group) {
         mAddPlayersFragment.setGroup(group);
         mBottomNavigationView.setSelectedItemId(R.id.addPlayersFragment);
     }
 
-    // LoadGroupFragment.OnActionReceiver
+    // LoadGroupFragment.OnActionListener
     @Override
     public void onGroupDeleted(int deletedGroupId) {
         mAddPlayersFragment.syncGroupDeletion(deletedGroupId);

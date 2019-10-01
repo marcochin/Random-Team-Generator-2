@@ -27,6 +27,7 @@ public class AddPlayersViewModel extends ViewModel {
     public static final int DIALOG_SAVE_GROUP = 1;
     public static final int DIALOG_EDIT_GROUP_NAME = 2;
     public static final int DIALOG_NUMBER_OF_TEAMS = 3;
+    public static final int DIALOG_CLEAR_LIST = 4;
 
     private static final int MIN_PLAYERS_FOR_RANDOMIZATION = 2;
 
@@ -236,7 +237,6 @@ public class AddPlayersViewModel extends ViewModel {
         mGroupNameLiveData.setValue(group.getName()); // Update groupName UI
 
         mCurrentGroup = group;
-        mCurrentGroup = group;
     }
 
     public void syncGroupDeletion(int deletedGroupId) {
@@ -250,6 +250,11 @@ public class AddPlayersViewModel extends ViewModel {
     }
 
     // Dialogs
+    void showClearListDialog(){
+        if(mPlayerListLiveData.getValue() != null && !mPlayerListLiveData.getValue().isEmpty()){
+            showDialog(DIALOG_CLEAR_LIST);
+        }
+    }
 
     void showEditNameDialog() {
         if (mGroupNameLiveData.getValue() != null && !mGroupNameLiveData.getValue().equals(Group.NEW_GROUP_NAME)) {
@@ -433,6 +438,8 @@ public class AddPlayersViewModel extends ViewModel {
         mActionLiveData.setValue(null);
     }
 
+
+    // Utility
     private void showDialog(int dialog) {
         mActionLiveData.setValue(AddPlayersAction.showDialog(dialog, null));
     }

@@ -1,6 +1,5 @@
 package com.marcochin.teamrandomizer.ui.addplayers.dialogs.editgroupname;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -32,22 +31,10 @@ public class EditGroupNameDialog extends DialogFragment implements View.OnClickL
 
     private EditGroupNameViewModel mViewModel;
 
-    private GroupNameReceiver mGroupNameReceiver;
+    private OnEditGroupNameListener mOnEditGroupNameListener;
 
-    public interface GroupNameReceiver {
-        void onReceiveNameFromEditGroupNameDialog(String groupName);
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-
-        if(context instanceof GroupNameReceiver){
-            mGroupNameReceiver = (GroupNameReceiver) context;
-        }else{
-            throw new RuntimeException(
-                    context.toString() + " must implement " + GroupNameReceiver.class.getSimpleName());
-        }
+    public interface OnEditGroupNameListener {
+        void onEditGroupNameClicked(String groupName);
     }
 
     @Nullable
@@ -76,6 +63,8 @@ public class EditGroupNameDialog extends DialogFragment implements View.OnClickL
         setupArguments(); // Make this the first setup as other setups might depend on it
         setupEditText(mGroupNameEditText);
         positiveButton.setText(R.string.degn_positive_btn);
+        mTextInputLayout.setHint(getString(R.string.degn_hint));
+
     }
 
     private void setupArguments(){
@@ -97,7 +86,6 @@ public class EditGroupNameDialog extends DialogFragment implements View.OnClickL
             }
         });
 
-        editText.setHint(getString(R.string.degn_hint));
         editText.setText(mCurrentGroupName);
         editText.setSelectAllOnFocus(true); // highlights the entire edit on focus
 
@@ -157,13 +145,17 @@ public class EditGroupNameDialog extends DialogFragment implements View.OnClickL
     }
 
     private void handleGroupValidatedAction(UIAction<Integer> editGroupNameAction) {
-        if(mGroupNameReceiver != null && mGroupNameEditText.getText() != null){
-            mGroupNameReceiver.onReceiveNameFromEditGroupNameDialog(mGroupNameEditText.getText().toString());
+        if(mOnEditGroupNameListener != null && mGroupNameEditText.getText() != null){
+            mOnEditGroupNameListener.onEditGroupNameClicked(mGroupNameEditText.getText().toString());
             dismiss();
         }
     }
 
     private void handleShowMessageAction(UIAction<Integer> editGroupNameAction) {
         mTextInputLayout.setError(editGroupNameAction.message);
+    }
+
+    public void setOnEditGroupNameListener(OnEditGroupNameListener onEditGroupNameListener){
+        mOnEditGroupNameListener = onEditGroupNameListener;
     }
 }

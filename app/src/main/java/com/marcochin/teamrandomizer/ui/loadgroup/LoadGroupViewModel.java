@@ -16,7 +16,12 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class LoadGroupViewModel extends ViewModel {
+    public static final int DIALOG_DELETE_GROUP = 1;
+
     private GroupRepository mGroupRepository;
+
+    private int mDeleteGroupId;
+    private int mDeleteGroupPosition;
 
     private MediatorLiveData<List<Group>> mGroupListLiveData;
     private MutableLiveData<UIAction<Integer>> mActionLiveData;
@@ -54,7 +59,7 @@ public class LoadGroupViewModel extends ViewModel {
                         mActionLiveData.setValue(LoadGroupAction.groupDeleted(groupId, null));
 
                     } else if (integerResource.status == Resource.Status.ERROR) {
-                        mActionLiveData.setValue(LoadGroupAction.showMessage((Integer)null, integerResource.message));
+                        showMessage(integerResource.message);
                     }
                     mGroupListLiveData.removeSource(source);
                 }
@@ -62,6 +67,27 @@ public class LoadGroupViewModel extends ViewModel {
             // Ui will update on its own because we are observing live data straight from the source.
         }
     }
+
+
+    // Getters
+
+    int getDeleteGroupId(){
+        return mDeleteGroupId;
+    }
+
+    int getDeleteGroupPosition(){
+        return mDeleteGroupPosition;
+    }
+
+
+    // Dialogs
+
+    void showDeleteGroupDialog(int groupId, int position){
+        mDeleteGroupId = groupId;
+        mDeleteGroupPosition = position;
+        showDialog(DIALOG_DELETE_GROUP);
+    }
+
 
     // LiveData
 
@@ -75,5 +101,17 @@ public class LoadGroupViewModel extends ViewModel {
 
     void clearActionLiveData() {
         mActionLiveData.setValue(null);
+    }
+
+
+    // Utility
+
+    @SuppressWarnings("SameParameterValue")
+    private void showDialog(int dialog) {
+        mActionLiveData.setValue(LoadGroupAction.showDialog(dialog, null));
+    }
+
+    private void showMessage(String message) {
+        mActionLiveData.setValue(LoadGroupAction.showMessage((Integer) null, message));
     }
 }
