@@ -1,6 +1,8 @@
 package com.marcochin.teamrandomizer.di;
 
 import android.app.Application;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import androidx.room.Room;
 
@@ -31,5 +33,11 @@ abstract class AppModule {
     // in the abstract methods.
     static GroupDao providePlayersGroupDao(GroupDatabase playersDatabase){
         return playersDatabase.getPlayersGroupDao();
+    }
+
+    // DefaultSharedPrefs is already a singleton;
+    @Provides
+    static SharedPreferences provideSharedPreferences(Application application){
+        return PreferenceManager.getDefaultSharedPreferences(application);
     }
 }

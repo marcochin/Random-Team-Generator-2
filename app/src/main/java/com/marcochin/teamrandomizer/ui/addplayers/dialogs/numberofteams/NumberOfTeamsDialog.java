@@ -1,6 +1,7 @@
 package com.marcochin.teamrandomizer.ui.addplayers.dialogs.numberofteams;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -13,7 +14,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -21,16 +21,23 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.model.Player;
+import com.marcochin.teamrandomizer.persistence.PreferenceConstants;
 import com.marcochin.teamrandomizer.ui.UIAction;
 import com.marcochin.teamrandomizer.ui.randomize.RandomizeActivity;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
-public class NumberOfTeamsDialog extends DialogFragment implements View.OnClickListener {
+import javax.inject.Inject;
+
+import dagger.android.support.DaggerDialogFragment;
+
+public class NumberOfTeamsDialog extends DaggerDialogFragment implements View.OnClickListener {
     public static final String TAG = NumberOfTeamsDialog.class.getSimpleName();
     public static final String BUNDLE_KEY_PLAYERS_LIST = "players_list";
 
-    private static final String DEFAULT_TEAMS = "2";
+    @Inject
+    SharedPreferences mSharedPreferences;
 
     private TextInputLayout mTextInputLayout;
     private TextInputEditText mNumberOfTeamsEditText;
@@ -89,7 +96,10 @@ public class NumberOfTeamsDialog extends DialogFragment implements View.OnClickL
             }
         });
 
-        editText.setText(DEFAULT_TEAMS);
+        // Try to retrieve previously used numberOfTeams value from prefs
+        int numberOfTeams = mSharedPreferences.getInt(PreferenceConstants.PREF_KEY_NUMBER_OF_TEAMS,
+                PreferenceConstants.PREF_DEFAULT_NUMBER_OF_TEAMS);
+        editText.setText(String.format(Locale.US, "%d", numberOfTeams));
 
         // Some phones focus editText automatically, some don't.
         // Add this here for the phones that don't
@@ -158,12 +168,18 @@ public class NumberOfTeamsDialog extends DialogFragment implements View.OnClickL
     private void handleTeamsValidatedAction(UIAction<Integer> numberOfTeamsAction) {
         // Start Randomize Activity
         Intent randomizeActivityIntent = new Intent(getActivity(), RandomizeActivity.class);
-        randomizeActivityIntent.putParcelableArrayListExtra(RandomizeActivity.BUNDLE_KEY_PLAYER_LIST, mViewModel.getPlayerListLiveData().getValue());
+
+        randomizeActivityIntent.putParcelableArrayListExtra(RandomizeActivity.BUNDLE_KEY_PLAYER_LIST,
+                mViewModel.getPlayerListLiveData().getValue());
+
         if(numberOfTeamsAction.data != null) {
-            randomizeActivityIntent.putExtra(RandomizeActivity.BUNDLE_KEY_NUMBER_OF_TEAMS, (int) numberOfTeamsAction.data); // data = number of teams
+            randomizeActivityIntent.putExtra(RandomizeActivity.BUNDLE_KEY_NUMBER_OF_TEAMS,
+                    (int) numberOfTeamsAction.data); // data = number of teams
+
+            // Save number of teams in prefs to auto-fill editText next time
+            mSharedPreferences.edit().putInt(PreferenceConstants.PREF_KEY_NUMBER_OF_TEAMS, numberOfTeamsAction.data).apply();
         }
         startActivity(randomizeActivityIntent);
-
         dismiss();
     }
 

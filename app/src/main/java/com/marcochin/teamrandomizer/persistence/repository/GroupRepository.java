@@ -1,4 +1,4 @@
-package com.marcochin.teamrandomizer.repository;
+package com.marcochin.teamrandomizer.persistence.repository;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.LiveDataReactiveStreams;

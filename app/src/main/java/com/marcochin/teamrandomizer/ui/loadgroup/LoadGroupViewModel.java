@@ -7,7 +7,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.marcochin.teamrandomizer.model.Group;
-import com.marcochin.teamrandomizer.repository.GroupRepository;
+import com.marcochin.teamrandomizer.persistence.repository.GroupRepository;
 import com.marcochin.teamrandomizer.ui.Resource;
 import com.marcochin.teamrandomizer.ui.UIAction;
 
