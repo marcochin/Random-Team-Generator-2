@@ -53,17 +53,17 @@ public class EditGroupNameDialog extends DialogFragment implements View.OnClickL
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.dialog_edit_group_name, container, false);
+        return inflater.inflate(R.layout.dialog_generic_edit_text, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mTextInputLayout = view.findViewById(R.id.degn_group_name_input_layout);
-        mGroupNameEditText = view.findViewById(R.id.degn_group_name_edit_text);
-        Button cancelButton = view.findViewById(R.id.degn_cancel_btn);
-        Button positiveButton = view.findViewById(R.id.degn_positive_btn);
+        mTextInputLayout = view.findViewById(R.id.dget_group_name_input_layout);
+        mGroupNameEditText = view.findViewById(R.id.dget_group_name_edit_text);
+        Button cancelButton = view.findViewById(R.id.dget_cancel_btn);
+        Button positiveButton = view.findViewById(R.id.dget_positive_btn);
 
         cancelButton.setOnClickListener(this);
         positiveButton.setOnClickListener(this);
@@ -75,6 +75,7 @@ public class EditGroupNameDialog extends DialogFragment implements View.OnClickL
 
         setupArguments(); // Make this the first setup as other setups might depend on it
         setupEditText(mGroupNameEditText);
+        positiveButton.setText(R.string.degn_positive_btn);
     }
 
     private void setupArguments(){
@@ -96,6 +97,7 @@ public class EditGroupNameDialog extends DialogFragment implements View.OnClickL
             }
         });
 
+        editText.setHint(getString(R.string.degn_hint));
         editText.setText(mCurrentGroupName);
         editText.setSelectAllOnFocus(true); // highlights the entire edit on focus
 
@@ -110,6 +112,7 @@ public class EditGroupNameDialog extends DialogFragment implements View.OnClickL
                     WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }
     }
+
 
     private void observeLiveData() {
         mViewModel.getActionLiveData().observe(this, new Observer<UIAction<Integer>>() {
@@ -137,11 +140,11 @@ public class EditGroupNameDialog extends DialogFragment implements View.OnClickL
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.degn_positive_btn:
+            case R.id.dget_positive_btn:
                 onPositiveButtonClick();
                 break;
 
-            case R.id.degn_cancel_btn:
+            case R.id.dget_cancel_btn:
                 dismiss();
                 break;
         }

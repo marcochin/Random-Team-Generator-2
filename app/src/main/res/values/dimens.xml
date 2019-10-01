@@ -2,7 +2,7 @@
 <resources>
     <!-- EditNameDialog && SaveGroupDialog -->
     <!-- 288dp just feels like a good size for small phones...-->
-    <dimen name="dialog_edit_text_width">288dp</dimen>
+    <dimen name="dialog_generic_edit_text_width">288dp</dimen>
     <dimen name="dialog_edit_text_width_numeric">220dp</dimen>
 
     <!-- RandomizeActivity -->
