@@ -15,7 +15,7 @@
         android:id="@+id/loadFragment"
         android:name="com.marcochin.teamrandomizer.ui.loadgroup.LoadGroupFragment"
         android:label="@string/nav_load_tab"
-        tools:layout="@layout/fragment_load" />
+        tools:layout="@layout/fragment_load_group" />
 
     <activity
         android:id="@+id/randomizeActivity"

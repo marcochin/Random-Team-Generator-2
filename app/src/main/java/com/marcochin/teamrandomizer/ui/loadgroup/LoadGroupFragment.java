@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,6 +33,7 @@ public class LoadGroupFragment extends DaggerFragment implements View.OnClickLis
 
     private LoadGroupListAdapter mListAdapter;
     private RecyclerView mRecyclerView;
+    private TextView mNoSavedGroupsText;
 
     private LoadGroupViewModel mViewModel;
 
@@ -58,14 +60,16 @@ public class LoadGroupFragment extends DaggerFragment implements View.OnClickLis
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_load, container, false);
+        return inflater.inflate(R.layout.fragment_load_group, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mRecyclerView = view.findViewById(R.id.fl_recycler_view);
+        mNoSavedGroupsText = view.findViewById(R.id.fl_no_saved_groups_text);
         ViewGroup newGroupButton = view.findViewById(R.id.fl_new_group_btn);
+
         newGroupButton.setOnClickListener(this);
 
         setupRecyclerView(mRecyclerView);
@@ -111,6 +115,12 @@ public class LoadGroupFragment extends DaggerFragment implements View.OnClickLis
             @Override
             public void onChanged(List<Group> groups) {
                 mListAdapter.submitList(groups);
+
+                if(groups == null || groups.isEmpty()){
+                    mNoSavedGroupsText.setVisibility(View.VISIBLE);
+                }else{
+                    mNoSavedGroupsText.setVisibility(View.INVISIBLE);
+                }
             }
         });
 

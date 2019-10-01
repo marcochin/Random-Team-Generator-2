@@ -14,6 +14,9 @@
     <string name="fap_clear_btn">Clear</string>
     <string name="fap_edit_text_hint">Name</string>
 
+    <!-- FragmentLoadGroups -->
+    <string name="fl_no_saved_groups_msg">You have no saved groups</string>
+
     <!-- Dialog Save Group-->
     <string name="dsg_hint">Group Name</string>
     <string name="dsg_positive_btn">Save</string>

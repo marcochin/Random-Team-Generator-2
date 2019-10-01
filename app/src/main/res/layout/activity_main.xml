@@ -33,7 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:label="@string/nav_load_tab"
-                tools:layout="@layout/fragment_load" />
+                tools:layout="@layout/fragment_load_group" />
         </FrameLayout>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
