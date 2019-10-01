@@ -123,7 +123,7 @@ public class RandomizeActivity extends AppCompatActivity implements View.OnClick
             case R.id.ar_share_btn:
                 Intent shareIntent = mViewModel.getShareIntent();
                 if(shareIntent != null) {
-                    startActivity(Intent.createChooser(mViewModel.getShareIntent(), null));
+                    startActivity(Intent.createChooser(shareIntent, null));
                 }
                 break;
         }
