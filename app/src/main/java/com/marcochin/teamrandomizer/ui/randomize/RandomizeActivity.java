@@ -1,5 +1,8 @@
 package com.marcochin.teamrandomizer.ui.randomize;
 
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +16,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.model.Player;
 import com.marcochin.teamrandomizer.model.Team;
@@ -92,6 +96,10 @@ public class RandomizeActivity extends AppCompatActivity implements View.OnClick
                     case RandomizeAction.CHANGE_RANDOMIZE_BUTTON_VISIBILITY:
                         handleChangeRandomizeButtonVisibilityAction(uiAction);
                         break;
+
+                    case RandomizeAction.SHOW_MSG:
+                        handleShowMessageAction(uiAction);
+                        break;
                 }
             }
         });
@@ -109,11 +117,14 @@ public class RandomizeActivity extends AppCompatActivity implements View.OnClick
                 break;
 
             case R.id.ar_copy_btn:
-
+                mViewModel.copyTeamsToClipboard((ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE));
                 break;
 
             case R.id.ar_share_btn:
-
+                Intent shareIntent = mViewModel.getShareIntent();
+                if(shareIntent != null) {
+                    startActivity(Intent.createChooser(mViewModel.getShareIntent(), null));
+                }
                 break;
         }
     }
@@ -123,6 +134,12 @@ public class RandomizeActivity extends AppCompatActivity implements View.OnClick
             mRandomizeButton.setVisibility(View.VISIBLE);
         }else{
             mRandomizeButton.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void handleShowMessageAction(UIAction<Integer> uiAction){
+        if(uiAction.message != null) {
+            Snackbar.make(mRandomizeButton, uiAction.message, Snackbar.LENGTH_SHORT).show();
         }
     }
 }
