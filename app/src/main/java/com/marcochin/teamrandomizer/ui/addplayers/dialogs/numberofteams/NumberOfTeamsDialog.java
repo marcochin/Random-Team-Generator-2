@@ -169,10 +169,12 @@ public class NumberOfTeamsDialog extends DaggerDialogFragment implements View.On
         // Start Randomize Activity
         Intent randomizeActivityIntent = new Intent(getActivity(), RandomizeActivity.class);
 
+        // Pass the included players to RandomizeActivity
         randomizeActivityIntent.putParcelableArrayListExtra(RandomizeActivity.BUNDLE_KEY_PLAYER_LIST,
                 mViewModel.getPlayerListLiveData().getValue());
 
         if(numberOfTeamsAction.data != null) {
+            // Pass the included the number of teams to RandomizeActivity
             randomizeActivityIntent.putExtra(RandomizeActivity.BUNDLE_KEY_NUMBER_OF_TEAMS,
                     (int) numberOfTeamsAction.data); // data = number of teams
 
