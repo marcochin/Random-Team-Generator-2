@@ -28,7 +28,7 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class RandomizeViewModel extends ViewModel {
-    private static final String MSG_RANDOMIZING_IN_PROGRESS = "Randomizing still in progress...";
+    private static final String MSG_RANDOMIZING_IN_PROGRESS = "Randomization still in progress...";
     private static final String MSG_TEAM_COPIED = "Teams copied to clipboard";
     private static final String CLIPBOARD_LABEL_TEAMS = "Teams";
 

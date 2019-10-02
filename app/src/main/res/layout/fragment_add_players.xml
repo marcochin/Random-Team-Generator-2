@@ -57,10 +57,10 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:ellipsize="end"
+        android:gravity="center_vertical"
         android:maxLines="1"
         android:minHeight="30dp"
         android:textSize="18sp"
-        android:gravity="center_vertical"
         app:layout_constraintEnd_toStartOf="@+id/fap_clear_btn"
         app:layout_constraintStart_toEndOf="@+id/fap_checkbox_mode_btn"
         app:layout_constraintTop_toBottomOf="@+id/fap_top_constraint"
@@ -86,6 +86,7 @@
 
     <Button
         android:id="@+id/fap_add_btn"
+        style="@style/AppButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -96,6 +97,7 @@
 
     <Button
         android:id="@+id/fap_randomize_btn"
+        style="@style/AppButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
