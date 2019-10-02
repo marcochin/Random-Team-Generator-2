@@ -6,4 +6,7 @@
 
     <!-- RandomizeActivity -->
     <integer name="ar_grid_column_count">2</integer>
+
+    <!-- AddPlayersFragment -->
+    <bool name="show_recycler_view_decoration">true</bool>
 </resources>

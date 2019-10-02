@@ -22,6 +22,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -181,6 +182,11 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
     private void setupRecyclerView(RecyclerView recyclerView) {
         mListItemAnimator = recyclerView.getItemAnimator();
         recyclerView.setHasFixedSize(true);
+
+        // Set decoration
+        if(getActivity() != null && getResources().getBoolean(R.bool.show_recycler_view_decoration)) {
+            recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+        }
 
         // Set adapter
         mListAdapter = new AddPlayersListAdapter();

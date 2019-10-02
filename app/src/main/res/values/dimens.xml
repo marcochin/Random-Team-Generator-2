@@ -8,12 +8,15 @@
     <!-- NumberOfTeamsDialog-->
     <dimen name="dialog_edit_text_width_numeric">220dp</dimen>
 
-    <!-- RandomizeActivity -->
-    <integer name="ar_grid_column_count">1</integer>
-
     <!-- item_team.xml -->
     <dimen name="it_padding_top">8dp</dimen>
     <dimen name="it_padding_bottom">16dp</dimen>
     <dimen name="it_text_size">16sp</dimen>
     <dimen name="it_players_text_margin_top">4dp</dimen>
+
+    <!-- RandomizeActivity -->
+    <integer name="ar_grid_column_count">1</integer>
+
+    <!-- AddPlayersFragment -->
+    <bool name="show_recycler_view_decoration">false</bool>
 </resources>
