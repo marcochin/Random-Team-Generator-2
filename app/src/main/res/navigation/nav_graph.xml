@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- IMPORTANT: Navigation components are not used. We just have this library added for visualization
+    of fragments-->
+
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/addPlayersFragment">
-    
+    app:startDestination="@id/addPlayersFragment"
+    tools:ignore="UnusedNavigation">
+
     <fragment
         android:id="@+id/addPlayersFragment"
         android:name="com.marcochin.teamrandomizer.ui.addplayers.AddPlayersFragment"
