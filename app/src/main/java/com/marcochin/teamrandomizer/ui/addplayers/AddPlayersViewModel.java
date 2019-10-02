@@ -237,6 +237,10 @@ public class AddPlayersViewModel extends ViewModel {
         mGroupNameLiveData.setValue(group.getName()); // Update groupName UI
 
         mCurrentGroup = group;
+
+        // Reset checkboxMode back to CheckboxButtonMode.GONE because new players have:
+        // included = true && checkboxVisible = false by default
+        mCheckBoxButtonMode = CheckboxButtonMode.GONE;
     }
 
     public void syncGroupDeletion(int deletedGroupId) {
