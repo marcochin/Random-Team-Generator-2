@@ -9,9 +9,9 @@
         android:id="@+id/dget_text_input_layout"
         android:layout_width="@dimen/dialog_generic_main_element_width"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
         app:errorEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -28,12 +28,14 @@
 
     <Button
         android:id="@+id/dget_positive_btn"
+        style="@style/AppFlatButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:background="?android:selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/dget_text_input_layout"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dget_text_input_layout"
         app:layout_constraintVertical_bias="0"
         tools:text="Positive" />
@@ -41,6 +43,7 @@
     <Button
         android:id="@+id/dget_cancel_btn"
         android:layout_width="wrap_content"
+        style="@style/AppFlatButton"
         android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:text="@android:string/cancel"
