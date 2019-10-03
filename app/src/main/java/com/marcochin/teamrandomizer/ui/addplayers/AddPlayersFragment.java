@@ -214,6 +214,7 @@ public class AddPlayersFragment extends DaggerFragment implements View.OnClickLi
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                // On a soft keyboard event will be null and so you don't have to worry about ACTION_UP/DOWN
                 boolean hardKeyboardEnterPress = event != null
                         && event.getAction() == KeyEvent.ACTION_UP
                         && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER);
