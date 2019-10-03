@@ -67,7 +67,11 @@ public class SaveGroupDialog extends DialogFragment implements View.OnClickListe
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                boolean hardKeyboardEnterPress = event != null
+                        && event.getAction() == KeyEvent.ACTION_UP
+                        && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER);
+
+                if (actionId == EditorInfo.IME_ACTION_DONE || hardKeyboardEnterPress) {
                     onPositiveButtonClick();
                 }
                 // Return true if you want to keep the keyboard open after hitting the enter button
