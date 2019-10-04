@@ -226,6 +226,11 @@ public class AddPlayersViewModel extends ViewModel {
     }
 
     public void setGroup(Group group, boolean autoSavePrevGroup) {
+        // If user loads a group that is already loaded do nothing!
+        if(group.getId() == mCurrentGroup.getId()){
+            return;
+        }
+
         // Don't auto save if it's a "new" group
         if (autoSavePrevGroup && !mCurrentGroup.getName().equals(Group.NEW_GROUP_NAME)) {
             updateGroup(false, false, GroupRepository.UpdateMessage.TYPE_SAVE);
@@ -376,8 +381,8 @@ public class AddPlayersViewModel extends ViewModel {
         mPlayerListLiveData.addSource(source, new Observer<Resource<Integer>>() {
             @Override
             public void onChanged(Resource<Integer> resource) {
-                // Sometimes we don't want successCallback to execute because it the mCurrentGroup
-                // might override mCurrentGroup setGroup().
+                // Sometimes we don't want successCallback to execute because the mCurrentGroup here
+                // might override mCurrentGroup in setGroup().
                 if (allowSuccessCallback && resource.status == Resource.Status.SUCCESS) {
                     mGroupNameLiveData.setValue(group.getName());
                     mCurrentGroup = group;
