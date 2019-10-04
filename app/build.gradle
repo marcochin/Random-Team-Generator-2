@@ -31,16 +31,15 @@ android {
 }
 
 dependencies {
-    def lifecycle_version = "2.0.0"
+    def lifecycle_version = "2.1.0"
     def material_version = "1.0.0"
-    def nav_version = "2.1.0"
     def dagger_version = "2.24"
-    def room_version = "2.2.0-beta01"
+    def room_version = "2.2.0-rc01"
     def rxjava_version = "2.2.12"
     def rxandroid_version = "2.1.1"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
@@ -48,10 +47,6 @@ dependencies {
 
     // Material design widgets
     implementation "com.google.android.material:material:$material_version"
-
-    // Navigation Components
-    implementation "androidx.navigation:navigation-fragment:$nav_version"
-    implementation "androidx.navigation:navigation-ui:$nav_version"
 
     // Lifecycle (LiveData & ViewModel)
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
