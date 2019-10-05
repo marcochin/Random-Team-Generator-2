@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.marcochin.teamrandomizer">
+    package="com.marcochin.teamrandomizer2">
 
     <application
-        android:name=".BaseApplication"
+        android:name="com.marcochin.teamrandomizer2.BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".ui.MainActivity"
+            android:name="com.marcochin.teamrandomizer2.ui.MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
@@ -24,7 +24,7 @@
         </activity>
 
         <activity
-            android:name=".ui.randomize.RandomizeActivity"
+            android:name="com.marcochin.teamrandomizer2.ui.randomize.RandomizeActivity"
             android:screenOrientation="portrait" />
     </application>
 

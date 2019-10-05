@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Random</string>
+    <string name="app_name">Random Team Generator</string>
 
     <!-- RandomizeActivity -->
     <string name="ar_randomize_again_btn">Randomize Again</string>

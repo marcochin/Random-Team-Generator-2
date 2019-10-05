@@ -21,7 +21,7 @@
 
             <fragment
                 android:id="@+id/addPlayersFragment"
-                android:name="com.marcochin.teamrandomizer.ui.addplayers.AddPlayersFragment"
+                android:name="com.marcochin.teamrandomizer2.ui.addplayers.AddPlayersFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:label="@string/nav_randomize_tab"
@@ -29,7 +29,7 @@
 
             <fragment
                 android:id="@+id/loadFragment"
-                android:name="com.marcochin.teamrandomizer.ui.loadgroup.LoadGroupFragment"
+                android:name="com.marcochin.teamrandomizer2.ui.loadgroup.LoadGroupFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:label="@string/nav_load_tab"
