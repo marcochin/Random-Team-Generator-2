@@ -9,11 +9,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 
 import com.marcochin.teamrandomizer.R;
+import com.marcochin.teamrandomizer.ui.custom.dialogs.NoTitleDialogFragment;
 
-public class ClearListDialog extends DialogFragment implements View.OnClickListener {
+public class ClearListDialog extends NoTitleDialogFragment implements View.OnClickListener {
     public static final String TAG = ClearListDialog.class.getSimpleName();
 
     private OnClearListClickedListener mOnClearListClickedListener;

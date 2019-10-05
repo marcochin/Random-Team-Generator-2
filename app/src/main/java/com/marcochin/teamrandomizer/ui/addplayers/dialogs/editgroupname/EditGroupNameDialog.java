@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -20,8 +19,9 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.ui.UIAction;
+import com.marcochin.teamrandomizer.ui.custom.dialogs.NoTitleDialogFragment;
 
-public class EditGroupNameDialog extends DialogFragment implements View.OnClickListener {
+public class EditGroupNameDialog extends NoTitleDialogFragment implements View.OnClickListener {
     public static final String TAG = EditGroupNameDialog.class.getSimpleName();
     public static final String BUNDLE_KEY_GROUP_NAME = "group_name";
 

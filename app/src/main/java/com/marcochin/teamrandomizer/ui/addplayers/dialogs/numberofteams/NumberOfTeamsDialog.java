@@ -23,6 +23,7 @@ import com.marcochin.teamrandomizer.R;
 import com.marcochin.teamrandomizer.model.Player;
 import com.marcochin.teamrandomizer.persistence.PreferenceConstants;
 import com.marcochin.teamrandomizer.ui.UIAction;
+import com.marcochin.teamrandomizer.ui.custom.dialogs.NoTitleDaggerDialogFragment;
 import com.marcochin.teamrandomizer.ui.randomize.RandomizeActivity;
 
 import java.util.ArrayList;
@@ -30,9 +31,7 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import dagger.android.support.DaggerDialogFragment;
-
-public class NumberOfTeamsDialog extends DaggerDialogFragment implements View.OnClickListener {
+public class NumberOfTeamsDialog extends NoTitleDaggerDialogFragment implements View.OnClickListener {
     public static final String TAG = NumberOfTeamsDialog.class.getSimpleName();
     public static final String BUNDLE_KEY_PLAYERS_LIST = "players_list";
 

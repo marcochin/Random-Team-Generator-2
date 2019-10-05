@@ -9,11 +9,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 
 import com.marcochin.teamrandomizer.R;
+import com.marcochin.teamrandomizer.ui.custom.dialogs.NoTitleDialogFragment;
 
-public class DeleteGroupDialog extends DialogFragment implements View.OnClickListener {
+public class DeleteGroupDialog extends NoTitleDialogFragment implements View.OnClickListener {
     public static final String TAG = DeleteGroupDialog.class.getSimpleName();
     public static final String BUNDLE_KEY_GROUP_ID = "group_id";
     public static final String BUNDLE_KEY_GROUP_POSITION = "group_position";
